@@ -1,0 +1,80 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Picking QC View" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/picking_qc_view.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="qc-view-wrapper">
+
+    <!-- header  -->
+    <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1><span>{% trans "Picking QC" %}</span> {% trans "(View Only)" %}</h1>
+      </div>
+      <div class="wh-header-right">          
+          <a href="#" class="btn-back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+    </div>
+
+    <div class="qc-view-card">
+
+        <!-- QC Checklist -->
+        <div class="qc-section">
+            <h3>{% trans "Picking Verification Summary" %}</h3>
+
+            <ul class="qc-list">
+                <li>
+                    <span>{% trans "Correct SKU" %}</span>
+                    <span class="value">{{ qc.correct_sku }}</span>
+                </li>
+                <li>
+                    <span>{% trans "Correct Batch" %}</span>
+                    <span class="value">{{ qc.correct_batch }}</span>
+                </li>
+                <li>
+                    <span>{% trans "Correct Quantity" %}</span>
+                    <span class="value">{{ qc.correct_quantity }}</span>
+                </li>
+                <li>
+                    <span>{% trans "Expiry OK" %}</span>
+                    <span class="value">{{ qc.expiry_ok }}</span>
+                </li>
+                <li>
+                    <span>{% trans "Barcode Verified" %}</span>
+                    <span class="value">{{ qc.barcode_scan }}</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Verification Info -->
+        <div class="qc-info">
+            <div class="info-box">
+                <small>{% trans "Verified By" %}</small>
+                <strong>{{ qc.verified_by }}</strong>
+            </div>
+
+            <div class="info-box">
+                <small>{% trans "Verified On" %}</small>
+                <strong>{{ qc.verified_on }}</strong>
+            </div>
+        </div>
+
+        <!-- Action -->
+        <div class="action-buttons">
+            <a href="{% url 'quality_controller:packing_qc' grn.id %}" class="action-btn continue">
+                {% trans "Continue" %} →
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

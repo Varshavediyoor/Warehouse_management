@@ -1,0 +1,163 @@
+{% load i18n static dict_extras %}
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+    {% comment %}
+    Determine the correct dashboard URL based on the logged-in user role
+    {% endcomment %}
+    {% if request.user.userprofile.role == 'WAREHOUSE_MANAGER' %}
+        {% url 'warehouse_manager_dashboard' as dashboard_url %}
+    {% elif request.user.userprofile.role == 'INVENTORY_MANAGER' %}
+        {% url 'inventory_manager_dashboard' as dashboard_url %}
+    {% elif request.user.userprofile.role == 'STOREKEEPER' %}
+        {% url 'storekeeper_dashboard' as dashboard_url %}
+    {% elif request.user.userprofile.role == 'LOGISTICS' %}
+        {% url 'logistics_dashboard' as dashboard_url %}
+    {% elif request.user.userprofile.role == 'FINANCE' %}
+        {% url 'finance_dashboard' as dashboard_url %}
+    {% elif request.user.userprofile.role == 'EXTERNAL' %}
+        {% url 'external_user_dashboard' as dashboard_url %}
+    {% elif request.user.userprofile.role == 'PROCUREMENT_OFFICER' %}
+        {% url 'procurement_officer_dashboard' as dashboard_url %}
+    {% elif request.user.userprofile.role == 'SUPPLIER' %}
+        {% url 'supplier_dashboard' as dashboard_url %}
+    {% elif request.user.userprofile.role == 'SALES_OFFICER' %}
+        {% url 'salesofficer_dashboard' as dashboard_url %}
+    {% elif request.user.userprofile.role == 'DELIVERY_BOY' %}
+        {% url 'delivery_boy_dashboard' as dashboard_url %}
+    {% elif request.user.userprofile.role == 'MAINTENANCE_STAFF' %}
+        {% url 'maintenance_staff_dashboard' as dashboard_url %}
+    {% elif request.user.userprofile.role == 'SECURITY' %}
+        {% url 'security_dashboard' as dashboard_url %}
+    {% elif request.user.userprofile.role == 'QC_INSPECTOR' %}
+        {% url 'quality_control' as dashboard_url %}
+    {% else %}
+      {% url 'external_user_dashboard' as dashboard_url %}
+    {% endif %}
+  <ul class="sidebar-menu">
+      <li
+        {% if request.resolver_match.url_name in 'warehouse_manager_dashboard inventory_supervisor_dashboard storekeeper_dashboard logistics_dashboard finance_dashboard external_user_dashboard procurement_officer_dashboard supplier_dashboard inventory_manager_dashboard maintenance_staff_dashboard salesofficer_dashboard security_dashboard quality_control' %}
+            class="active"
+        {% endif %}
+      >
+          <a href="{{ dashboard_url }}">
+              <i class="bi bi-speedometer2"></i> <span>{% trans "Dashboard" %}</span>
+          </a>
+      </li>
+
+      <li class="nav-dropdown">
+        <a href="#" class="dropdown-toggle">
+            <i class="bi bi-box-seam"></i>
+            <span>{% trans "Products" %}</span>
+            <i class="bi bi-chevron-down dropdown-arrow"></i>
+        </a>
+    
+        <ul class="language-dropdown">
+            <li><a href="#">Add Products</a></li>
+            <li><a href="#">Products Category</a></li>
+            <li><a href="#">View Products</a></li>
+        </ul>
+    </li>
+    
+    <li class="nav-dropdown">
+        <a href="#" class="dropdown-toggle">
+            <i class="bi bi-geo-alt"></i>
+            <span>{% trans "Locations" %}</span>
+            <i class="bi bi-chevron-down dropdown-arrow"></i>
+        </a>
+    
+        <ul class="language-dropdown">
+            <li><a href="#">Add Locations</a></li>
+            <li><a href="#">View Locations</a></li>
+        </ul>
+    </li>
+    
+    
+      <li class="{% if request.resolver_match.url_name == 'user_profile' %}active{% endif %}">
+          <a href="{% url 'user_profile' %}">
+              <i class="bi bi-person"></i> <span>{% trans "Profile" %}</span>
+          </a>
+      </li>
+
+    <li class="{% if request.resolver_match.url_name == 'user_notifications' %}active{% endif %}">
+        <a href="{% url 'user_notifications' %}" style="position: relative;">
+            <i class="bi bi-bell"></i> 
+            <span>{% trans "Notifications" %}</span>
+            {% if unread_count > 0 %}
+                <span class="notif-badge">{{ unread_count }}</span>
+            {% endif %}
+        </a>
+    </li>
+
+
+      <li class="{% if request.resolver_match.url_name == 'calendar_page' %}active{% endif %}">
+        <a href="#">
+            <i class="bi bi-calendar"></i> <span>{% trans "Calendar" %}</span>
+        </a>
+      </li>
+
+      <li class="{% if request.resolver_match.url_name == 'settings_page' %}active{% endif %}">
+          <a href="#">
+              <i class="bi bi-gear"></i> <span>{% trans "Settings" %}</span>
+          </a>
+      </li>
+
+
+
+      <li id="languageLi" class="nav-dropdown">
+        <a href="#" id="languageToggle" class="dropdown-toggle">
+            <i class="bi bi-translate"></i>
+            <span>{% trans "Language" %}</span>
+            <i class="bi bi-chevron-down dropdown-arrow"></i>
+        </a>
+    
+        <ul class="language-dropdown">
+            {% for lang in company_languages %}
+                <li>
+                    <a href="{% url 'switch_language' lang %}"
+                       class="{% if LANGUAGE_CODE == lang %}active{% endif %}">
+                        {% if lang == "en" %}
+                            English
+                        {% elif lang == "ar" %}
+                            العربية
+                        {% else %}
+                            {{ lang|upper }}
+                        {% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </li>
+    
+
+
+
+  </ul>
+
+</aside>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+    
+        const dropdownToggles = document.querySelectorAll(".dropdown-toggle");
+    
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener("click", (e) => {
+                e.preventDefault();
+    
+                const parentLi = toggle.closest("li");
+    
+                // Close other dropdowns
+                document.querySelectorAll(".nav-dropdown").forEach(li => {
+                    if (li !== parentLi) {
+                        li.classList.remove("active");
+                    }
+                });
+    
+                parentLi.classList.toggle("active");
+            });
+        });
+    
+    });
+    </script>
+    
+    

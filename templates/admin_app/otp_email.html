@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <body style="font-family: Arial, sans-serif; background-color: #f5f6fa; margin: 0; padding: 0;">
+    <div
+      style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"
+    >
+      <div style="background-color: #0d6efd; color: #ffffff; padding: 20px; text-align: center;">
+        <h2>Admin Login Verification</h2>
+      </div>
+      <div style="padding: 30px; color: #333333;">
+        <p>Hello,</p>
+        <p>Use the following One-Time Password (OTP) to complete your admin login verification:</p>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <span
+            style="display: inline-block; background-color: #f1f3f5; color: #0d6efd;
+                   font-size: 24px; font-weight: bold; letter-spacing: 4px;
+                   padding: 12px 24px; border-radius: 6px; border: 1px solid #0d6efd;"
+          >
+            {{ otp }}
+          </span>
+        </div>
+
+        <p>This OTP is valid for <strong>15 minutes</strong> and can be used only once.</p>
+        <p>Please note that we will <strong>never ask</strong> for your OTP via call, SMS, or email reply.</p>
+
+        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;" />
+
+        <p style="text-align: center; color: #6c757d; font-size: 14px;">
+          Need help? Contact the admin support team.
+        </p>
+      </div>
+      <div
+        style="background-color: #f8f9fa; text-align: center; padding: 15px; font-size: 13px; color: #6c757d;"
+      >
+        <p>© {{ year }} WMS Pro. All rights reserved.</p>
+        <a href="#" style="color: #0d6efd; text-decoration: none; margin: 0 5px;">Privacy Policy</a> |
+        <a href="#" style="color: #0d6efd; text-decoration: none; margin: 0 5px;">Terms of Service</a>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+{% extends "base_user.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Delivery Order Detail" %}{% endblock %}
+
+{% block content %}
+<div class="delivery-order-detail">
+
+    <!-- HEADER -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                {% trans "Delivery Order" %} – {{ delivery_order.delivery_no }}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- DELIVERY INFO -->
+    <div class="info-card">
+        <p><b>{% trans "Delivery No" %}:</b> {{ delivery_order.delivery_no }}</p>
+        <p><b>{% trans "Delivery Date" %}:</b> {{ delivery_order.delivery_date|date:"Y-m-d H:i" }}</p>
+        <p><b>{% trans "Customer" %}:</b> {{ delivery_order.order.customer_name }}</p>
+        <p><b>{% trans "Status" %}:</b> {{ delivery_order.status }}</p>
+        <p><b>{% trans "Vehicle No" %}:</b> {{ delivery_order.vehicle_no|default:"—" }}</p>
+        <p><b>{% trans "Driver" %}:</b> {{ delivery_order.driver_name|default:"—" }}</p>
+    </div>
+
+    <!-- PRODUCTS -->
+<h3>{% trans "Product Details" %}</h3>
+
+{% if items %}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>{% trans "Product" %}</th>
+            <th>{% trans "SKU" %}</th>
+            <th>{% trans "Ordered Qty" %}</th>
+            <th>{% trans "Delivered Qty" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+<td>{{ item.order_item.stock.product.name }}</td>
+<td>{{ item.order_item.stock.product.sku }}</td>
+<td>{{ item.order_item.quantity }}</td>
+<td>{{ item.quantity }}</td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>{% trans "No items found for this delivery order." %}</p>
+{% endif %}
+
+
+
+
+
+</div>
+{% endblock %}

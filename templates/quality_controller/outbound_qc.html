@@ -1,0 +1,311 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Outbound QC" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/inbound_qc.css' %}">
+
+<style>
+/* CAMERA MODAL */
+.camera-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.camera-box {
+    width: 100%;
+    max-width: 620px;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+#camera-video,
+#camera-canvas {
+    width: 100%;
+}
+
+.camera-actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    background: #111;
+}
+
+.camera-actions button {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.capture-btn { background: #2c8cfb; color: #fff; }
+.confirm-btn { background: #28a745; color: #fff; }
+.retake-btn  { background: #ffc107; }
+.cancel-btn  { background: #dc3545; color: #fff; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="qc-page">
+
+    <!-- HEADER -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Outbound QC - " %}</span>
+                {% trans "GRN" %} {{ grn.id }}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="qc-card">
+
+        <!-- INFO -->
+        <div class="qc-info">
+            <img src="{% static 'images/total-sku.png' %}">
+            <h3>{% trans "Outbound Quality Check" %}</h3>
+            <p>
+                {% trans "Verify delivery documents, vehicle condition, seal, driver details and route before dispatch." %}
+            </p>
+        </div>
+
+        <!-- FORM -->
+        <form method="post" enctype="multipart/form-data" class="qc-form">
+            {% csrf_token %}
+
+            <div class="form-grid">
+
+                <!-- Delivery Order -->
+                <div class="qc-item">
+                    <div class="qc-check">
+                        <input type="checkbox" name="delivery_order_ok">
+                        <label>{% trans "Delivery Order OK" %}</label>
+                    </div>
+                    <div class="qc-image">
+                        <img id="delivery-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('delivery')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="delivery_order_image" id="delivery-input" hidden>
+                    </div>
+                </div>
+
+                <!-- Vehicle -->
+                <div class="qc-item">
+                    <div class="qc-check">
+                        <input type="checkbox" name="vehicle_clean">
+                        <label>{% trans "Vehicle Clean" %}</label>
+                    </div>
+                    <div class="qc-image">
+                        <img id="vehicle-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('vehicle')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="vehicle_image" id="vehicle-input" hidden>
+                    </div>
+                </div>
+
+                <!-- Route -->
+                <div class="qc-item">
+                    <div class="qc-check">
+                        <input type="checkbox" name="route_verified">
+                        <label>{% trans "Route Verified" %}</label>
+                    </div>
+                    <div class="qc-image">
+                        <img id="route-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('route')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="route_image" id="route-input" hidden>
+                    </div>
+                </div>
+
+                <!-- Export Docs -->
+                <div class="qc-item">
+                    <div class="qc-check">
+                        <input type="checkbox" name="export_docs_ok" checked>
+                        <label>{% trans "Export Documents OK" %}</label>
+                    </div>
+                    <div class="qc-image">
+                        <img id="export-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('export')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="export_docs_image" id="export-input" hidden>
+                    </div>
+                </div>
+
+                <!-- Seal -->
+                <div class="qc-item">
+                    <div class="qc-check">
+                        <input type="checkbox" disabled checked>
+                        <label>{% trans "Seal Verified" %}</label>
+                    </div>
+
+                    <div class="qc-fields">
+                        <input type="text" name="seal_number" placeholder="{% trans 'Seal Number' %}" required class="qc-text-input-special">
+                    </div>
+
+                    <div class="qc-image">
+                        <img id="seal-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('seal')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="seal_image" id="seal-input" hidden>
+                    </div>
+                </div>
+
+                <!-- Driver -->
+                <div class="qc-item">
+                    <div class="qc-check">
+                        <input type="checkbox" disabled checked>
+                        <label>{% trans "Driver Verified" %}</label>
+                    </div>
+
+                    <div class="qc-fields">
+                        <input type="text" name="driver_id" placeholder="{% trans 'Driver ID' %}" required class="qc-text-input-special">
+                    </div>
+
+                    <div class="qc-image">
+                        <img id="driver-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('driver')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="driver_image" id="driver-input" hidden>
+                    </div>
+                </div>
+
+
+
+
+                <!-- Gate Pass -->
+                <!-- Remarks -->
+                <div class="field">
+                    <label>{% trans "Gate Pass Number" %}</label>
+                    <input type="text" name="gate_pass_number">
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="action-btn submit">
+                    {% trans "Submit & Continue" %}
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- CAMERA MODAL -->
+<div class="camera-modal" id="camera-modal">
+    <div class="camera-box">
+        <video id="camera-video" autoplay playsinline></video>
+        <canvas id="camera-canvas" hidden></canvas>
+
+        <div class="camera-actions">
+            <button class="cancel-btn" onclick="closeCamera()">✖ Cancel</button>
+            <button class="retake-btn" id="retakeBtn" onclick="retakePhoto()" hidden>🔄 Retake</button>
+            <button class="confirm-btn" id="confirmBtn" onclick="confirmPhoto()" hidden>Confirm</button>
+            <button class="capture-btn" id="captureBtn" onclick="capturePhoto()">📸 Capture</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let stream = null;
+let activeInput = null;
+let activePreview = null;
+
+const cameraModal = document.getElementById("camera-modal");
+const cameraVideo = document.getElementById("camera-video");
+const cameraCanvas = document.getElementById("camera-canvas");
+
+const captureBtn = document.getElementById("captureBtn");
+const confirmBtn = document.getElementById("confirmBtn");
+const retakeBtn  = document.getElementById("retakeBtn");
+
+function openCamera(prefix) {
+    activeInput = document.getElementById(prefix + "-input");
+    activePreview = document.getElementById(prefix + "-preview");
+
+    cameraModal.style.display = "flex";
+
+    navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+        audio: false
+    }).then(s => {
+        stream = s;
+        cameraVideo.srcObject = stream;
+        cameraVideo.play();
+    });
+}
+
+function capturePhoto() {
+    cameraCanvas.width = cameraVideo.videoWidth;
+    cameraCanvas.height = cameraVideo.videoHeight;
+    cameraCanvas.getContext("2d").drawImage(cameraVideo, 0, 0);
+
+    cameraVideo.hidden = true;
+    cameraCanvas.hidden = false;
+
+    captureBtn.hidden = true;
+    confirmBtn.hidden = false;
+    retakeBtn.hidden = false;
+}
+
+function confirmPhoto() {
+    cameraCanvas.toBlob(blob => {
+        const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        activeInput.files = dt.files;
+
+        activePreview.src = URL.createObjectURL(file);
+        activePreview.hidden = false;
+
+        closeCamera();
+    }, "image/jpeg", 0.9);
+}
+
+function retakePhoto() {
+    cameraCanvas.hidden = true;
+    cameraVideo.hidden = false;
+
+    captureBtn.hidden = false;
+    confirmBtn.hidden = true;
+    retakeBtn.hidden = true;
+}
+
+function closeCamera() {
+    cameraModal.style.display = "none";
+
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+
+    cameraVideo.hidden = false;
+    cameraCanvas.hidden = true;
+
+    captureBtn.hidden = false;
+    confirmBtn.hidden = true;
+    retakeBtn.hidden = true;
+}
+</script>
+
+{% endblock %}

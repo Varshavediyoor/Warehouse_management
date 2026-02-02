@@ -1,0 +1,150 @@
+{% extends 'base_admin.html' %}
+{% load static i18n %}
+
+{% block title %}Reports{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/admin_report.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+<!-- ===== Reports & Analytics Section ===== -->
+  <section class="reports-section">
+
+    <!-- header  -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Reports" %}</span> {% trans "& Insights" %}</h1>
+        </div>
+        <div class="wh-header-right">          
+            <a href="{% url 'custom_admin_dashboard' %}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+    
+    <!-- <div class="report-cards"> -->
+    <div class="report-grid">
+        <div class="report-card">
+            <div class="report-card-bubble"></div>
+
+            <div class="report-card-header">
+                <h2>{% trans "Purchase " %}<span>{% trans "Report" %}</span></h2>
+                <p>{% trans "Track all purchase orders, suppliers, and order statuses." %}</p>
+            </div>
+
+            <div class="report-card-datebox">
+                <a href="{% url 'purchase_report' %}">{% trans "View Report" %}</a>
+            </div>
+        </div>
+
+        <div class="report-card">
+            <div class="report-card-bubble"></div>
+
+            <div class="report-card-header">
+                <h2>{% trans "Batch " %}<span>{% trans "Report" %}</span></h2>
+                <p>{% trans "View received batches, quantities, and stock status." %}</p>
+            </div>
+
+            <div class="report-card-datebox">
+                <a href="{% url 'batch_report' %}">{% trans "View Report" %}</a>
+            </div>
+        </div>
+
+        <div class="report-card">
+            <div class="report-card-bubble"></div>
+
+            <div class="report-card-header">
+                <h2>{% trans "Picking " %}<span>{% trans "Report" %}</span></h2>
+                <p>{% trans "Monitor picking lists, accuracy, and item traceability." %}</p>
+            </div>
+
+            <div class="report-card-datebox">
+                <a href="{% url 'picking_report' %}">{% trans "View Report" %}</a>
+            </div>
+        </div>
+
+        <div class="report-card">
+            <div class="report-card-bubble"></div>
+
+            <div class="report-card-header">
+                <h2>{% trans "Packing " %}<span>{% trans "Report" %}</span></h2>
+                <p>{% trans "Review packed items, packaging materials, and timestamps." %}</p>
+            </div>
+
+            <div class="report-card-datebox">
+                <a href="{% url 'packing_report' %}">{% trans "View Report" %}</a>
+            </div>
+        </div>
+
+        <div class="report-card">
+            <div class="report-card-bubble"></div>
+
+            <div class="report-card-header">
+                <h2>{% trans "Dispatch " %}<span>{% trans "Report" %}</span></h2>
+                <p>{% trans "Track dispatch schedules, assigned carriers, and documents." %}</p>
+            </div>
+
+            <div class="report-card-datebox">
+                <a href="{% url 'dispatch_report' %}">{% trans "View Report" %}</a>
+            </div>
+        </div>
+
+        <div class="report-card">
+            <div class="report-card-bubble"></div>
+
+            <div class="report-card-header">
+                <h2>{% trans "Delivery " %}<span>{% trans "Report" %}</span></h2>
+                <p>{% trans "View delivery confirmations, timelines, and customer feedback." %}</p>
+            </div>
+
+            <div class="report-card-datebox">
+                <a href="{% url 'delivery_report' %}">{% trans "View Report" %}</a>
+            </div>
+        </div>
+
+        <div class="report-card">
+            <div class="report-card-bubble"></div>
+
+            <div class="report-card-header">
+                <h2>{% trans "Sales Order " %}<span>{% trans "Report" %}</span></h2>
+                <p>{% trans "View sales confirmations, timelines, and customer feedback." %}</p>
+            </div>
+
+            <div class="report-card-datebox">
+                <a href="{% url 'sales_order_report' %}">{% trans "View Report" %}</a>
+            </div>
+        </div>
+
+        <div class="report-card">
+            <div class="report-card-bubble"></div>
+
+            <div class="report-card-header">
+                <h2>{% trans "Sales Invoice " %}<span>{% trans "Report" %}</span></h2>
+                <p>{% trans "Track dispatch schedules, assigned carriers, and documents." %}</p>
+            </div>
+
+            <div class="report-card-datebox">
+                <a href="{% url 'sales_invoice_report' %}">{% trans "View Report" %}</a>
+            </div>
+        </div>
+
+        <div class="report-card">
+            <div class="report-card-bubble"></div>
+
+            <div class="report-card-header">
+                <h2>{% trans "Purchase Invoice" %}<span>{% trans "Report" %}</span></h2>
+                <p>{% trans "Track dispatch schedules, assigned carriers, and documents." %}</p>
+            </div>
+
+            <div class="report-card-datebox">
+                <a href="{% url 'purchase_invoice_report' %}">{% trans "View Report" %}</a>
+            </div>
+        </div>
+    </div>
+
+  </section>
+
+{% endblock %}

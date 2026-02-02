@@ -1,0 +1,232 @@
+/* Root Container */
+.picking-report-container {
+    margin-top: 1rem;
+    font-family: "Poppins", sans-serif;
+}
+
+/*----------------------------------------------------------- Report Header Section -------------------------------------------*/
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: headerFadeUp 0.8s ease-out forwards;
+    animation-delay: 0.2s;
+}
+
+@keyframes headerFadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.report-header-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.report-header h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c4c71;
+    opacity: 0;
+    transform: translateX(-30px);
+    animation: titleSlideIn 0.8s ease-out forwards;
+    animation-delay: 0.3s;
+}
+
+@keyframes titleSlideIn {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.report-header h1 span {
+    color: #2c8cfb;
+}
+
+.subtext {
+    font-size: 0.85rem;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: subtextFadeIn 0.9s ease-out forwards;
+    animation-delay: 0.6s;
+}
+
+@keyframes subtextFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.btn-back {
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border-radius: 30px;
+    color: #fff;
+    padding: .4rem 2rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden;
+    position: relative;
+}
+
+.btn-back:hover { transform: scale(1.05); }
+
+.btn-back::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.btn-back:hover::before { animation: shine 1.5s ease-out infinite; }
+
+@keyframes shine {
+    0% { left: -80px; }
+    60%,100% { left: 100%; }
+}
+
+/*----------------------------------------------------- Filter Form -------------------------------------------------------*/
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: subtextFadeIn 0.9s ease-out forwards;
+    animation-delay: 0.6s;
+}
+
+.filter-form input,
+.filter-form select,
+.filter-form button {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    transition: all 0.3s ease;
+}
+
+.filter-form input:focus,
+.filter-form select:focus {
+    border-color: #2c8cfb;
+    outline: none;
+    box-shadow: 0 0 5px rgba(37,117,252,0.3);
+}
+
+/* Keep your gradient button */
+.filter-form button {
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border-radius: 30px;
+    color: #fff;
+    padding: .5rem 2rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden; 
+    position: relative;
+    cursor: pointer;
+}
+
+.filter-form button:hover { transform: scale(1.05); }
+
+.filter-form button::before {
+    content: "";
+    position: absolute;
+    width: 80px; 
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.filter-form button:hover::before { animation: shine 1.5s ease-out infinite; }
+
+/*----------------------------------------------------- Meta Info -------------------------------------------------------*/
+.report-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #6c757d;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: subtextFadeIn 0.9s ease-out forwards;
+    animation-delay: 0.6s;
+}
+
+.report-meta-content-left { display: flex; gap: 3rem; }
+.report-meta-content-right { display: flex; gap: 1rem; }
+
+.report-meta-content-right .action-btn {
+    opacity: 0;
+    transform: translateY(15px);
+    animation: buttonFadeUp 0.8s ease-out forwards;
+}
+
+.report-meta-content-right .action-btn:nth-child(1) { animation-delay: 0.8s; }
+.report-meta-content-right .action-btn:nth-child(2) { animation-delay: 1s; }
+
+@keyframes buttonFadeUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.action-btn {
+    border: none;
+    border-radius: 25px;
+    font-size: 0.8rem;
+    padding: .5rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden;
+    position: relative;
+}
+
+.action-btn.excel { background: linear-gradient(135deg, #28a745, #218838); }
+.action-btn.pdf { background: linear-gradient(135deg, #dc3545, #a71d2a); }
+
+.action-btn:hover { transform: scale(1.02); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
+.action-btn::before { content: ""; position: absolute; width: 80px; height: 100%; background-image: linear-gradient(120deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.8), rgba(255,255,255,0) 70%); top: 0; left: -80px; opacity: 0.6; pointer-events: none; }
+.action-btn:hover::before { animation: shine 1.5s ease-out infinite; }
+
+.report-meta .records-count strong { color: #2c4c71; }
+.generated-date { font-style: italic; }
+
+/*----------------------------------------------------- Responsive -------------------------------------------------------*/
+@media (max-width: 768px) {
+    .report-header { flex-direction: column; align-items: flex-start; }
+    .header-right { margin-top: 15px; }
+    .report-meta { flex-direction: column; gap: 8px; }
+}

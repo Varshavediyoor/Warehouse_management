@@ -1,0 +1,96 @@
+{% extends "base_user.html" %}
+{% block content %}
+
+<h2>Transfer Request - {{ transfer.request_no }}</h2>
+
+<p><strong>From:</strong> {{ transfer.requester_warehouse_code }}</p>
+<p><strong>To:</strong> {{ transfer.receiver_warehouse_code }}</p>
+<p><strong>Status:</strong> {{ transfer.status|capfirst }}</p>
+<p><strong>Created By:</strong> {{ transfer.creator_username }}</p>
+<p><strong>Approved By:</strong>
+    {% if transfer.approved_by %}
+        {{ transfer.approved_by }}
+    {% else %}-{% endif %}
+</p>
+
+<h3>Products</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.qty }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2" class="text-center">No products found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Transfer Type: {{ transfer.get_transfer_type_display }}</h3>
+
+{% if transfer.transfer_type == "customer" %}
+    <h4>Customer Details</h4>
+    {% if transfer.status in "approved,rejected" %}
+        <a href="{% url 'salesofficer:view_customer_details' transfer.id %}" class="btn btn-primary">
+            View Customer Details
+        </a>
+    {% else %}
+        <p><strong>Name:</strong> {{ transfer.customer_name }}</p>
+        <p><strong>Address:</strong> {{ transfer.customer_address }}</p>
+        <p><strong>Necessities:</strong> {{ transfer.necessities }}</p>
+    {% endif %}
+{% else %}
+    <!-- Goods transfer -->
+    {% if transfer.status in "approved,rejected" %}
+        <a href="{% url 'salesofficer:view_goods_details' transfer.id %}" class="btn btn-primary">
+            View Goods Transfer Details
+        </a>
+    {% else %}
+        <p>No additional details yet.</p>
+    {% endif %}
+{% endif %}
+
+<!-- Approve / Reject buttons for the receiving warehouse -->
+{% if transfer.status == "requested" %}
+    {% if user.userprofile.warehouse == transfer.receiver_warehouse_code %}
+        <h4>Actions</h4>
+        <a href="{% url 'salesofficer:approve_request' transfer.id %}" class="btn btn-success">
+            Approve
+        </a>
+
+        <form method="post" action="{% url 'salesofficer:reject_request' transfer.id %}" style="display:inline;">
+            {% csrf_token %}
+            <input type="text" name="reason" placeholder="Reason for rejection" required>
+            <button type="submit" class="btn btn-danger">Reject</button>
+        </form>
+    {% endif %}
+{% endif %}
+
+<!-- Buttons for requesting warehouse -->
+{% if transfer.status == "requested" %}
+    {% if user.userprofile.warehouse == transfer.requester_warehouse_code %}
+        {% if transfer.transfer_type == "customer" %}
+            <a href="{% url 'salesofficer:send_customer_details' transfer.id %}" class="btn btn-success">
+                Send Customer Details
+            </a>
+        {% else %}
+            <a href="{% url 'salesofficer:request_goods_transfer' transfer.id %}" class="btn btn-success">
+                Request Goods Transfer
+            </a>
+        {% endif %}
+    {% endif %}
+{% endif %}
+
+<br><br>
+<a href="{% url 'salesofficer:a_requests' %}" class="btn btn-secondary">Back to Transfers</a>
+
+{% endblock %}

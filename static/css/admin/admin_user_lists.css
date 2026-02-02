@@ -1,0 +1,202 @@
+.userlist-container{
+  /* Animation */
+  opacity: 0;
+  transform: translateY(25px);
+  animation: fadeSlideIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeSlideIn {
+  0% {
+      opacity: 0;
+      transform: translateY(25px) scale(0.98);
+      filter: blur(6px);
+  }
+  70% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+  }
+  100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+  }
+}
+
+/* ---------------------------- Header ---------------------------- */
+
+.wh-header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+@keyframes slideFromRight {
+  0% {
+  transform: translateX(80px); /* Start slightly off-screen to the right */
+  opacity: 0;
+  }
+  100% {
+  transform: translateX(0); /* End in place */
+  opacity: 1;
+  }
+  }
+
+.wh-header-section h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2c4c71;
+
+  animation: slideFromRight 0.9s ease-out forwards;
+  opacity: 0; /* Start invisible */
+}
+
+.wh-header-section h1 span {
+  color: #2c8cfb;
+}
+
+.wh-header-section p{
+  font-size: 13px;
+}
+
+.wh-header-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+
+  opacity: 0;
+  transform: translateY(25px);
+  animation: fadeSlideIn 0.8s ease-out forwards;
+}
+
+.btn-back {
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  background: linear-gradient(90deg, #2c8cfb, #3c6696);
+  border-radius: 30px;
+  color: #fff;
+  padding: .4rem 2rem;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+  outline: none;
+  overflow: hidden; /* ✅ Keeps shine animation inside button */
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+
+.btn-back:hover {
+  transform: scale(1.05);
+}
+  
+.btn-back::before {
+  content: "";
+  position: absolute;
+  width: 80px; /* ✅ Slightly smaller for smooth edge transition */
+  height: 100%;
+  background-image: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0) 70%
+  );
+  top: 0;
+  left: -80px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+  
+.btn-back:hover::before {
+  animation: shine 1.5s ease-out infinite;
+}
+  
+@keyframes shine {
+  0% {
+      left: -80px;
+  }
+  60% {
+      left: 100%;
+  }
+  100% {
+      left: 100%;
+  }
+}
+
+
+@media (max-width: 845px) {
+  .wh-header-section {
+      margin-top: 0rem;
+  }
+
+.wh-header-section h1{
+  font-size: 28px;
+}
+
+.wh-header-right{
+  gap: 0.5rem;
+}
+
+.wh-header-right a{
+  font-size: 11px;
+  width: 100px;
+  padding: .3rem .6rem;
+}
+}
+
+@media (max-width: 670px) {
+  .wh-header-section h1{
+    font-size: 26px;
+    max-width: 400px;
+  }
+
+  .wh-header-section p{
+    font-size: 12px;
+  }
+
+  .wh-header-right a{
+    width: 80px;
+  }
+
+  .wh-header-right a{
+    width: 80px;
+  }
+}
+
+@media (max-width: 550px) {
+  .wh-header-section h1{
+    font-size: 20px;
+    max-width: 350px;
+  }
+  .wh-header-left p{
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .wh-header-section h1{
+    font-size: 20px;
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 420px) {
+  .wh-header-section h1{
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 380px) {
+  .wh-header-section h1{
+    font-size: 16px;
+    max-width: 200px;
+  }
+}
+
+/* -------------------------------------------------------- */

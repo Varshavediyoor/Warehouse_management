@@ -1,0 +1,169 @@
+/* =========================
+   DELETE CONFIRM MODAL
+========================= */
+
+/* 🌟 Modal Box */
+.delete-modal-content {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid #5cacfa;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding: 3rem;
+    border-radius: 15px;
+    width: 500px;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    margin: 80px auto; /* centers the modal vertically */
+
+    /* Animation */
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+  }
+
+  @keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(25px) scale(0.98);
+        filter: blur(6px);
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+  
+  /* Heading */
+  .delete-modal-content h3 {
+    color: #2c8cfb;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+  
+  .delete-modal-content h3 span {
+    color: #2c4c71;
+  }
+  
+  /* Message */
+  .delete-modal-content p {
+    color: #2c4c71;
+    font-size: 14px;
+    margin-bottom: 2rem;
+  }
+  
+  /* Buttons container */
+  .action-buttons{
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+  .action-btn {
+    border: none;
+    border-radius: 30px;
+    font-size: 15px;
+    padding: .6rem 1.2rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;  /* Ensures text stays centered */
+    gap: 6px;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    min-width: 150px;  /* 🎯 Same button width */
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    }
+    
+    
+    .action-btn.cancel {
+    background: #c7d2de;
+    color: #000;
+    }
+    
+    .action-btn.confirm{
+    background: #E03F3F;
+    }
+    
+    .action-btn::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 100%;
+    background-image: linear-gradient(120deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 70%);
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    }
+    .action-btn:hover::before {
+    animation: shine 1.5s ease-out infinite;
+    }
+    
+    .action-btn:hover { 
+    transform: scale(1.05); 
+    }
+
+    @keyframes shine {
+        0% {
+            left: -80px;
+        }
+        60% {
+            left: 100%;
+        }
+        100% {
+            left: 100%;
+        }
+      }
+  
+  
+  /* Responsive */
+  @media (max-width: 500px) {
+    .delete-modal-content {
+      margin: 40px 15px;
+      padding: 2rem;
+    }
+  
+    .delete-modal-buttons a,
+    .delete-modal-buttons button {
+      width: 100%;
+      padding: 12px 0;
+    }
+  }
+  
+  @media (max-width: 680px) {
+    .action-buttons{
+        gap: 10px;
+    }
+
+    .action-btn{
+        font-size: 13px;
+        padding: .4rem 2rem;
+        min-width: 120px;
+    }
+  }
+
+  @media (max-width: 580px) {
+    .action-buttons{
+        gap: 5px;
+    }
+
+    .action-btn{
+        font-size: 11px;
+        padding: .4rem .4rem;
+        width: 100px;
+    }
+  }

@@ -1,0 +1,73 @@
+{% extends 'base_user.html' %}
+{% load i18n static dict_extras %}
+
+{% block title %}{% trans "Vehicle Security Checkup" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/security/upload_vehicle_image.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="grn-header">
+    <div class="grn-header-left">
+        <h1><span>{% trans "vehicle" %}</span> {% trans "security check" %}</h1>
+        <p>{% trans "Upload entry and exit images for Dispatch ID:" %} <strong>{{ dispatch.id }}</p>
+    </div>
+    <div class="grn-list-header-right">
+        <a href="{% url 'security_dashboard' %}" class="security-back-btn">
+        <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+        </a>
+    </div>
+</div>
+
+<div class="upload-image-wrapper">
+    <!-- Upload Card -->
+    <div class="upload-card">
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Vehicle In -->
+            <div class="upload-section">
+                <h4><i class="bi bi-camera-fill"></i> {% trans "Vehicle Entry Image" %}</h4>
+                <p class="small-text">{% trans "Capture the vehicle as it enters the premises." %}</p>
+
+                <label class="upload-box">
+                    <i class="bi bi-upload upload-icon"></i>
+                    <span>{% trans "Click to upload entry image" %}</span>
+                    <input type="file" name="vehicle_in_image" class="file-input">
+                </label>
+
+                {% if dispatch.vehicle_in_image %}
+                    <img src="{{ dispatch.vehicle_in_image.url }}" alt="Vehicle In" class="preview-img">
+                {% endif %}
+            </div>
+
+            <hr>
+
+            <!-- Vehicle Out -->
+            <div class="upload-section">
+                <h4><i class="bi bi-camera-reels-fill"></i> {% trans "Vehicle Exit Image" %}</h4>
+                <p class="small-text">{% trans "Capture the vehicle during exit verification." %}</p>
+
+                <label class="upload-box">
+                    <i class="bi bi-upload upload-icon"></i>
+                    <span>{% trans "Click to upload exit image" %}</span>
+                    <input type="file" name="vehicle_out_image" class="file-input">
+                </label>
+
+                {% if dispatch.vehicle_out_image %}
+                    <img src="{{ dispatch.vehicle_out_image.url }}" alt="Vehicle Out" class="preview-img">
+                {% endif %}
+            </div>
+
+            <div class="submit-button">
+                <button type="submit" class="upload-btn-submit">{% trans "Upload Images" %}</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+    
+
+{% endblock %}

@@ -1,0 +1,220 @@
+.form-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.form-card {
+  background: #fff;
+  border: 1px solid #5cacfa;
+  border-radius: 18px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  max-width: 900px;
+  width: 100%;
+  padding: 40px 50px;
+  animation: slideUp 0.7s ease;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.form-header h1 {
+  font-size: 26px;
+  color: #2c3e50;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.form-header h1 span {
+  color: #2c8cfb;
+}
+
+.form-header .subtitle {
+  font-size: 14px;
+  color: #666;
+}
+
+/* Input Grid */
+.input-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  margin-bottom: 25px;
+  gap: 25px;
+  background: rgba(255, 255, 255, 0.65);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid #2c8cfb;
+  transition: all 0.4s ease;
+  box-sizing: border-box;
+}
+
+/* Form Group */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  animation: fadeUp 0.9s ease;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #2c4c71;
+  letter-spacing: 0.3px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  max-width: 100%; /* prevent overflow */
+  box-sizing: border-box;
+  padding: 12px 15px;
+  border: 1px solid #2c8cfc;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  font-size: 15px;
+  background: #f8fbff;
+  box-shadow: 0 3px 8px rgba(44, 140, 251, 0.05);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  background: #fff;
+  box-shadow: 0 0 10px rgba(10, 124, 255, 0.75);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+/* Smaller Textarea */
+.textarea-group textarea {
+  height: 90px;
+  resize: none;
+}
+
+/* Buttons Container */
+.btn-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.btn-submit,
+.btn-cancel{
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  background: linear-gradient(90deg, #2c8cfb, #3c6696);
+  border-radius: 30px;
+  color: #fff;
+  padding: .6rem 2rem;   /* same padding */
+  width: 150px;          /* set same width for both */
+  text-align: center;    /* center text */
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+  outline: none;
+  overflow: hidden;
+  position: relative;
+  border: none;
+  cursor: pointer;
+}
+
+/* Specific Background Colors */
+.btn-cancel {
+background: linear-gradient(90deg, #a5b8cc, #738291); 
+}
+
+.btn-submit {
+background: linear-gradient(90deg, #2c8cfb, #3c6696); /* Red gradient */
+}
+
+/* Hover Effect */
+.btn-cancel:hover,
+.btn-submit:hover {
+transform: scale(1.05);
+color: #fff;
+}
+
+
+/* Shine effect */
+.btn-cancel::before,
+.btn-submit::before {
+content: "";
+position: absolute;
+width: 80px;
+height: 100%;
+background-image: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0) 70%
+);
+top: 0;
+left: -80px;
+opacity: 0.6;
+pointer-events: none;
+}
+
+.btn-cancel:hover::before,
+.btn-submit:hover::before {
+animation: shine 1.5s ease-out infinite;
+}
+
+/* Keyframes - already available but included for safety */
+@keyframes shine {
+0% { left: -80px; }
+60% { left: 100%; }
+100% { left: 100%; }
+}
+
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 645px) {
+  .form-card {
+    width: 100%;
+    padding: 30px 10px;
+  }
+
+  .input-grid {
+    padding: 10px;
+    border-left: 0px;
+  }
+
+  .btn-container {
+    gap: 8px;
+  }
+
+  .btn-submit,
+  .btn-cancel{
+    font-size: 13px;
+    padding: .4rem 1rem;   /* same padding */
+    width: 150px;          /* set same width for both */
+  }
+}
+
+@media (max-width: 645px) {
+  .btn-submit,
+  .btn-cancel{
+    width: 120px;          /* set same width for both */
+  }
+}

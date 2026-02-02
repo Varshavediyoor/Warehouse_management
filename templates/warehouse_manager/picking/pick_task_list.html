@@ -1,0 +1,54 @@
+{% extends "base_user.html" %}
+{% load static i18n %}
+
+{% block title %}Pick Tasks{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="pick-task-container">
+    <h1>Pick Tasks</h1>
+    <div class="table-scroll-wrapper">
+        <table class="table-content">
+            <thead>
+                <tr>
+                    <th>Task ID</th>
+                    <th>Delivery Order</th>
+                    <th>Product</th>
+                    <th>Batch</th>
+                    <th>Quantity</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td>{{ task.id }}</td>
+                    <td>{{ task.picklist_item.picklist.delivery_order.delivery_no }}</td>
+                    <td>{{ task.picklist_item.order_item.product.name }}</td>
+                    <td>{{ task.picklist_item.batch_no|default:"-" }}</td>
+                    <td>{{ task.quantity }}</td>
+                    <td>{{ task.picklist_item.location|default:"-" }}</td>
+                    <td>{{ task.status }}</td>
+                    <td>
+                        {% if task.status != "COMPLETED" %}
+                        <a href="{% url 'warehouse_manager:complete_picktask' task.id %}">Start / Update</a>
+                        {% else %}
+                        <span>Completed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8">No pick tasks available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

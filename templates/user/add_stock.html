@@ -1,0 +1,161 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Add Stock" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/add_stock.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <!-- header  -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Add " %}</span> {% trans "Stock" %}</h1>
+        </div>
+        <div class="wh-header-right"> 
+            <a href="{% url 'warehouse_manager:view_stock' %}" class="btn-back view">
+                <i class="fas fa-eye"></i> {% trans "View Stocks" %}
+            </a>         
+            <a href="{% url 'warehouse_manager_dashboard' %}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+    <!-- <div class="form-header">
+        <h1>{% trans "Add" %} <span>{% trans "Stock Item" %}</span></h1>
+        <div class="add-stock-header-right">
+            <a class="view-stock-btn" href="{% url 'warehouse_manager:view_stock' %}"><i class="fas fa-eye"></i> {% trans "View Stocks" %}</a>
+            <a href="{% url 'warehouse_manager_dashboard' %}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div> -->
+    <div class="form-card">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="input-grid">
+                <!-- Product dropdown -->
+                <div class="form-group" id="group-product">
+                    <label>{% trans "Product" %}</label>
+                    <select name="product" id="id_product">
+                        {% for p in products %}
+                            <option value="{{ p.id }}" 
+                                {% if form.instance.product and form.instance.product.id == p.id %}selected{% endif %}>
+                                {{ p.name }} ({{ p.sku }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group" id="group-category">
+                    <label>{% trans "Category" %}</label>
+                    {{ form.category }}
+                </div>
+
+                <div class="form-group" id="group-supplier">
+                    <label>{% trans "Supplier" %}</label>
+                    {{ form.supplier }}
+                </div>
+
+                <div class="form-group" id="group-size">
+                    <label>{% trans "Size" %}</label>
+                    {{ form.size }}
+                </div>
+
+                <div class="form-group" id="group-color">
+                    <label>{% trans "Color" %}</label>
+                    {{ form.color }}
+                </div>
+
+                <div class="form-group" id="group-batch_number">
+                    <label>{% trans "Batch Number" %}</label>
+                    {{ form.batch_number }}
+                </div>
+
+                <div class="form-group" id="group-unit_price">
+                    <label>{% trans "Unit Price" %}</label>
+                    {{ form.unit_price }}
+                </div>
+
+                <div class="form-group" id="group-quantity">
+                    <label>{% trans "Quantity" %}</label>
+                    {{ form.quantity }}
+                </div>
+
+                <div class="form-group" id="group-rack">
+                    <label>{% trans "Warehouse Rack" %}</label>
+                    {{ form.rack }}
+                </div>
+
+                <div class="form-group" id="group-zone">
+                    <label>{% trans "Warehouse Zone" %}</label>
+                    {{ form.zone }}
+                </div>
+
+                <div class="form-group" id="group-shelf">
+                    <label>{% trans "Warehouse Shelf" %}</label>
+                    {{ form.shelf }}
+                </div>
+
+                <div class="form-group" id="group-expiry_date">
+                    <label>{% trans "Expiry Date" %}</label>
+                    {{ form.expiry_date }}
+                </div>
+
+                <div class="form-group" id="group-product_image">
+                    <label>{% trans "Product Image" %}</label>
+                    {{ form.product_image }}
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button type="submit" class="btn-submit">{% trans "Add Item" %}</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const categoryField = document.getElementById("id_category");
+
+    // Fields to toggle
+    const sizeGroup = document.getElementById("group-size");
+    const colorGroup = document.getElementById("group-color");
+    const expiryGroup = document.getElementById("group-expiry_date");
+    const batchGroup = document.getElementById("group-batch_number");
+
+    function updateFields() {
+        const cat = categoryField.value.toLowerCase();
+
+        // Show batch number always
+        batchGroup.style.display = "block";
+
+        // Hide optional fields by default
+        sizeGroup.style.display = "none";
+        colorGroup.style.display = "none";
+        expiryGroup.style.display = "none";
+
+        // Show fields based on category
+        if (cat === "clothing") {
+            sizeGroup.style.display = "block";
+            colorGroup.style.display = "block";
+        } else if (cat === "food") {
+            expiryGroup.style.display = "block";
+        }
+    }
+
+    // Initial call
+    updateFields();
+
+    // Update on change
+    categoryField.addEventListener("change", updateFields);
+});
+</script>
+{% endblock %}

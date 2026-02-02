@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load i18n static dict_extras %}
+
+{% block title %}{% trans "Home" %} | WMSPro{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home/home.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ----------------------------hero------------------------------------- -->
+<!-- HERO WRAPPER (SVG background + content) -->
+<section class="hero-wrapper">
+  <!-- SVG BACKGROUND: note id="curve" for JS -->
+  <svg class="svg-bg" viewBox="0 0 800 400" preserveAspectRatio="none" aria-hidden="true">
+    <path id="curve" fill="#2c8cfb"
+      d="M800,300 Q400,380 0,300 L0,0 L800,0 Z"></path>
+  </svg>
+
+  <!-- HERO CONTENT (keeps your i18n & static tags) -->
+  <section class="hero" dir="{% if LANGUAGE_CODE == 'ar' %}rtl{% else %}ltr{% endif %}">
+    <div class="hero-content">
+      <h1>{% trans "Streamline" %} {% trans "Your Operations" %}</h1>
+      <p>{% trans "Manage Inventory, Track Shipments, and Optimize Your Supply Chain Effortlessly with Our All-in-One Warehouse Management CRM." %}</p>
+
+      <div class="hero-buttons">
+        <a href="#" class="cta">
+          <span class="span">Schedule Live Demo</span>
+          <span class="second">
+            <svg class="arrows" width="30px" height="20px" viewBox="0 0 66 43">
+              <g fill="#FFFFFF">
+                <path class="arrow one" d="M40 4 L44 0 L66 21 L44 43 L40 39 L57 21 Z"></path>
+                <path class="arrow two" d="M20 4 L24 0 L46 21 L24 43 L20 39 L37 21 Z"></path>
+                <path class="arrow three" d="M0 4 L4 0 L26 21 L4 43 L0 39 L17 21 Z"></path>
+              </g>
+            </svg>
+          </span>
+        </a>
+        
+        
+      </div>
+    </div>
+  
+    <img
+    src="{% static 'images/ChatGPT Image Oct 20, 2025, 09_23_58 AM.png' %}"
+    class="hero-image"
+    alt="{% trans 'Warehouse Illustration' %}"
+    width="540"
+    height="540"
+    loading="lazy"        
+    decoding="async"
+    fetchpriority="low" 
+  >
+  
+  
+  </section>
+</section>
+
+<!-- ---------------------------- About Section ---------------------------- -->
+
+<section id="about" class="about">
+  <div class="about-container">
+    <div class="about-image scroll-left">
+      <div class="carousel">
+        <img src="{% static 'images/warehouse-img4.jpg' %}" alt="{% trans 'Warehouse Image 1' %}">
+        <img src="{% static 'images/warehouse-img1.jpg' %}" alt="{% trans 'Warehouse Image 2' %}">
+        <img src="{% static 'images/warehouse-img3.jpg' %}" alt="{% trans 'Warehouse Image 3' %}">
+      </div>
+    </div>
+
+    <div class="about-text scroll-right">
+      <h2><span>{% trans "Efficient " %}</span>{% trans " Warehouse Management CRM" %}</h2>
+      <p>{% trans "Our Warehouse Management CRM empowers businesses..." %}</p>
+      <ul class="features-list">
+        <li>{% trans "Real-time Inventory Tracking" %}</li>
+        <li>{% trans "Shipment & Order Management" %}</li>
+        <li>{% trans "Data-driven Reporting & Analytics" %}</li>
+        <li>{% trans "Multi-warehouse Support" %}</li>
+      </ul>
+      <div class="home-button">
+        <a href="#contact" class="home-btn">{% trans "Get Started Today" %}</a>
+      </div>
+    </div>    
+  </div>  
+</section>
+
+<!-- ---------------------------- Contact Section ---------------------------- -->
+<section id="contact" class="contact">
+  <div class="contact-info">
+    <h2>
+      <span>{% trans "Contact " %}</span>{% trans "Us" %}
+    </h2>
+
+    <p class="contact-desc">
+      {% trans "We’re here to assist you with any questions or project inquiries. Fill out the form and we’ll get back to you promptly." %}
+    </p>
+
+    <div class="contact-details">
+      <p><strong>{% trans "Email:" %}</strong> support@wmspro.com</p>
+      <p><strong>{% trans "Phone:" %}</strong> +91 999999999</p>
+      <p><strong>{% trans "Address:" %}</strong> Kochi, Kerala, India</p>
+    </div>
+  </div>
+
+  <form class="contact-form">
+    <h2><span>{% trans "Enquiry " %}</span>{% trans " Form" %}</h2>
+    <input type="text" placeholder="{% trans 'Your Name' %}" required>
+    <input type="email" placeholder="{% trans 'Email Address' %}" required>
+    <textarea placeholder="{% trans 'Your Message' %}" required></textarea>
+    <div class="home-button form">
+      <button type="submit" class="home-btn form">{% trans "Send Message" %}</button>
+    </div>
+  </form>
+</section>
+
+
+<script>
+  (function () {
+    var curve = document.getElementById('curve');
+    if (!curve) return;
+  
+    var defaultCtrlY = 380;
+    var minCtrlY = 260;
+    var maxCtrlY = 420;
+    var curveRate = 3.2;
+    var ticking = false;
+  
+    function clamp(v, a, b) {
+      return Math.max(a, Math.min(b, v));
+    }
+  
+    function updateCurve(scrollY) {
+      var newY = defaultCtrlY - (scrollY / curveRate);
+      newY = clamp(newY, minCtrlY, maxCtrlY);
+      var d = 'M800 300 Q400 ' + newY.toFixed(2) + ' 0 300 L0 0 L800 0 Z';
+      curve.setAttribute('d', d);
+    }
+  
+    window.addEventListener('scroll', function () {
+      var scrollY = window.scrollY || window.pageYOffset;
+      if (!ticking) {
+        window.requestAnimationFrame(function () {
+          updateCurve(scrollY);
+          ticking = false;
+        });
+      }
+      ticking = true;
+    }, { passive: true });
+  
+    window.addEventListener('resize', function () {
+      curve.setAttribute('d', 'M800 300 Q400 ' + defaultCtrlY + ' 0 300 L0 0 L800 0 Z');
+    });
+  })();
+  </script>  
+
+  
+{% endblock %}

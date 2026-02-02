@@ -1,0 +1,132 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Purchase Orders" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/procurement_officer/po_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class="po-container">
+      <!-- header  -->
+      <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Purchase " %}</span> {% trans "Orders" %}</h1>
+        </div>
+        <div class="wh-header-right"> 
+            <a href="{% url 'procurement_officer:purchaseorder_create' %}" class="btn-back view">
+              <i class="bi bi-plus-lg"></i> {% trans "New PO" %}
+            </a>         
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+<!-- Filter/Search -->
+<form method="GET" class="filter-form">
+  <input
+      type="text"
+      name="search"
+      placeholder="{% trans 'Search by PO Number' %}"
+      value="{{ search_query }}"
+  >
+
+  <select name="supplier">
+      <option value="">{% trans "All Suppliers" %}</option>
+      {% for sup in suppliers %}
+          <option value="{{ sup }}" {% if sup == supplier_filter %}selected{% endif %}>
+              {{ sup }}
+          </option>
+      {% endfor %}
+  </select>
+  <select name="po_type">
+    <option value="">{% trans "All PO Types" %}</option>
+    <option value="external" {% if po_type_filter == 'external' %}selected{% endif %}>
+      External
+    </option>
+    <option value="vendor" {% if po_type_filter == 'vendor' %}selected{% endif %}>
+      Vendor
+    </option>
+  </select>
+
+
+  <button type="submit">{% trans "Filter" %}</button>
+</form>
+
+
+  <div class="table-scroll-wrapper">
+    <div class="table-container">
+      <table class="table-content" id="tableContent">
+        <thead>
+          <tr>
+            <th>{% trans "PO Number" %}</th>
+            <th>{% trans "Supplier" %}</th>
+            <th>{% trans "Order Date" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Actions" %}</th>
+            <th>{% trans "Invoice" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for po in pos %}
+          <tr>
+            <td>{{ po.po_number }}</td>
+            <td>
+              {% if po.po_type == 'external' %}
+                {{ po.supplier }}
+              {% elif po.po_type == 'vendor' %}
+                {{ po.vendor_name }}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+            <td>{{ po.order_date }}</td>
+            <td >
+              <span class="status-badge {{ po.status|lower }}">{{ po.status }}</span>
+            </td>
+            <td data-label="Actions">
+              <div class="action-buttons">
+                <a href="{% url 'procurement_officer:purchaseorder_items' po.id %}" class="action-btn normal">
+                  <i class="fas fa-eye"></i> {% trans "View Items" %}
+                </a>
+              </div>
+
+            </td>
+            
+            <td>
+              <div class="action-buttons">
+                {% if po.invoice %}
+                <a href="{% url 'finance:purchase_invoice_detail' po.invoice.id %}"
+                  class="action-btn approve">
+                  View Invoice
+                </a>
+                {% else %}
+                -
+              </div>              
+            </td>
+            {% endif %}
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="no-data">{% trans "No purchase orders yet." %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      
+    </div>
+    <!-- Pagination Controls -->
+    <div class="pagination-container" id="tablePagination"></div>
+  </div>
+
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

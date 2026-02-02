@@ -1,0 +1,95 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Create Purchase Order" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/procurement_officer/po_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="po-form-section">
+  <div class="po-form-card">
+    <div class="po-form-header">
+      <h2>Create <span>{% trans "Purchase Order" %}</span></h2>
+      <p>{% trans "Fill out the form below to generate a new purchase order for your supplier." %}</p>
+    </div>
+
+    <!-- <form method="post" class="po-form">
+      {% csrf_token %}
+      <div class="form-grid">
+        {{ form.as_p }}
+      </div>
+
+      <div class="po-btn-group">
+        <a href="{% url 'procurement_officer_dashboard' %}" class="btn-cancel"><i class="bi bi-x"></i> {% trans "Cancel" %}</a>
+        <button type="submit" class="btn-submit"> {% trans "Create Order" %}</button>
+      </div>
+    </form> -->
+      <form method="post" class="po-form">
+      {% csrf_token %}
+
+      <div class="form-grid">
+
+        <!-- PO TYPE -->
+        <div class="form-group">
+          <label for="id_po_type">{% trans "PO Type" %}</label>
+          {{ form.po_type }}
+        </div>
+
+        <!-- SUPPLIER (EXTERNAL PO) -->
+        <div class="form-group" id="supplier_block">
+          <label for="id_supplier">{% trans "Supplier" %}</label>
+          {{ form.supplier }}
+        </div>
+
+        <!-- VENDOR (VENDOR PO) -->
+        <div class="form-group" id="vendor_block">
+          <label for="id_vendor_name">{% trans "Vendor Name" %}</label>
+          {{ form.vendor_name }}
+        </div>
+
+        <!-- ORDER DATE -->
+        <div class="form-group">
+          <label for="id_order_date">{% trans "Order Date" %}</label>
+          {{ form.order_date }}
+        </div>
+
+      </div>
+
+      <div class="po-btn-group">
+        <a href="{% url 'procurement_officer_dashboard' %}" class="btn-cancel">
+          <i class="bi bi-x"></i> {% trans "Cancel" %}
+        </a>
+        <button type="submit" class="btn-submit">
+          {% trans "Create Order" %}
+        </button>
+      </div>
+    </form>
+
+
+  </div>
+</section>
+<script>
+  const poType = document.getElementById("id_po_type");
+  const supplierBlock = document.getElementById("supplier_block");
+  const vendorBlock = document.getElementById("vendor_block");
+
+  function toggleFields() {
+    if (poType.value === "external") {
+      supplierBlock.style.display = "block";
+      vendorBlock.style.display = "none";
+    } else if (poType.value === "vendor") {
+      supplierBlock.style.display = "none";
+      vendorBlock.style.display = "block";
+    } else {
+      supplierBlock.style.display = "none";
+      vendorBlock.style.display = "none";
+    }
+  }
+
+  poType.addEventListener("change", toggleFields);
+  toggleFields(); // run on page load
+</script>
+
+{% endblock %}

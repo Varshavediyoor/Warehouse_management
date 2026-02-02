@@ -1,0 +1,46 @@
+<h2>Purchase Order Request</h2>
+
+<p>Dear {{ vendor.vendor_name }},</p>
+
+<p>
+We would like to place a purchase order with you.  
+Please find the purchase order details below.
+</p>
+
+<p>
+<strong>Purchase Order Number:</strong> {{ po.po_number }}<br>
+<strong>Order Date:</strong> {{ po.order_date }}
+</p>
+
+<table border="1" cellpadding="6" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Product</th>
+            <th>Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.category }}</td>
+            <td>{{ item.product }}</td>
+            <td>{{ item.quantity }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p>
+Kindly confirm the availability of the above items and the expected delivery timeline.
+</p>
+
+<p>
+Thank you for your cooperation.
+</p>
+
+<p>
+Regards,<br>
+<strong>{{ po.created_by.get_full_name }}</strong><br>
+<strong>{{ po.created_by.email }}</strong>
+</p>

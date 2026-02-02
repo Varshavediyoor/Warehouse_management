@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm PO Details</title>
+</head>
+<body>
+
+<h2>Confirm PO Invoice Details</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <input type="hidden" name="invoice_id" value="{{ invoice.id }}">
+
+    <label>PO Number</label><br>
+    <input type="text" name="po_number" value="{{ invoice.po_number }}" required><br><br>
+
+    <label>Vendor Name</label><br>
+    <input type="text" name="vendor_name" value="{{ invoice.vendor_name }}" required><br><br>
+
+    <label>Created By</label><br>
+    <input type="text" name="created_by" value="{{ invoice.created_by }}" required><br><br>
+
+    <button type="submit">Verify With System</button>
+
+</form>
+
+</body>
+</html>

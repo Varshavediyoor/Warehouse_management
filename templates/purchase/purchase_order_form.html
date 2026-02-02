@@ -1,0 +1,25 @@
+<h2>{% if po %}Edit{% else %}Create{% endif %} Purchase Order</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <label>Vendor</label>
+    <select name="vendor" required>
+        {% for v in vendors %}
+        <option value="{{ v.id }}"
+            {% if po and po.vendor_id == v.id %}selected{% endif %}>
+            {{ v.vendor_name }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label>Order Date</label>
+    <input type="date" name="order_date"
+        value="{{ po.order_date|date:'Y-m-d' }}" required>
+
+    <label>Remarks</label>
+    <textarea name="remarks">{{ po.remarks }}</textarea>
+
+    <button type="submit">Save</button>
+    <a href="{% url 'purchase_order_list' %}">Cancel</a>
+</form>

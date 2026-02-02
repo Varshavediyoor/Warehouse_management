@@ -1,0 +1,482 @@
+/* General container */
+.register-container {
+    display: flex;
+    max-width: 1100px;
+    width: min(1100px, 100% - 2rem);
+    margin: 3rem auto;
+    border-radius: 30px;
+    box-shadow: 8px 8px 25px rgba(44, 140, 251, 0.4);
+
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(25px) scale(0.98);
+        filter: blur(6px);
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+/* Left Section */
+.left-section {
+    width: 35%;
+    background: #cde3ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    border-radius: 30px;
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+    text-align: center;
+}
+
+.form-image img {
+    width: 250px;
+}
+
+.left-section h2 {
+    color: #2c8cfb;
+    font-size: 30px;
+    margin-bottom: 0.5rem;
+}
+
+.left-section h2 span {
+    color: #2c4c71;
+}
+
+.left-section p {
+    color: #1f46b5;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* Right Section */
+.right-section {
+    width: 65%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+/* Card */
+.form-card {
+    width: 90%;
+    background: transparent;
+    padding: 2rem 0rem;
+    color: #2c4c71;
+    /* background: yellow; */
+}
+
+/* Form Header */
+.form-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.form-header h1 {
+    color: #2c4c71;
+    font-weight: 600;
+}
+
+.form-header span {
+    color: #2c8cfb;
+}
+
+/* Input Grid */
+.input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1.5rem;
+    margin-bottom: 1rem;
+
+    justify-items: center; /* ✅ KEY LINE */
+}
+
+/* Form Fields */
+.form-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto; /* ✅ center inside grid cell */
+}
+
+.form-group label {
+    width: 100%;
+    margin-bottom: 0.3rem;
+    color: #2c4c71;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.required-star {
+    color: #E03f3f;
+    margin-left: 4px;
+    font-weight: bold;
+}
+
+
+.form-group input {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 10px;
+    border: 1px solid #2c8cfb;
+    font-size: 0.9rem;
+    color: #2c4c71;
+    background-color: white;
+    margin: 0 auto;
+    display: block;
+}
+
+
+
+.form-group input:focus {
+    outline: none;
+    box-shadow: 0 0 5px #2c8cfb;
+}
+  
+.form-group input::placeholder {
+    color: transparent;
+}
+
+.form-group input::-webkit-input-placeholder {
+    color: transparent;
+}
+
+.form-group input:-ms-input-placeholder {
+    color: transparent;
+}
+
+.form-group input::-moz-placeholder {
+    color: transparent;
+}
+
+.form-group input:-moz-placeholder {
+    color: transparent;
+}
+
+
+/*-------------- password hide  */
+
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 40px; /* space for the eye icon */
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: #446285;
+    transition: color 0.3s ease;
+}
+
+.toggle-password:hover {
+    color: #2c8cfb;
+}
+
+
+
+
+/* Buttons */
+/* Match button width to input fields */
+.btn-register {
+    width: 100%;
+    max-width: 350px;
+    display: block;
+    margin: 1rem auto 0 auto;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    color: #ffffff;
+    border: none;
+    padding: 0.7rem;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    animation: slideDownBtn 0.8s ease forwards;
+    opacity: 0;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden; /* ✅ Keeps shine animation inside button */
+    position: relative;
+}
+
+.btn-register:hover {
+    transform: scale(1.05);
+}
+    
+.btn-register::before {
+    content: "";
+    position: absolute;
+    width: 80px; /* ✅ Slightly smaller for smooth edge transition */
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+    
+.btn-register:hover::before {
+    animation: shine 1.5s ease-out infinite;
+}
+
+
+/* Top-down animation */
+@keyframes slideDownBtn {
+    0% {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+    60% {
+        transform: translateY(10px);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.password-info {
+    position: relative;
+    width: 100%;
+  }
+  
+  .password-dropdown {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    background: #f8faff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 10px 14px;
+    width: 100%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    z-index: 10;
+    font-size: 13px;
+    color: #2c4c71;
+    animation: slideDown 0.3s ease forwards;
+  }
+  
+  .password-hint-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    padding: 4px 8px;
+    box-sizing: border-box;
+  }
+  
+  .password-hint-header p {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #2c4c71;
+    margin: 0;
+    word-wrap: break-word;
+    width: 100%;
+  }
+  
+  
+  .password-dropdown ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+  
+  .password-dropdown li {
+    margin: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #E03F3F;
+  }
+  
+  .password-dropdown li::before {
+    content: "✖";
+    color: #E03F3F;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+  
+  /* When valid */
+  .password-dropdown li.valid {
+    color: #22A06B;
+    transition: color 0.3s ease;
+  }
+  
+  .password-dropdown li.valid::before {
+    content: "✔";
+    color: #22A06B;
+  }
+  
+/*--------------- Responsive  -------------------*/
+
+@media (max-width: 1130px) {
+    .register-container {
+        width: 100%;
+        margin: 2rem auto;
+    }
+
+    .left-section {
+        width: 30%;
+    }
+
+    .right-section {
+        width: 70%;
+    }
+
+    .left-section h2 {
+        font-size: 25px;
+        margin-bottom: 0.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .register-container {
+        border-radius: 20px;
+    }
+
+    .left-section {
+        padding: 1rem;
+        width: 30%;
+        border-radius: 20px;
+    }
+
+    .right-section {
+        width: 70%;
+    }
+
+    .form-image img {
+        width: 200px;
+    }
+
+    .left-section p{
+        font-size: 13px;
+    }
+
+    .right-section {
+        padding: 1rem;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .register-container {
+        flex-direction: column;
+    }
+    .left-section, .right-section {
+        width: 100%;
+        border-right: none;
+    }
+  }
+
+@media (max-width: 768px) {
+    .register-container{
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .left-section {
+        padding: 5px;
+    }
+
+    .form-card {
+        padding: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .form-image img {
+        width: 180px;
+    }
+    
+    .left-section h2 {
+        font-size: 20px;
+        margin-bottom: 0.3rem;
+    }
+
+    .left-section p{
+        font-size: 12px;
+    }
+
+    .right-section {
+        padding: 0rem;
+    }
+}
+
+@media (max-width: 680px) {
+    .form-card {
+        padding: 0rem;
+    }
+
+    .form-header {
+        margin-top: 15px;
+    }
+
+    .left-section, .right-section {
+        width: 100%;
+        border-right: none;
+    }
+
+    .left-section{
+        border-bottom-left-radius: 20px;
+        padding: 1rem;
+    }
+
+    .left-section h2{
+        font-size: 24px;
+    }
+
+    .right-section{
+        margin-bottom: 2rem;
+    }
+
+    .form-header h1{
+        font-size: 24px;
+        font-weight: 700;
+    }
+  }
+
+@media (max-width: 576px) {
+    .register-container {
+        margin: 1rem auto;
+    }
+
+    .input-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-image img {
+        width: 150px;
+    }
+  }

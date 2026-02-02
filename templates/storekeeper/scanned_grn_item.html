@@ -1,0 +1,36 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "GRN Scanner" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/procurement_officer/scanned_grn_item.css' %}">
+
+{% endblock extra_css %}
+
+{% block content %}
+<div class="po-header">
+      <!-- header  -->
+      <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Scanned " %}</span> {% trans "GRN Item Details" %}</h1>
+        </div>
+        <div class="wh-header-right">          
+            <a href="{% url 'procurement_officer:grn_list' %}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+    
+  <div class="scan-container">
+    <img src="{{ item.barcode_image.url }}" class="barcode-img" alt="{% trans 'Barcode' %}">
+
+    <div class="info-box">
+        <p><strong>{% trans "Product:" %}</strong> {{ item.product_name }}</p>
+        <p><strong>{% trans "Batch:" %}</strong> {{ item.batch_no }}</p>
+        <p><strong>{% trans "Quantity:" %}</strong> {{ item.quantity_received }}</p>
+        <p><strong>{% trans "GRN:" %}</strong> {{ item.grn.grn_number }}</p>
+    </div>
+  </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,6 @@
+<h3>{% trans "Are you sure you want to delete user" %}: {{ user_obj.username }}?</h3>
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">{% trans "Yes, Delete" %}</button>
+    <a href="{% url 'admin_user_list' %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+</form>

@@ -1,0 +1,335 @@
+.tax-type-page{
+    /* Animation */
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(25px) scale(0.98);
+        filter: blur(6px);
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+/* ---------------------------- Header ---------------------------- */
+
+.wh-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  
+  @keyframes slideFromRight {
+    0% {
+    transform: translateX(80px); /* Start slightly off-screen to the right */
+    opacity: 0;
+    }
+    100% {
+    transform: translateX(0); /* End in place */
+    opacity: 1;
+    }
+    }
+  
+  .wh-header-section h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c4c71;
+  
+    animation: slideFromRight 0.9s ease-out forwards;
+    opacity: 0; /* Start invisible */
+  }
+  
+  .wh-header-section h1 span {
+    color: #2c8cfb;
+  }
+  
+  .wh-header-section p{
+    font-size: 13px;
+  }
+  
+  .wh-header-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+  }
+  
+  .btn-back {
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border-radius: 30px;
+    color: #fff;
+    padding: .4rem 2rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden; /* ✅ Keeps shine animation inside button */
+    position: relative;
+  
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+  }
+  
+  .btn-back:hover {
+    transform: scale(1.05);
+  }
+    
+  .btn-back::before {
+    content: "";
+    position: absolute;
+    width: 80px; /* ✅ Slightly smaller for smooth edge transition */
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+    
+  .btn-back:hover::before {
+    animation: shine 1.5s ease-out infinite;
+  }
+    
+  @keyframes shine {
+    0% {
+        left: -80px;
+    }
+    60% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+  }
+  
+  
+  @media (max-width: 845px) {
+    .wh-header-section {
+        margin-top: 0rem;
+    }
+  
+  .wh-header-section h1{
+    font-size: 28px;
+  }
+  
+  .wh-header-right{
+    gap: 0.5rem;
+  }
+  
+  .wh-header-right a{
+    font-size: 11px;
+    width: 100px;
+    padding: .3rem .6rem;
+  }
+  }
+  
+  @media (max-width: 670px) {
+    .wh-header-section h1{
+      font-size: 26px;
+      max-width: 400px;
+    }
+  
+    .wh-header-section p{
+      font-size: 12px;
+    }
+  
+    .wh-header-right a{
+      width: 80px;
+    }
+  
+    .wh-header-right a{
+      width: 80px;
+    }
+  }
+  
+  @media (max-width: 550px) {
+    .wh-header-section h1{
+      font-size: 20px;
+      max-width: 350px;
+    }
+    .wh-header-left p{
+      max-width: 240px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .wh-header-section h1{
+      font-size: 20px;
+      max-width: 250px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .wh-header-section h1{
+      font-size: 20px;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .wh-header-section h1{
+      font-size: 16px;
+      max-width: 200px;
+    }
+  }
+
+  /* -------------------------------------------------------- */
+  /* ===============================
+     CARD
+  ================================ */
+  .tax-type-card {
+    position: relative;
+    margin: 1rem auto;
+    max-width: 600px;
+    background: #ffffff;
+    border: 1px solid #5cacfa;
+    border-radius: 18px;
+    padding: 36px 32px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+  }
+  
+  /* Icon */
+  .card-icon {
+    position: absolute;
+    top: -26px;
+    right: 24px;
+    width: 54px;
+    height: 54px;
+    background: linear-gradient(135deg, #5cacfa, #2c8cfb);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.4rem;
+    box-shadow: 0 12px 24px rgba(22, 92, 163, 0.4);
+  }
+  
+  /* ===============================
+     FORM
+  ================================ */
+  .tax-type-form {
+    margin-top: 12px;
+  }
+  
+  .form-group {
+    margin-bottom: 22px;
+  }
+  
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  
+  .form-group input {
+    width: 100%;
+    max-width: 100%; /* prevent overflow */
+    box-sizing: border-box;
+    padding: 12px 15px;
+    border: 1px solid #2c8cfc;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    font-size: 15px;
+    background: #f8fbff;
+    box-shadow: 0 3px 8px rgba(44, 140, 251, 0.05);
+  }
+  
+  .form-group input:focus {
+  /* border-color: #2c8cfb; */
+  background: #fff;
+  box-shadow: 0 0 10px rgba(10, 124, 255, 0.75);
+  transform: translateY(-2px);
+  outline: none;
+  }
+  
+  .hint {
+    display: block;
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-top: 4px;
+  }
+  
+  /* ===============================
+     ACTIONS
+  ================================ */
+  .form-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    margin-top: 28px;
+  }
+  
+  .btn-save {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    color: #ffffff;
+    padding: 12px 22px;
+    border-radius: 30px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  
+  .btn-save:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 26px rgba(22, 95, 163, 0.4);
+  }
+  
+  
+  /* ===============================
+     RESPONSIVE
+  ================================ */
+  @media (max-width: 640px) {
+    .tax-type-card {
+        padding: 24px 10px;
+      }
+
+    .tax-type-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+    }
+  
+    .form-actions {
+      flex-direction: column;
+    }
+  
+    .btn-save,
+    .btn-cancel {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Warehouse Location Master</title>
+    <style>
+        body {font-family: Arial, sans-serif;background:#f4f6f9;margin:0;padding:20px;}
+        h2{margin-bottom:10px;} h3{margin:10px 0;}
+        .container{max-width:1400px;margin:auto;}
+        .form-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:30px;}
+        .card{background:#fff;padding:15px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+        label{font-size:13px;font-weight:bold;display:block;margin-top:8px;}
+        select,input{width:100%;padding:6px;margin-top:4px;border-radius:5px;border:1px solid #ccc;}
+        button{margin-top:10px;width:100%;padding:8px;border:none;border-radius:5px;background:#0d6efd;color:#fff;cursor:pointer;}
+        button:hover{background:#0b5ed7;}
+        .table-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+        table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+        th{background:#212529;color:#fff;padding:8px;font-size:13px;}
+        td{padding:6px;font-size:13px;border-bottom:1px solid #ddd;}
+        tr:hover{background:#f1f1f1;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+<h2>Warehouse Location Master</h2>
+
+<!-- ================= ADD FORMS ================= -->
+<div class="form-grid">
+
+<!-- ADD ZONE -->
+<div class="card">
+<h3>Add Zone</h3>
+<label>Zone Name</label>
+<input id="zone_name">
+<button onclick="addZone()">Add Zone</button>
+</div>
+
+<!-- ADD RACK -->
+<div class="card">
+<h3>Add Rack</h3>
+<label>Zone</label>
+<select id="rack_zone"></select>
+<label>Rack No</label>
+<input id="rack_number">
+<button onclick="addRack()">Add Rack</button>
+</div>
+
+<!-- ADD SHELF -->
+<div class="card">
+<h3>Add Shelf</h3>
+<label>Rack</label>
+<select id="shelf_rack"></select>
+<label>Shelf Level</label>
+<input id="shelf_level">
+<button onclick="addShelf()">Add Shelf</button>
+</div>
+
+<!-- ADD BIN -->
+<div class="card">
+<h3>Add Bin</h3>
+<label>Shelf</label>
+<select id="bin_shelf"></select>
+<label>Bin No</label>
+<input id="bin_number">
+<label>Capacity</label>
+<input id="bin_capacity" value="100">
+<button onclick="addBin()">Add Bin</button>
+</div>
+
+</div>
+
+
+<!-- ================= MASTER LOCATION TABLE ================= -->
+
+<h3>Location Master (Bin Level)</h3>
+<div>
+<table>
+<thead>
+<tr>
+<th>Zone</th>
+<th>Rack</th>
+<th>Shelf</th>
+<th>Bin</th>
+<th>Capacity</th>
+<th>Barcode</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="locationTable"></tbody>
+</table>
+
+</div>
+
+<script>
+const API = "/en/dashboard/inventory-manager/api/locations/";
+
+function csrf(){ return "{{ csrf_token }}"; }
+
+// ---------------- LOAD DATA ----------------
+function loadData(){
+fetch(API)
+.then(r=>r.json())
+.then(d=>{
+
+// -------- ZONE DROPDOWN --------
+rack_zone.innerHTML="";
+d.zones.forEach(z=>{
+rack_zone.innerHTML+=`<option value="${z.id}">${z.name}</option>`;
+});
+
+// -------- RACK DROPDOWN --------
+shelf_rack.innerHTML="";
+d.racks.forEach(r=>{
+shelf_rack.innerHTML+=`<option value="${r.id}">${r.number}</option>`;
+});
+
+// -------- SHELF DROPDOWN --------
+bin_shelf.innerHTML="";
+d.shelves.forEach(s=>{
+bin_shelf.innerHTML+=`<option value="${s.id}">${s.level}</option>`;
+});
+
+// -------- MASTER LOCATION TABLE (BIN LEVEL) --------
+locationTable.innerHTML="";
+d.bins.forEach(b=>{
+
+let shelf = d.shelves.find(x=>x.id==b.shelf);
+let rack  = d.racks.find(x=>x.id==b.rack);
+let zone  = d.zones.find(x=>x.id==b.zone);
+
+locationTable.innerHTML+=`
+<tr>
+<td>${zone?.name||''}</td>
+<td>${rack?.number||''}</td>
+<td>${shelf?.level||''}</td>
+<td>${b.bin_number}</td>
+<td>${b.capacity}</td>
+<td>
+  ${b.barcode_image ? `<img src="${b.barcode_image}" width="120">` : 'No barcode'}
+</td>
+<td>
+<button style="background:#dc3545" onclick="del('bin',${b.id})">Delete</button>
+</td>
+</tr>`;
+});
+
+});
+}
+
+
+// ---------------- POST COMMON ----------------
+function post(data){
+return fetch(API,{
+method:"POST",
+headers:{"Content-Type":"application/json","X-CSRFToken":csrf()},
+body:JSON.stringify(data)
+})
+.then(r=>r.json())
+.then(()=>{
+   loadData();
+});
+}
+
+
+// ---------------- ADD FUNCTIONS ----------------
+function addZone(){ post({action:"add_zone",name:zone_name.value}); zone_name.value=""; }
+
+function addRack(){
+post({action:"add_rack",zone:rack_zone.value,number:rack_number.value});
+rack_number.value="";
+}
+
+function addShelf(){
+post({action:"add_shelf",rack:shelf_rack.value,level:shelf_level.value});
+shelf_level.value="";
+}
+
+function addBin(){
+post({
+action:"add_bin",
+shelf:bin_shelf.value,
+bin_number:bin_number.value,
+capacity:bin_capacity.value
+});
+bin_number.value="";
+}
+
+
+// ---------------- DELETE ----------------
+function del(type,id){
+if(!confirm("Are you sure?")) return;
+post({action:"delete_"+type,id:id});
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+   loadData();
+});
+</script>
+
+
+</body>
+</html>

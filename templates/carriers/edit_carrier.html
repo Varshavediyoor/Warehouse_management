@@ -1,0 +1,62 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}Edit Carrier{% endblock %}
+
+{% block content %}
+<div class="page-container">
+
+    <h2 class="page-title">Edit Carrier – {{ carrier.name }}</h2>
+
+    <form method="POST" class="admin-form">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <label>Carrier Name</label>
+            {{ form.name }}
+        </div>
+
+        <div class="form-row">
+            <label>Carrier Type</label>
+            {{ form.carrier_type }}
+        </div>
+
+        <div id="api-fields">
+            <div class="form-row">
+                <label>API Base URL</label>
+                {{ form.api_base_url }}
+            </div>
+
+            <div class="form-row">
+                <label>API Key</label>
+                {{ form.api_key }}
+            </div>
+
+            <div class="form-row">
+                <label>API Secret</label>
+                {{ form.api_secret }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label>Status</label>
+            {{ form.status }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{% url 'carrier_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<script>
+function toggleAPI() {
+    const type = document.getElementById("id_carrier_type").value;
+    document.getElementById("api-fields").style.display =
+        (type === "api") ? "block" : "none";
+}
+
+document.getElementById("id_carrier_type").addEventListener("change", toggleAPI);
+window.onload = toggleAPI;
+</script>
+
+{% endblock %}

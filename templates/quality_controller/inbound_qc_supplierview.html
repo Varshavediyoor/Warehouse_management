@@ -1,0 +1,174 @@
+{% extends "base_user.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Inbound QC Details" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/inbound_qc_supplierview.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="supplier-container">
+
+      <!-- Header -->
+      <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Inbound " %}</span>
+                {% trans " QC Details" %}
+            </h1>
+            <div class="qc-header-info">
+            <span><strong>{% trans "PO Number:" %}</strong> {{ po.po_number }}</span>
+            <span>
+                <strong>{% trans "QC Status:" %}</strong>
+                <span class="badge 
+                    {% if qc.qc_status == 'PASSED' %}badge-success
+                    {% elif qc.qc_status == 'FAILED' %}badge-danger
+                    {% else %}badge-warning{% endif %}">
+                    {{ qc.get_qc_status_display }}
+                </span>
+            </span>
+        </div>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- PO ITEM DETAILS -->
+    <div class="qc-section">
+      <h4>{% trans "PO Items" %}</h4>
+      <div class="table-scroll-x po-table-wrapper">
+        <table class="po-item-table">
+            <thead class="po-table-head">
+                <tr>
+                    <th>{% trans "S.No" %}</th>
+                    <th>{% trans "Product Name" %}</th>
+                    <th>{% trans "Ordered Qty" %}</th>
+                    <th>{% trans "Unit Price" %}</th>
+                    <th>{% trans "Total Price" %}</th>
+                </tr>
+            </thead>
+  
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td class="product-name">{{ item.product.name }}</td>
+                    <td>{{ item.quantity_ordered }}</td>
+                    <td>₹ {{ item.unit_price }}</td>
+                    <td class="total-price">₹ {{ item.line_total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- QC CHECKLIST -->
+    <div class="qc-section">
+        <h4>{% trans "QC Checklist" %}</h4>
+        <div class="qc-checklist">
+            <div class="qc-check-item">PO Matched: <span>{{ qc.po_matched|yesno:"✔,✖" }}</span></div>
+            <div class="qc-check-item">Invoice Verified: <span>{{ qc.invoice_verified|yesno:"✔,✖" }}</span></div>
+            <div class="qc-check-item">Quantity OK: <span>{{ qc.quantity_ok|yesno:"✔,✖" }}</span></div>
+            <div class="qc-check-item">Packaging OK: <span>{{ qc.packaging_ok|yesno:"✔,✖" }}</span></div>
+            <div class="qc-check-item">Damage Found: <span>{{ qc.damage_found|yesno:"✔,✖" }}</span></div>
+            <div class="qc-check-item">Barcode Verified: <span>{{ qc.barcode_verified|yesno:"✔,✖" }}</span></div>
+            <div class="qc-check-item">Temperature OK: <span>{{ qc.temperature_ok|yesno:"✔,✖" }}</span></div>
+        </div>
+    </div>
+
+      <!-- ✅ QUANTITY BREAKUP (MISSING SECTION ADDED) -->
+  <h5 class="mt-4">📦 {% trans "Quantity Details" %}</h5>
+  <table class="table table-bordered">
+    <tr>
+      <th>{% trans "Received Qty" %}</th>
+      <td>{{ qc.received_qty }}</td>
+    </tr>
+    <tr>
+      <th class="text-success">{% trans "Accepted Qty" %}</th>
+      <td>{{ qc.accepted_qty }}</td>
+    </tr>
+    <tr>
+      <th class="text-danger">{% trans "Rejected Qty" %}</th>
+      <td>{{ qc.rejected_qty }}</td>
+    </tr>
+    <tr>
+      <th>{% trans "Quantity Remarks" %}</th>
+      <td>{{ qc.quantity_remark|default:"—" }}</td>
+    </tr>
+  </table>
+
+    <!-- IMAGES -->
+    <div class="qc-section">
+        <h4>{% trans "Uploaded QC Images" %}</h4>
+        <div class="row qc-images g-3">
+            {% if qc.po_matched_image %}
+            <div class="col-6 col-md-3 qc-image-card">
+                <img src="{{ qc.po_matched_image.url }}" class="img-fluid">
+                <p>PO Proof</p>
+            </div>
+            {% endif %}
+
+            {% if qc.invoice_image %}
+            <div class="col-6 col-md-3 qc-image-card">
+                <img src="{{ qc.invoice_image.url }}" class="img-fluid">
+                <p>Invoice</p>
+            </div>
+            {% endif %}
+
+            {% if qc.quantity_image %}
+            <div class="col-6 col-md-3 qc-image-card">
+                <img src="{{ qc.quantity_image.url }}" class="img-fluid">
+                <p>Quantity</p>
+            </div>
+            {% endif %}
+
+            {% if qc.packaging_image %}
+            <div class="col-6 col-md-3 qc-image-card">
+                <img src="{{ qc.packaging_image.url }}" class="img-fluid">
+                <p>Packaging</p>
+            </div>
+            {% endif %}
+
+            {% if qc.damage_image %}
+            <div class="col-6 col-md-3 qc-image-card">
+                <img src="{{ qc.damage_image.url }}" class="img-fluid">
+                <p class="text-danger">Damage</p>
+            </div>
+            {% endif %}
+
+            {% if qc.barcode_image %}
+            <div class="col-6 col-md-3 qc-image-card">
+                <img src="{{ qc.barcode_image.url }}" class="img-fluid">
+                <p>Barcode</p>
+            </div>
+            {% endif %}
+
+            {% if qc.temperature_image %}
+            <div class="col-6 col-md-3 qc-image-card">
+                <img src="{{ qc.temperature_image.url }}" class="img-fluid">
+                <p>Temperature</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ✅ DETAILED REMARKS (MISSING SECTION ADDED) -->
+    <h5 class="mt-4">{% trans "QC Remarks" %}</h5>
+    <table class="table table-bordered">
+      <tr><th>PO Match</th><td>{{ qc.po_matched_remark|default:"—" }}</td></tr>
+      <tr><th>Invoice</th><td>{{ qc.invoice_remark|default:"—" }}</td></tr>
+      <tr><th>Packaging</th><td>{{ qc.packaging_remark|default:"—" }}</td></tr>
+      <tr><th>Damage</th><td>{{ qc.damage_remark|default:"—" }}</td></tr>
+      <tr><th>Barcode</th><td>{{ qc.barcode_remark|default:"—" }}</td></tr>
+      <tr><th>Temperature</th><td>{{ qc.temperature_remark|default:"—" }}</td></tr>
+    </table>
+
+</div>
+{% endblock %}
+
+

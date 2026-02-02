@@ -1,0 +1,73 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Assign Delivery Boy" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/salesofficer/assign_delivery_boy.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="assign-container">
+
+  <!-- Header -->
+  <div class="order-header">
+    <div class="order-header-left">
+      <h1>{% trans "Assign Delivery" %}</h1>
+      <p class="subtext">{% trans "Select orders and assign them to a delivery boy" %}</p>
+    </div>
+    <a href="{% url 'salesofficer:ready_for_delivery' %}" class="btn-back">
+      <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+    </a>
+  </div>
+
+  <!-- Assignment Form -->
+  <div class="assign-card">
+    <form method="post">
+      {% csrf_token %}
+
+      <!-- MULTIPLE ORDER SELECTION -->
+      <div class="form-group">
+        <label>{% trans "Select Orders" %}</label>
+        <div class="orders-list">
+          {% for pick in picklists %}
+            <label class="checkbox-item">
+              <input type="checkbox" name="picklist_ids" value="{{ pick.id }}">
+              <span>Order #{{ pick.order.order_no }} — {{ pick.order.customer_name }}</span>
+            </label>
+          {% empty %}
+            <p class="no-orders">{% trans "No orders available for assignment." %}</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- SELECT DELIVERY BOY -->
+      <div class="form-group">
+        <label for="delivery_boy">{% trans "Select Delivery Boy" %}</label>
+        <select name="delivery_boy" id="delivery_boy" required>
+          <option value="">{% trans "Choose a delivery boy..." %}</option>
+          {% for boy in delivery_boys %}
+            <option value="{{ boy.id }}">
+              {{ boy.user.username }} — {{ boy.vehicle_number }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- ADD VEHICLE NUMBER IF NEEDED -->
+      <div class="form-group">
+        <label for="vehicle_number">{% trans "Vehicle Number (Optional)" %}</label>
+        <input type="text" name="vehicle_number" id="vehicle_number" placeholder="KL-07-AB-1234">
+        <small>{% trans "If left blank, delivery boy's default vehicle number will be used." %}</small>
+      </div>
+
+      <div class="btn-container">
+        <button type="submit" class="btn-assign">
+          {% trans "Assign Selected Orders" %}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}

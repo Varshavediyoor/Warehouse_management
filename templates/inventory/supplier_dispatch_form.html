@@ -1,0 +1,104 @@
+{% extends "base_user.html" %}
+{% load static i18n %}
+
+{% block title %}
+{% trans "Create Supplier Dispatch" %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/procurement_officer/supplier_dispatch_form.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="supplier-container">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Supplier " %}</span>
+                {% trans " Dispatch" %}
+            </h1>
+            <p>(PO: {{ po.po_number }})</p>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- PO Summary -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>{% trans "Purchase Order Summary" %}</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <p><strong>{% trans "PO Number:" %}</strong> {{ po.po_number }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>{% trans "Supplier:" %}</strong> {{ po.supplier|default:"-" }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>{% trans "Status:" %}</strong>
+                        <span class="badge bg-success">{{ po.status }}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dispatch Form -->
+    <div class="card">
+        <div class="card-header">
+            <strong>{% trans "Dispatch Details" %}</strong>
+        </div>
+        <div class="card-body">
+
+            <form method="post" novalidate class="dispatch-form">
+                {% csrf_token %}
+            
+                <div class="form-grid">
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label class="form-label">
+                                {{ field.label }}
+                                {% if field.field.required %}
+                                    <span class="text-danger">*</span>
+                                {% endif %}
+                            </label>
+            
+                            {{ field }}
+            
+                            {% if field.errors %}
+                                <div class="text-danger small">
+                                    {{ field.errors|striptags }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            
+                <!-- Buttons -->
+                <div class="form-actions">
+                    <a href="{% url 'procurement_officer:purchaseorder_items' po.id %}"
+                       class="btn btn-outline-secondary">
+                        {% trans "Cancel" %}
+                    </a>
+            
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-truck"></i>
+                        {% trans "Create Dispatch" %}
+                    </button>
+                </div>
+            </form>            
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

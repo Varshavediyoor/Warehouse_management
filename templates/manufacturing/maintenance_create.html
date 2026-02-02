@@ -1,0 +1,21 @@
+{% extends "base_user.html" %}
+{% block content %}
+
+<h4>Report Maintenance Issue</h4>
+
+<form method="post">{% csrf_token %}
+
+<label>Machine</label>
+<select name="machine" class="form-control">
+{% for m in machines %}
+<option value="{{ m.id }}">{{ m.name }}</option>
+{% endfor %}
+</select>
+
+<label>Issue</label>
+<textarea name="issue" class="form-control"></textarea>
+
+<button class="btn btn-danger mt-2">Report</button>
+</form>
+
+{% endblock %}

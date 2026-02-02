@@ -1,0 +1,123 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Shipping – Delivery Orders" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/warehouse_manager/shipping_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="header-section">
+        <h1><span>{% trans "Shipping –" %}</span> {% trans "Delivery Orders" %}</h1>
+        <div class="view-stock-header-right">          
+            <a href="#" class="btn-back">
+            <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- FILTERS SECTION -->
+    <div class="filter-container">
+        <!-- Left Filters -->
+        <div class="filters-left">
+            <!-- DO Number -->
+            <div class="filter-item">
+                <input type="text" class="filter-input" placeholder="{% trans 'Enter DO Number' %}">
+            </div>
+        
+            <!-- Shipment Status Dropdown -->
+            <div class="filter-item">
+                <select name="packing" class="filter-input">
+                    <option value="">{% trans "Shipment Status" %}</option>
+                    <option value="created">{% trans "Shipped" %}</option>
+                    <option value="pending">{% trans "Pending" %}</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Filter Buttons -->
+        <div class="filters-right">
+            <button class="btn-back filter-btn">{% trans "Filter" %}</button>
+        </div>
+    </div>
+
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>DO No</th>
+                        <th>Customer</th>
+                        <th>Packing</th>
+                        <th>Shipment</th>
+                        <th>Tracking Number</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for do in delivery_orders %}
+                    <tr>
+                        <td>{{ do.delivery_no }}</td>
+                        <td>{{ do.order.customer_name }}</td>
+
+                        <!-- Packing Status -->
+                        <td>
+                            {% if do.has_packing %}
+                                <span class="status-badge success">✅ Packing Done</span>
+                            {% else %}
+                                <span class="status-badge pending">❌ Pending</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Shipment Status -->
+                        <td>
+                            {% if do.has_shipment %}
+                                <span class="status-badge success">✅ Shipped</span>
+                            {% else %}
+                                <span class="status-badge pending">❌ Pending</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Tracking Number -->
+                        <td>
+                            {% if do.has_shipment %}
+                                {{ do.first_shipment.tracking_number }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+                        <!-- Actions -->
+                        <td>
+                            <div class="action-buttons shipping">
+                                {% if do.has_shipment %}
+                                <a href="{% url 'warehouse_manager:print_shipping_label' do.first_shipment.id %}" class="action-btn print-btn">Print Label</a>
+                                <a href="{% url 'warehouse_manager:shipping_detail' do.id %}" class="action-btn view-btn">View</a>
+                                {% elif do.has_packing %}
+                                <a href="{% url 'warehouse_manager:shipping_page' do.id %}" class="action-btn generate-btn">Generate Shipment</a>
+                                {% else %}
+                                <span class="text-muted">Packing not ready</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">No delivery orders found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+         <!-- Pagination Controls -->
+         <div class="pagination-container" id="tablePagination"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

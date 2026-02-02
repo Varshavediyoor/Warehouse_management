@@ -1,0 +1,303 @@
+{% extends 'base_admin.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Admin Dashboard" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/admin.css' %}">
+{% endblock %}
+
+{% block content %}
+<!--====================================== Top Header =========================================-->
+
+<section class="wm-topbar">
+    <div class="wm-topbar-left">
+      <h1><span>{% trans "Admin" %}</span> {% trans "Dashboard" %}</h1>
+      <p class="muted">
+        {% trans "Overview & operations — Inbound, Inventory, Outbound, Reports" %}
+      </p>
+    </div>
+  </section>
+
+
+<!--========================================= Summary Cards =============================================-->
+
+  <div class="im-cards">
+    <!-- INBOUND ITEMS -->
+    <div class="im-card fade-up">
+      <div class="maint-card-bubble"></div>
+        <div class="im-card-image">
+          <img src="{% static 'images/warehouse-building.png' %}" alt="card-image">
+        </div>
+        <div class="im-info">
+            <h4>{% trans "Total Warehouses" %}</h4>
+            <p class="im-number">{{ total_warehouses|default:"0" }}</p>
+            <span class="im-sub">
+              {% trans "Active locations:" %} {{ active_warehouses|default:"0" }}
+            </span>    
+        </div>
+    </div>
+
+    <!-- PUTAWAY TASKS -->
+    <div class="im-card fade-up delay-1">
+      <div class="maint-card-bubble"></div>
+        <div class="im-card-image">
+          <img src="{% static 'images/storekeeper1.png' %}" alt="card-image">
+        </div>
+        <div class="im-info">
+          <h4>{% trans "Total Inventory" %}</h4>
+          <p class="im-number">{{ total_inventory|default:"0" }}</p>
+          <span class="im-sub">
+            {% trans "SKUs in stock:" %} {{ total_skus|default:"0" }}
+          </span>
+        </div>
+    </div>
+
+    <!-- LOW STOCK ALERTS -->
+    <div class="im-card fade-up delay-2">
+      <div class="maint-card-bubble"></div>
+        <div class="im-card-image">
+          <img src="{% static 'images/truck.png' %}" alt="card-image">
+        </div>
+        <div class="im-info">
+          <h4>{% trans "Pending Shipments" %}</h4>
+          <p class="im-number">{{ pending_shipments|default:"0" }}</p>
+          <span class="im-sub">
+            {% trans "Awaiting dispatch:" %} {{ awaiting_dispatch|default:"0" }}
+          </span>
+        </div>
+    </div>
+
+    <!-- LOW STOCK ALERTS -->
+    <div class="im-card fade-up delay-2">
+      <div class="maint-card-bubble"></div>
+        <div class="im-card-image">
+          <img src="{% static 'images/low-stock.png' %}" alt="card-image">
+        </div>
+        <div class="im-info">
+          <h4>{% trans "Low Stock Alerts" %}</h4>
+          <p class="im-number low-stock">{{ low_stock_items|default:"0" }}</p>
+          <span class="im-sub">
+            {% trans "Critical items:" %} {{ critical_items|default:"0" }}
+          </span>
+        </div>
+    </div>
+  </div>
+<!--======================================== quick actions  ===========================================-->
+
+  <aside class="quick-actions responsive">
+    <div class="quick-action-heading">
+      <h3>{% trans "Quick Actions" %}</h3>
+    </div>
+    <div class="actions-grid">
+      <a href="#" class="action-button">{% trans "Create Company" %}</a>
+      <a href="#" class="action-button">{% trans "Create Warehouse" %}</a>
+      <a href="#" class="action-button">{% trans "Create Location" %}</a>
+      <a href="#" class="action-button">{% trans "Location Rules" %}</a>
+      <a href="#" class="action-button">{% trans "Location Rules(FIFO/FEFO)" %}</a>
+      <a href="#" class="action-button">{% trans "Reorder Rules" %}</a>
+      <a href="#" class="action-button">{% trans "GST/VAT Config" %}</a>
+      <a href="#" class="action-button">{% trans "Tally Integration Settings" %}</a>
+      <a href="#" class="action-button">{% trans "System Health Dashboard" %}</a>
+      <a href="#" class="action-button">{% trans "Retry Failed Sync" %}</a>
+    </div>
+    <!-- <div class="quick-actions-img">
+      <img src="{% static 'images/quick-actions.png' %}" alt="quick-actions-img">
+    </div> -->
+  </aside>
+
+<!--======================================== charts  ===========================================-->
+
+  <section class="kpi-actions">  
+    <!-- Bar Chart Card -->
+    <div class="chart-card">
+      <h3>{% trans "Inbound vs Outbound Stock (Last 7 Days)" %}</h3>
+      <div class="chart-container">
+        <canvas id="chartPOvsGRN"></canvas>
+      </div>
+    </div>
+    
+    <!-- Pie Chart Card -->
+    <aside class="pie-chart-card pie-card">
+      <h3>{% trans "User Distribution" %}</h3>
+      <p class="muted">{% trans "Active Employees, Clients & Admins" %}</p>
+      <div class="pie-chart-container">
+        <canvas id="userPieChart"></canvas>
+      </div>
+    </aside>
+  </section>
+  
+
+  <!-- =========================================== Warehouse Layout ================================================= -->
+
+<section class="warehouse-layout">
+  <div class="layout-header">
+    <h3>{% trans "Warehouse Layout" %}</h3>
+    <a href="#">{% trans "View All" %}</a>
+  </div>
+  <div class="warehouse-grid">
+    <!-- Section 1 -->
+    <div class="warehouse-card">
+      <h3>{% trans "Section A" %}</h3>
+      <p class="space-label">{% trans "Rack Capacity" %}: <span>48</span></p>
+      <div class="rack-visual">
+        <div class="slot filled">A1</div>
+        <div class="slot">A2</div>
+        <div class="slot filled">A3</div>
+        <div class="slot">A4</div>
+        <div class="slot">A5</div>
+        <div class="slot filled">A6</div>
+        
+        <div class="slot filled">A7</div>
+        <div class="slot">A8</div>
+        <div class="slot">A9</div>
+        <div class="slot filled">A10</div>
+        <div class="slot">A11</div>
+        <div class="slot">A12</div>
+        
+        <div class="slot">A13</div>
+        <div class="slot filled">A14</div>
+        <div class="slot">A15</div>
+        <div class="slot filled">A16</div>
+        <div class="slot">A17</div>
+        <div class="slot filled">A18</div>
+        
+        <div class="slot">A19</div>
+        <div class="slot">A20</div>
+        <div class="slot filled">A21</div>
+        <div class="slot">A22</div>
+        <div class="slot filled">A23</div>
+        <div class="slot">A24</div>
+        
+        <div class="slot filled">A25</div>
+        <div class="slot">A26</div>
+        <div class="slot filled">A27</div>
+        <div class="slot">A28</div>
+        <div class="slot filled">A29</div>
+        <div class="slot">A30</div>
+        
+        <div class="slot">A31</div>
+        <div class="slot filled">A32</div>
+        <div class="slot">A33</div>
+        <div class="slot filled">A34</div>
+        <div class="slot">A35</div>
+        <div class="slot filled">A36</div>
+        
+      </div>
+      <p class="availability">{% trans "Available Slots" %}: <strong>19</strong></p>
+      <button class="rack-btn">{% trans "View Details" %}</button>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="warehouse-card">
+      <h3>{% trans "Section B" %}</h3>
+      <p class="space-label">{% trans "Rack Capacity" %}: <span>36</span></p>
+      <div class="rack-visual">
+        <div class="slot filled">B1</div>
+          <div class="slot">B2</div>
+          <div class="slot filled">B3</div>
+          <div class="slot">B4</div>
+          <div class="slot">B5</div>
+          <div class="slot filled">B6</div>
+
+          <div class="slot">B7</div>
+          <div class="slot filled">B8</div>
+          <div class="slot">B9</div>
+          <div class="slot">B10</div>
+          <div class="slot filled">B11</div>
+          <div class="slot">B12</div>
+
+          <div class="slot filled">B13</div>
+          <div class="slot">B14</div>
+          <div class="slot">B15</div>
+          <div class="slot filled">B16</div>
+          <div class="slot">B17</div>
+          <div class="slot filled">B18</div>
+
+          <div class="slot">B19</div>
+          <div class="slot filled">B20</div>
+          <div class="slot">B21</div>
+          <div class="slot filled">B22</div>
+          <div class="slot">B23</div>
+          <div class="slot">B24</div>
+
+          <div class="slot filled">B25</div>
+          <div class="slot">B26</div>
+          <div class="slot filled">B27</div>
+          <div class="slot">B28</div>
+          <div class="slot filled">B29</div>
+          <div class="slot">B30</div>
+
+          <div class="slot">B31</div>
+          <div class="slot">B32</div>
+          <div class="slot filled">B33</div>
+          <div class="slot">B34</div>
+          <div class="slot filled">B35</div>
+          <div class="slot filled">B36</div>
+
+      </div>
+      <p class="availability">{% trans "Available Slots" %}: <strong>20</strong></p>
+      <button class="rack-btn">{% trans "View Details" %}</button>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="warehouse-card">
+      <h3>{% trans "Section C" %}</h3>
+      <p class="space-label">{% trans "Rack Capacity" %}: <span>60</span></p>
+      <div class="rack-visual">
+        <div class="slot">C1</div>
+        <div class="slot filled">C2</div>
+        <div class="slot">C3</div>
+        <div class="slot filled">C4</div>
+        <div class="slot">C5</div>
+        <div class="slot filled">C6</div>
+        
+        <div class="slot filled">C7</div>
+        <div class="slot">C8</div>
+        <div class="slot filled">C9</div>
+        <div class="slot">C10</div>
+        <div class="slot">C11</div>
+        <div class="slot filled">C12</div>
+        
+        <div class="slot filled">C13</div>
+        <div class="slot">C14</div>
+        <div class="slot">C15</div>
+        <div class="slot filled">C16</div>
+        <div class="slot filled">C17</div>
+        <div class="slot">C18</div>
+        
+        <div class="slot">C19</div>
+        <div class="slot filled">C20</div>
+        <div class="slot">C21</div>
+        <div class="slot filled">C22</div>
+        <div class="slot filled">C23</div>
+        <div class="slot">C24</div>
+        
+        <div class="slot filled">C25</div>
+        <div class="slot">C26</div>
+        <div class="slot filled">C27</div>
+        <div class="slot">C28</div>
+        <div class="slot">C29</div>
+        <div class="slot filled">C30</div>
+        
+        <div class="slot">C31</div>
+        <div class="slot filled">C32</div>
+        <div class="slot">C33</div>
+        <div class="slot filled">C34</div>
+        <div class="slot">C35</div>
+        <div class="slot filled">C36</div>
+        
+      </div>
+      <p class="availability">{% trans "Available Slots" %}: <strong>18</strong></p>
+      <button class="rack-btn">{% trans "View Details" %}</button>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<script src="{% static 'js/admin/admin.js' %}"></script>
+{% endblock %}

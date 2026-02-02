@@ -1,0 +1,74 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Tax Types" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/finance/tax/tax_type_list.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="tax-page">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1>
+              <span>{% trans "Tax " %}</span>
+              {% trans " Types" %}
+          </h1>
+          <p>{% trans "Manage tax classifications used across invoices and transactions" %}</p>
+      </div>
+      <div class="wh-header-right">
+          <a href="{% url 'finance:add_tax_type' %}" class="btn-back add">
+            <i class="bi bi-plus-circle"></i> {% trans "Add Tax Type" %}
+          </a>
+      
+          <a href="javascript:history.back()" class="btn-back back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+    </div>
+
+  <!-- Card -->
+  <div class="list-card">
+
+    {% if types %}
+    <div class="table-responsive">
+      <table class="tax-type-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>{% trans "Code" %}</th>
+            <th>{% trans "Name" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in types %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>
+              <span class="tax-code">{{ t.code }}</span>
+            </td>
+            <td>{{ t.name }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <div class="empty-state">
+        <i class="bi bi-receipt"></i>
+        <h4>{% trans "No Tax Types Found" %}</h4>
+        <p>{% trans "Start by adding a new tax type" %}</p>
+        <a href="{% url 'finance:add_tax_type' %}" class="btn-add">
+          {% trans "Add Tax Type" %}
+        </a>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}

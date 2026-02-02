@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Client</title>
+</head>
+<body>
+
+<h2>Delete Client</h2>
+
+<p>Are you sure you want to delete <strong>{{ client.company_name }}</strong>?</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" style="color:red;">Yes, Delete</button>
+</form>
+
+<br>
+
+<a href="{% url 'client_detail' client.id %}">Cancel</a>
+
+</body>
+</html>

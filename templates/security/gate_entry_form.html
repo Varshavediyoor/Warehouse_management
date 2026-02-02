@@ -1,0 +1,263 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Security Gate Entry" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/security/gate_entry_form.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="gate-entry-page">
+
+    <!-- HEADER -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Security " %}</span>{% trans "Gate Entry" %}</h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- GATE ENTRY FORM -->
+    <div class="form-card grid-layout">
+        <div class="form-illustration">
+            <img src="{% static 'images/security-gate-entry.png' %}" alt="Gate Entry">
+            <h3>{% trans "Gate" %}<span>{% trans " Entry Details" %}</span></h3>
+            <span class="dis-id">{% trans "Dispatch ID" %}: #{{ dispatch.id }}</span>
+            <p>{% trans "Record vehicle entry details for secure dispatch and tracking." %}</p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-grid">
+      
+              <!-- Vehicle Number -->
+              <div class="form-group">
+                <label>{% trans "Vehicle Number" %}</label>
+                {{ form.vehicle_number }}
+              </div>
+      
+              <!-- Driver Name -->
+              <div class="form-group">
+                <label>{% trans "Driver Name" %}</label>
+                {{ form.driver_name }}
+              </div>
+      
+              <!-- Driver ID Number -->
+              <div class="form-group">
+                <label>{% trans "Driver ID Number" %}</label>
+                {{ form.driver_id_number }}
+              </div>
+      
+              <!-- Entry Time -->
+              <div class="form-group">
+                <label>{% trans "Entry Time" %}</label>
+                {{ form.entry_time }}
+              </div>
+      
+              <!-- Purpose -->
+              <div class="form-group">
+                <label>{% trans "Purpose" %}</label>
+                {{ form.purpose }}
+              </div>
+      
+              <!-- Vehicle Type -->
+              <div class="form-group">
+                <label>{% trans "Vehicle Type" %}</label>
+                {{ form.vehicle_type }}
+              </div>
+      
+              <!-- Camera Uploads -->
+              <div class="camera-group">
+                <div class="qc-check">
+                  <input type="checkbox" name="vehicle_photo_front_checked" value="1">
+                  <label>{% trans "Vehicle Photo (Front)" %}</label>
+                </div>
+                <div class="qc-image">
+                  <img id="vehicle-front-preview" class="preview-img" hidden>
+                  <button type="button" class="camera-btn" onclick="openCamera('vehicle-front')">📷 {% trans "Take Photo" %}</button>
+                  <input type="file" name="vehicle_photo_front" id="vehicle-front-input" hidden>
+                </div>
+              </div>
+      
+              <div class="camera-group">
+                <div class="qc-check">
+                  <input type="checkbox" name="vehicle_photo_rear_checked" value="1">
+                  <label>{% trans "Vehicle Photo (Rear)" %}</label>
+                </div>
+                <div class="qc-image">
+                  <img id="vehicle-rear-preview" class="preview-img" hidden>
+                  <button type="button" class="camera-btn" onclick="openCamera('vehicle-rear')">📷 {% trans "Take Photo" %}</button>
+                  <input type="file" name="vehicle_photo_rear" id="vehicle-rear-input" hidden>
+                </div>
+              </div>
+      
+              <div class="camera-group">
+                <div class="qc-check">
+                  <input type="checkbox" name="driver_id_proof_checked" value="1">
+                  <label>{% trans "Driver ID Proof" %}</label>
+                </div>
+                <div class="qc-image">
+                  <img id="driver-id-preview" class="preview-img" hidden>
+                  <button type="button" class="camera-btn" onclick="openCamera('driver-id')">📷 {% trans "Take Photo" %}</button>
+                  <input type="file" name="driver_id_proof" id="driver-id-input" hidden>
+                </div>
+              </div>
+      
+            </div>
+      
+            <div class="form-actions">
+              <button type="submit" class="action-btn submit">{% trans "Submit Gate Entry" %}</button>
+            </div>
+          </form>
+    </div>
+
+    <div class="related-delivery-heagin">
+        <h3>{% trans "Related Delivery Orders" %}</h3>
+    </div>
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>{% trans "DO Number" %}</th>
+                        <th>{% trans "Date" %}</th>
+                        <th>{% trans "Customer" %}</th>
+                        <th>{% trans "Invoice(s)" %}</th>
+                        <th>{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for do in delivery_orders %}
+                    <tr>
+                        <td>{{ do.delivery_no|default:do.id }}</td>
+                        <td>{{ do.order.order_date|date:"Y-m-d H:i" }}</td>
+                        <td>{{ do.order.customer_name }}</td>
+    
+                        <!-- Invoice(s) -->
+                        <td>
+                            {% if do.invoices.exists %}
+                                {% for invoice in do.invoices.all %}
+                                <div class="action-buttons">
+                                    <a href="{% url 'finance:invoice_detail' invoice.id %}" class="action-btn normal">
+                                        {{ invoice.invoice_no }}
+                                    </a>
+                                </div>
+                                {% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                {% trans "No Invoice" %}
+                            {% endif %}
+                        </td>
+    
+                        <!-- Actions -->
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{% url 'Security:delivery_order_detail' do.id %}" class="action-btn normal">
+                                    {% trans "View Details" %}
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5">{% trans "No delivery orders found for this dispatch." %}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- CAMERA MODAL -->
+<div class="camera-modal" id="camera-modal">
+    <div class="camera-box">
+        <video id="camera-video" autoplay playsinline></video>
+        <canvas id="camera-canvas" hidden></canvas>
+
+        <div class="camera-actions">
+            <button class="cancel-btn" onclick="closeCamera()">✖ Cancel</button>
+            <button class="retake-btn" id="retakeBtn" onclick="retakePhoto()" hidden>🔄 Retake</button>
+            <button class="confirm-btn" id="confirmBtn" onclick="confirmPhoto()" hidden> Confirm</button>
+            <button class="capture-btn" id="captureBtn" onclick="capturePhoto()">📸 Capture</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    let stream;
+    let activeInput, activePreview;
+    
+    const cameraModal = document.getElementById('camera-modal');
+    const cameraVideo = document.getElementById('camera-video');
+    const cameraCanvas = document.getElementById('camera-canvas');
+    const captureBtn = document.getElementById('captureBtn');
+    const confirmBtn = document.getElementById('confirmBtn');
+    const retakeBtn = document.getElementById('retakeBtn');
+    
+    function openCamera(prefix) {
+        activeInput = document.getElementById(prefix + '-input');
+        activePreview = document.getElementById(prefix + '-preview');
+        cameraModal.style.display = 'flex';
+    
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } }, audio: false })
+            .then(s => { stream = s; cameraVideo.srcObject = stream; cameraVideo.play(); })
+            .catch(err => { alert("Camera blocked or insecure site"); closeCamera(); });
+    }
+    
+    function capturePhoto() {
+        cameraCanvas.width = cameraVideo.videoWidth;
+        cameraCanvas.height = cameraVideo.videoHeight;
+        cameraCanvas.getContext('2d').drawImage(cameraVideo, 0, 0);
+    
+        cameraVideo.hidden = true;
+        cameraCanvas.hidden = false;
+        captureBtn.hidden = true;
+        confirmBtn.hidden = false;
+        retakeBtn.hidden = false;
+    }
+    
+    function confirmPhoto() {
+        cameraCanvas.toBlob(blob => {
+            const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            activeInput.files = dt.files;
+    
+            activePreview.src = URL.createObjectURL(file);
+            activePreview.hidden = false;
+            closeCamera();
+        }, "image/jpeg", 0.9);
+    }
+    
+    function retakePhoto() {
+        cameraCanvas.hidden = true;
+        cameraVideo.hidden = false;
+        captureBtn.hidden = false;
+        confirmBtn.hidden = true;
+        retakeBtn.hidden = true;
+    }
+    
+    function closeCamera() {
+        cameraModal.style.display = 'none';
+        if (stream) stream.getTracks().forEach(t => t.stop());
+        cameraVideo.hidden = false;
+        cameraCanvas.hidden = true;
+        captureBtn.hidden = false;
+        confirmBtn.hidden = true;
+        retakeBtn.hidden = true;
+    }
+    </script>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

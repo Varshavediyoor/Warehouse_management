@@ -1,0 +1,44 @@
+<h2>PO {{ po.po_number }}</h2>
+<p>Status: {{ po.status }}</p>
+
+<table border="1">
+<tr>
+    <th>Category</th>
+    <th>Product</th>
+    <th>Variants</th>
+    <th>Qty</th>
+</tr>
+
+{% for i in po.items.all %}
+<tr>
+    <td>{{ i.category }}</td>
+    <td>{{ i.product }}</td>
+    <td>
+        {% for cv in i.category_variant.all %}
+            <span class="badge">
+                {{ cv.name }} :
+                {% for pv in i.product_variant.all %}
+                    {% if forloop.counter0 == forloop.parentloop.counter0 %}
+                        {{ pv.value }}
+                    {% endif %}
+                {% endfor %}
+            </span><br>
+        {% endfor %}
+    </td>
+    <td>{{ i.quantity }}</td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="4">No items added</td>
+</tr>
+{% endfor %}
+</table>
+
+{% if po.status == "SUBMITTED" %}
+<!-- <form method="post">
+    {% csrf_token %}
+    <button name="action" value="approve">Approve</button>
+    <button name="action" value="reject">Reject</button>
+</form> -->
+{% endif %}
+

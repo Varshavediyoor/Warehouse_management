@@ -1,0 +1,306 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}{% trans "Dashboard" %}{% endblock %}</title>
+
+  <!-- ✅ Favicon for all pages -->
+  <link rel="icon" type="image/png" href="{% static 'images/warevos.png' %}">
+  <link rel="shortcut icon" type="image/png" href="{% static 'images/tab.png' %}">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- ✅ Bootstrap CSS (required for proper toast colors & layout) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons & Fonts -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/user/user_dashboard.css' %}">
+
+  <link rel="stylesheet" href="{% static 'css/toast_message.css' %}">
+
+  <link rel="stylesheet" href="{% static 'css/logout_popup.css' %}">
+
+  <link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
+
+  <link rel="stylesheet" href="{% static 'css/slidebar.css' %}">
+
+
+  <link rel="stylesheet" href="{% static 'css/admin/language.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body dir="{% if LANGUAGE_CODE == 'ar' %}rtl{% else %}ltr{% endif %}">
+    <div class="page-container">
+
+      <!-- ✅ FULL WIDTH HEADER (Fixed to top) -->
+      <div class="user-header-wrapper">
+        {% include 'user/includes/user_header.html' %}
+      </div>
+
+      <!-- 
+            ⭐ SIDEBAR AND CONTENT STARTS BELOW HEADER
+        -->
+
+        <div class="dashboard-body-wrapper">
+          {% include 'user/includes/user_sidebar.html' %}
+
+          <main class="content-wrap main-content">
+
+ <style>
+#session-warning-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.warning-box {
+    background: white;
+    padding: 40px;
+    text-align: center;
+    border-radius: 8px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+</style>
+
+
+            {% if session_warning %}
+<div id="session-warning-overlay">
+    <div class="warning-box">
+        <h1>⚠ Session Expiring</h1>
+        <p>Your session will expire in</p>
+        <h2>{{ session_warning }} minutes</h2>
+        <p>Please save your work.</p>
+    </div>
+</div>
+{% endif %}
+            {% block content %}
+           
+{% endblock %}
+          </main>
+        </div>
+        
+        {% include 'user/includes/user_footer.html' %}
+    </div>
+
+  {% if messages %}
+  <div class="toast-overlay" id="toast-overlay">
+      <div class="toast-container" id="toast-container">
+          {% for message in messages %}
+          <div class="toast-message toast-{{ message.tags }}">
+              {% if "error" in message.tags %}
+                  <i class="bi bi-x-circle-fill"></i>
+              {% elif "success" in message.tags %}
+                  <i class="bi bi-check-circle-fill"></i>
+              {% elif "info" in message.tags %}
+                  <i class="bi bi-info-circle-fill"></i>
+              {% else %}
+                  <i class="bi bi-exclamation-circle-fill"></i>
+              {% endif %}
+              <div class="text">{{ message }}</div>
+          </div>
+          {% endfor %}
+      </div>
+  </div>
+  {% endif %}
+
+    <!-- 🌟 Logout Confirmation Modal (Same as Admin) -->
+<div id="logoutModal" class="logout-modal">
+  <div class="logout-modal-content">
+    <h3><span>{% trans "Logout" %}</span> {% trans "Confirmation" %}</h3>
+    <p>{% trans "Are you sure you want to do logout?" %}</p>
+    <div class="logout-modal-buttons">
+      <a id="cancelLogout" class="logout-btn-cancel">{% trans "Cancel" %}</a>
+      <a href="{% url 'user_logout' %}" id="confirmLogout" class="logout-btn-confirm">{% trans "Yes" %}</a>
+    </div>
+  </div>
+</div>
+
+
+<!------------------------------ chatbot  --------------------->
+
+<!-- CHATBOT LAUNCHER -->
+<button id="chatbot-launcher" class="chatbot-launcher">
+  <img src="{% static 'images/chatbot-warehouse.png' %}" alt="Chatbot">
+  <span>Need Help?</span>
+</button>
+
+<!-- CHATBOT CONTAINER -->
+<div id="chatbot-container" class="chatbot-container">
+
+  <!-- WELCOME SCREEN -->
+  <div id="welcome-screen" class="welcome-screen">
+    <div class="welcome-screen-header">
+      <button class="welcome-close-btn">×</button>
+    </div>
+    <div class="welcome-screen-body">
+      <img src="{% static 'images/warevos.png' %}" class="company-logo" alt="Company Logo">
+      <h3><span>Welcome</span> to Smart Assistant</h3>
+      <p>I’m here to help you with orders, inventory & support.</p>
+      <div class="chatbot-buttons">
+        <button id="start-chat-btn" class="chatbot-btn">Start Chat</button>
+      </div>
+    </div>    
+  </div>
+
+  <!-- CHAT SCREEN -->
+  <div id="chat-screen" class="chat-screen">
+    <div class="chat-header">
+      <div class="header-left">
+        <img src="{% static 'images/warevos-removebg.png' %}" alt="">
+      </div>
+      <button id="close-chat" class="chat-close-btn">×</button>
+    </div>
+
+    <div class="chat-body" id="chat-body">
+      <p class="bot-msg">Hello 👋 How can I assist you today?</p>
+    </div>
+
+    <div class="chat-footer">
+      <input type="text" id="chat-input" placeholder="Type your message...">
+      <button id="send-btn">➤</button>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+  <!-- -----------------------------------------------------  -->
+
+
+<!-- MOBILE SLIDING SIDEBAR -->
+<div id="mobileSidebar" class="mobile-sidebar">
+
+  <!-- Close Button -->
+  <div class="close-button-container">
+    <button id="closeSidebar" class="sidebar-close-btn"><i class="bi bi-arrow-left-circle"></i></button>
+  </div>
+
+  {% comment %}
+  Determine the correct dashboard URL based on the logged-in user role
+  {% endcomment %}
+  {% if request.user.userprofile.role == 'WAREHOUSE_MANAGER' %}
+      {% url 'warehouse_manager_dashboard' as dashboard_url %}
+  {% elif request.user.userprofile.role == 'INVENTORY_MANAGER' %}
+      {% url 'inventory_manager_dashboard' as dashboard_url %}
+  {% elif request.user.userprofile.role == 'STOREKEEPER' %}
+      {% url 'storekeeper_dashboard' as dashboard_url %}
+  {% elif request.user.userprofile.role == 'LOGISTICS' %}
+      {% url 'logistics_dashboard' as dashboard_url %}
+  {% elif request.user.userprofile.role == 'FINANCE' %}
+      {% url 'finance_dashboard' as dashboard_url %}
+  {% elif request.user.userprofile.role == 'EXTERNAL' %}
+      {% url 'external_user_dashboard' as dashboard_url %}
+  {% elif request.user.userprofile.role == 'PROCUREMENT_OFFICER' %}
+      {% url 'procurement_officer_dashboard' as dashboard_url %}
+  {% elif request.user.userprofile.role == 'SUPPLIER' %}
+      {% url 'supplier_dashboard' as dashboard_url %}
+  {% elif request.user.userprofile.role == 'SALES_OFFICER' %}
+      {% url 'salesofficer_dashboard' as dashboard_url %}
+  {% elif request.user.userprofile.role == 'DELIVERY_BOY' %}
+      {% url 'delivery_boy_dashboard' as dashboard_url %}
+  {% elif request.user.userprofile.role == 'MAINTENANCE_STAFF' %}
+      {% url 'maintenance_staff_dashboard' as dashboard_url %}
+  {% elif request.user.userprofile.role == 'SECURITY' %}
+      {% url 'security_dashboard' as dashboard_url %}
+  {% else %}
+    {% url 'external_user_dashboard' as dashboard_url %}
+  {% endif %}
+
+<ul class="sidebar-menu">
+    <li
+      {% if request.resolver_match.url_name in 'warehouse_manager_dashboard inventory_supervisor_dashboard storekeeper_dashboard logistics_dashboard finance_dashboard external_user_dashboard procurement_officer_dashboard supplier_dashboard inventory_manager_dashboard maintenance_staff_dashboard salesofficer_dashboard security_dashboard' %}
+          class="active"
+      {% endif %}
+    >
+        <a href="{{ dashboard_url }}">
+            <i class="bi bi-speedometer2"></i> <span>{% trans "Dashboard" %}</span>
+        </a>
+    </li>
+
+    <li class="{% if request.resolver_match.url_name == 'user_profile' %}active{% endif %}">
+        <a href="{% url 'user_profile' %}">
+            <i class="bi bi-person"></i> <span>{% trans "Profile" %}</span>
+        </a>
+    </li>
+
+    <li class="{% if request.resolver_match.url_name == 'user_notifications' %}active{% endif %}">
+        <a href="{% url 'user_notifications' %}">
+            <i class="bi bi-bell"></i> <span>{% trans "Notifications" %}</span>
+        </a>
+    </li>
+
+    <li class="{% if request.resolver_match.url_name == 'calendar_page' %}active{% endif %}">
+      <a href="#">
+          <i class="bi bi-calendar"></i> <span>{% trans "Calendar" %}</span>
+      </a>
+    </li>
+
+    <li class="{% if request.resolver_match.url_name == 'settings_page' %}active{% endif %}">
+        <a href="#">
+            <i class="bi bi-gear"></i> <span>{% trans "Settings" %}</span>
+        </a>
+    </li>
+
+    <li id="languageLi">
+      <a href="#" id="languageToggle">
+          <i class="bi bi-translate"></i>
+          <span>{% trans "Language" %}</span>
+          <i class="bi bi-chevron-down dropdown-arrow" id="languageArrow"></i>
+      </a>
+  
+      <ul class="language-dropdown" id="languageDropdown">
+        {% for lang in company_languages %}
+            <li>
+                <a href="{% url 'switch_language' lang %}" class="{% if LANGUAGE_CODE == lang %}active{% endif %}">
+                    {% if lang == "en" %}
+                        English
+                    {% elif lang == "ar" %}
+                        العربية
+                    {% else %}
+                        {{ lang|upper }}
+                    {% endif %}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+    </li>    
+
+</ul>
+</div>
+
+<!-- Overlay -->
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+
+
+  <!-- -----------------------------------------------------  -->
+
+  <!-- ✅ Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <script src="{% static 'js/toast_message.js' %}"></script>
+  <script src="{% static 'js/user/user_dashboard.js' %}"></script>
+  <script src="{% static 'js/logout_popup.js' %}"></script>
+  <script src="{% static 'js/chatbot.js' %}"></script>
+  <script src="{% static 'js/slidebar.js' %}"></script>
+
+  {% block scripts %}{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,94 @@
+{% extends "base_user.html" %}
+{% load static i18n %}
+
+{% block title %}
+{% trans "Supplier QC Verified List" %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- Header -->
+    <div class="page-header mb-4">
+        <h2>{% trans "QC Verified Purchase Orders" %}</h2>
+        <p class="text-muted">
+            
+        </p>
+    </div>
+
+    {% if dispatches %}
+    <div class="card">
+        <div class="card-body p-0">
+
+            <table class="table table-striped table-bordered mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>{% trans "PO Number" %}</th>
+                        <th>{% trans "Supplier" %}</th>
+                        <th>{% trans "Dispatch Date" %}</th>
+                        <th>{% trans "Vehicle No" %}</th>
+                        <th>{% trans "LR / DC No" %}</th>
+                        <th>{% trans "QC Status" %}</th>
+                        <th class="text-center">{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dispatch in dispatches %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+
+                        <td>
+                            <strong>{{ dispatch.purchase_order.po_number }}</strong>
+                        </td>
+
+                        <td>
+                            {{ dispatch.purchase_order.supplier|default:"-" }}
+                        </td>
+
+                        <td>
+                            {{ dispatch.dispatch_date|date:"d M Y" }}
+                        </td>
+
+                        <td>
+                            {{ dispatch.vehicle_number|default:"-" }}
+                        </td>
+
+                        <td>
+                            {{ dispatch.lr_number|default:"-" }}
+                        </td>
+
+                        <td>
+                            <span class="badge bg-success">PASSED</span>
+                        </td>
+
+                        <td class="text-center">
+    <a href="{% url 'security:supplier_gate_entry_create' dispatch.id %}"
+   class="btn btn-sm btn-outline-primary">
+    <i class="bi bi-eye"></i>
+    {% trans "View" %}
+</a>
+
+</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    {% else %}
+        <div class="alert alert-info">
+            {% trans "No supplier dispatches found." %}
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
+

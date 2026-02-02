@@ -1,0 +1,30 @@
+{% extends "base_user.html" %}
+{% block content %}
+
+<h2>QC Approved - GRN Pending</h2>
+
+<table class="table">
+  <tr>
+    <th>PO Number</th>
+    <th>QC Status</th>
+    <th>Action</th>
+  </tr>
+
+  {% for qc in qc_list %}
+  <tr>
+    <td>{{ qc.purchase_order.po_number }}</td>
+    <td>{{ qc.qc_status }}</td>
+    <td>
+        GRN Created
+      <!-- <a href="{% url 'warehouse_manager:create_grn_from_qc' qc.purchase_order.po_number %}"
+         class="btn btn-success">
+        Create GRN
+      </a> -->
+    </td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="3">No GRN pending.</td></tr>
+  {% endfor %}
+</table>
+
+{% endblock %}

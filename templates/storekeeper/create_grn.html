@@ -1,0 +1,36 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Create GRN" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/procurement_officer/create_grn.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="form-page">
+  <div class="form-card">
+    <div class="form-header">
+      <h1>{% trans "Create" %} <span>{% trans "Goods Received Note" %}</span></h1>
+      <p class="subtitle">{% trans "Please fill in the required details below to generate a new GRN." %}</p>
+    </div>
+
+    <form method="POST" class="grn-form">
+      {% csrf_token %}
+      <div class="input-grid">
+        {% for field in form %}
+        <div class="form-group {% if field.name == 'remarks' %}textarea-group{% endif %}">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="btn-container">
+        <a href="{% url 'procurement_officer_dashboard' %}" class="btn-cancel">{% trans "Cancel" %}</a>
+        <button type="submit" class="btn-submit">{% trans "Create GRN" %}</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

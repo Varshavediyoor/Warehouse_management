@@ -1,0 +1,61 @@
+{% extends 'base_admin.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Client Details" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/client/client_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="role-header">
+    <div class="role-header-left">
+      <h1>{% trans "Clients" %} <span>{% trans "Details" %}</span></h1>
+      <p class="subtext">{% trans "Detailed overview of the selected client." %}</p>
+    </div>
+    <a href="{% url 'client_list' %}" class="btn-back">
+      <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+    </a>
+</div>
+
+<div class="client-details-container">
+        <div class="info-card">
+            <div class="info-row">
+                <span class="label">{% trans "Company Name" %}</span>
+                <div class="right">
+                    <div class="company-logo-container">
+                        {% if client.company_logo %}
+                        <img src="{{ client.company_logo.url }}" alt="Logo">
+                        {% else %}
+                            <div class="no-logo">No Logo</div>
+                        {% endif %}
+                    </div>
+                    <span class="value">{{ client.company_name }}</span>
+                </div>
+            </div>
+
+            <div class="info-row">
+                <span class="label">{% trans "Email" %}</span>
+                <span class="value">{{ client.email }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="label">{% trans "Phone" %}</span>
+                <span class="value">{{ client.phone }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="label">{% trans "Address" %}</span>
+                <span class="value">{{ client.address }}</span>
+            </div>
+
+            <div class="action-buttons">
+                <a href="{% url 'client_update' client.id %}" class="btn edit">{% trans "Edit" %}</a>
+                <a href="{% url 'client_delete' client.id %}" class="btn delete">{% trans "Delete" %}</a>
+            </div>
+        </div>
+
+</div>
+
+{% endblock %}

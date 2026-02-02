@@ -1,0 +1,98 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Supplier Dispatch List" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/procurement_officer/supplier_dispatch_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="supplier-container">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Supplier " %}</span>
+                {% trans " Dispatches" %}
+            </h1>
+            <p class="text-muted mb-0">
+                <strong>{% trans "Supplier:" %}</strong>
+                {{ supplier.supplier_name }}
+            </p>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Dispatch List -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>{% trans "PO Number" %}</th>
+                        <th>{% trans "Dispatch Date" %}</th>
+                        <th>{% trans "Created By" %}</th>
+                        <th>{% trans "PO Status" %}</th>
+                        <th>{% trans "Action" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dispatch in dispatches %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+
+                        <td>
+                            <a href="{% url 'procurement_officer:purchaseorder_items' dispatch.purchase_order.id %}"
+                            class="action-btn normal">
+                                {{ dispatch.purchase_order.po_number }}
+                            </a>
+                        </td>
+
+                        <td>{{ dispatch.created_at|date:"d M Y H:i" }}</td>
+
+                        <td>{{ dispatch.created_by.username }}</td>
+
+                        <td>
+                            <span class="status-badge received">
+                                {{ dispatch.purchase_order.status }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <a href="{% url 'procurement_officer:purchaseorder_items' dispatch.purchase_order.id %}"
+                            class="action-btn normal">
+                                {% trans "View PO" %}
+                            </a>
+                        </td>
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="no-data">
+                            {% trans "No dispatch records found for this supplier." %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+
+    
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,180 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Create Return Request" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/rma/return_request_create.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="rma-wrapper">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Create " %}</span>
+                {% trans " Return Request" %}
+            </h1>
+            <p class="muted">
+                {% trans "Delivery No:" %} <strong>{{ delivery_order.delivery_no }}</strong>
+            </p>
+        </div>
+        <div class="wh-header-right">
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+
+    <div class="rma-section-wrapper">
+        <form method="post" enctype="multipart/form-data" class="rma-form">
+            {% csrf_token %}
+    
+            <!-- STEP 1 -->
+            <div class="rma-card">
+                <h4 class="card-title">1. {% trans "Reason for Return" %}</h4>
+                <textarea
+                    name="reason"
+                    class="input"
+                    rows="3"
+                    placeholder="{% trans 'Briefly explain the reason for return...' %}"
+                    required></textarea>
+            </div>
+    
+            <!-- STEP 2 -->
+            <div class="rma-card">
+                <h4 class="card-title">2. {% trans "Select Products to Return" %}</h4>
+    
+                <div class="table-wrapper">
+                    <table class="rma-table">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Select" %}</th>
+                                <th>{% trans "Product" %}</th>
+                                <th>{% trans "Delivered Qty" %}</th>
+                                <th>{% trans "Return Qty" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in delivery_order.items.all %}
+                            <tr>
+                                <td class="center">
+                                    <input type="checkbox" name="items" value="{{ item.id }}">
+                                </td>
+                                <td>
+                                    {{ item.order_item.product.name }}
+                                </td>
+                                <td class="center">{{ item.quantity }}</td>
+                                <td>
+                                    <input
+                                        type="number"
+                                        name="return_qty_{{ item.id }}"
+                                        class="input qty-input return-qty"
+                                        min="1"
+                                        max="{{ item.quantity }}"
+                                        disabled>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="center muted">
+                                    {% trans "No delivered products found." %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+    
+                <div class="total-return" id="totalReturn">
+                    {% trans "Total Return Quantity:" %} <strong>0</strong>
+                </div>
+            </div>
+    
+            <!-- STEP 3 -->
+            <div class="rma-card">
+                <h4 class="card-title">3. {% trans "Upload Supporting Images (Optional)" %}</h4>
+                <input
+                    type="file"
+                    name="images[]"
+                    multiple
+                    accept="image/*"
+                    id="imageInput"
+                    class="input">
+                <div class="image-preview" id="imagePreview"></div>
+            </div>
+    
+            <!-- ACTION -->
+            <div class="rma-card buttons">
+                <button type="submit" class="submit-return-btn">
+                    {% trans "Submit Return Request" %}
+                </button>
+            </div>
+    
+        </form>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const checkboxes = document.querySelectorAll('input[name="items"]');
+    const totalReturnEl = document.getElementById('totalReturn');
+    const form = document.querySelector('.rma-form');
+
+    function updateTotalReturn() {
+        let total = 0;
+        document.querySelectorAll('.return-qty').forEach(input => {
+            if (!input.disabled && input.value) {
+                total += parseInt(input.value, 10);
+            }
+        });
+        totalReturnEl.innerHTML = `{% trans "Total Return Quantity:" %} <strong>${total}</strong>`;
+    }
+
+    // Checkbox toggle logic
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', function () {
+            const qtyInput = document.querySelector(
+                `input[name="return_qty_${this.value}"]`
+            );
+
+            if (!qtyInput) return;
+
+            if (this.checked) {
+                qtyInput.disabled = false;
+                qtyInput.required = true;
+                qtyInput.value = 1;
+            } else {
+                qtyInput.disabled = true;
+                qtyInput.required = false;
+                qtyInput.value = '';
+            }
+
+            updateTotalReturn();
+        });
+    });
+
+    // Quantity change
+    document.querySelectorAll('.return-qty').forEach(input => {
+        input.addEventListener('input', updateTotalReturn);
+    });
+
+    // Prevent submit if no checkbox selected
+    form.addEventListener('submit', function (e) {
+        const isChecked = Array.from(checkboxes).some(cb => cb.checked);
+        if (!isChecked) {
+            e.preventDefault();
+            alert("{% trans 'Please select at least one product to return.' %}");
+        }
+    });
+
+});
+</script>
+{% endblock %}

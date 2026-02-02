@@ -1,0 +1,45 @@
+{% extends "base_user.html" %}
+{% block content %}
+
+<h2>Transfer Request Updates - {{ transfer.request_no }}</h2>
+
+<p><strong>From (Requesting Warehouse):</strong> {{ transfer.requested_by.name }} ({{ transfer.requested_by.code }})</p>
+<p><strong>To (Supplying Warehouse):</strong> {{ transfer.supplying_to.name }} ({{ transfer.supplying_to.code }})</p>
+<p><strong>Status:</strong> {{ transfer.status|capfirst }}</p>
+<p><strong>Approved By:</strong> 
+    {% if transfer.approved_by %}
+        {{ transfer.approved_by.username }}
+    {% else %}
+        -
+    {% endif %}
+</p>
+
+{% if transfer.remarks %}
+<p><strong>Remarks from Supplying Warehouse:</strong> {{ transfer.remarks }}</p>
+{% endif %}
+
+<h3>Products in Transfer</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2" class="text-center">No products found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'salesofficer:a_requests' %}" class="btn btn-secondary">Back to My Requests</a>
+
+{% endblock %}

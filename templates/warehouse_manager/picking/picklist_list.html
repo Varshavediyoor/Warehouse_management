@@ -1,0 +1,142 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Delivery Orders" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/warehouse_manager/outbound/picklist_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="picking-container">
+
+    <!-- HEADER SECTION -->
+    <div class="page-header">
+        <div class="page-header-left">
+            <h1 class="page-title">{% trans "Delivery" %}<span>{% trans "Orders" %}</span></h1>
+            <p class="page-subtitle">{% trans "Warehouse → Outbound → Delivery Orders" %}</p>
+        </div>
+
+        <div class="page-header-right">
+            <a href="#" class="btn-back">
+                ← {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="filters-inline">
+
+        <!-- Warehouse -->
+        <div class="filter-item">
+          <select>
+              <option selected disabled>{% trans "Select Warehouse" %}</option>
+              <option>{% trans "Main Warehouse" %}</option>
+              <option>{% trans "Secondary Warehouse" %}</option>
+          </select>
+        </div>
+
+        <!-- Priority -->
+        <div class="filter-item">
+          <select>
+              <option selected disabled>{% trans "Select Priority" %}</option>
+              <option>{% trans "Normal" %}</option>
+              <option>{% trans "Urgent" %}</option>
+          </select>
+        </div>
+
+        <!-- Status -->
+        <div class="filter-item">
+          <select>
+              <option selected disabled>{% trans "Select Status" %}</option>
+              <option>{% trans "Pending" %}</option>
+              <option>{% trans "In Progress" %}</option>
+              <option>{% trans "Completed" %}</option>
+          </select>
+        </div>
+
+      <!-- Search Box -->
+      <div class="search-inline">
+          <input type="text" placeholder="{% trans 'Search by DO No / SO No / SKU / Customer' %}">
+          <button class="search-btn">{% trans "Search" %}</button>
+      </div>
+
+  </div>  
+
+
+  <div class="do-list-section">
+    <h2 class="section-title">{% trans "Delivery Order List" %}</h2>
+
+        <!-- Delivery Orders Table -->
+        <div class="table-scroll-wrapper">
+            <div class="table-container">
+                <table class="table-content" id="tableContent">
+                    <thead>
+                        <tr>
+                            <th>{% trans "DO No" %}</th>
+                            <th>{% trans "Sales Order No" %}</th>
+                            <th>{% trans "Customer" %}</th>
+                            <th>{% trans "Total Items" %}</th>
+                            <th>{% trans "Picklist Exists" %}</th>
+                            <th>{% trans "Action" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for do in delivery_orders %}
+                        <tr>
+                            <td>{{ do.delivery_no }}</td>
+                            <td>{{ do.order.order_no }}</td>
+                            <td>{{ do.order.customer_name }}</td>
+                            <td>{{ do.items.count }}</td>
+                            <td>
+                                {% if do.picklist_exists %}
+                                    <span class="status-badge received">{% trans "Yes" %}</span>
+                                {% else %}
+                                    <span class="status-badge pending">{% trans "No" %}</span>
+                                {% endif %}
+                            </td>
+        
+<td>
+    <div class="action-buttons">
+        {% comment %}
+        If picklist does not exist → show Start Picking
+        If picklist exists → show View Picklist
+        {% endcomment %}
+
+        {% if not do.picklist_exists %}
+            <a href="{% url 'warehouse_manager:start_picking' do.id %}" class="action-btn view">
+                {% trans "Start Picking" %}
+            </a>
+        {% else %}
+            {% comment %}
+            Try resolving the URL, fallback to '#' if it fails
+            {% endcomment %}
+            {% url 'warehouse_manager:view_picklist' do.id as view_picklist_url %}
+            <a href="{{ view_picklist_url|default:'#' }}" class="action-btn view">
+                {% trans "View Picklist" %}
+            </a>
+        {% endif %}
+    </div>
+</td>
+
+        
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td class="no-data" colspan="6">{% trans "No delivery orders available." %}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination Controls -->
+          <div class="pagination-container" id="tablePagination"></div>
+        </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Return QC View" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/return_qc_view.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="qc-view-wrapper">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Return QC" %}</span>
+                {% trans "(View Only)" %}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Card -->
+    <div class="qc-view-card">
+
+        <!-- QC Checklist -->
+        <div class="qc-section">
+            <h3>{% trans "Return Verification Summary" %}</h3>
+
+            <ul class="qc-list">
+                <li>
+                    <span>{% trans "Return Reason" %}</span>
+                    <span class="value">{{ qc.reason }}</span>
+                </li>
+
+                <li>
+                    <span>{% trans "Physical Condition OK" %}</span>
+                    <span class="value">{{ qc.physical_condition_ok }}</span>
+                </li>
+
+                <li>
+                    <span>{% trans "Repack Possible" %}</span>
+                    <span class="value">{{ qc.repack_possible }}</span>
+                </li>
+
+                <li>
+                    <span>{% trans "Expiry Valid" %}</span>
+                    <span class="value">{{ qc.expiry_valid }}</span>
+                </li>
+
+                <li>
+                    <span>{% trans "Documents Matched" %}</span>
+                    <span class="value">{{ qc.docs_matched }}</span>
+                </li>
+
+                <li>
+                    <span>{% trans "Final Decision" %}</span>
+                    <span class="value">{{ qc.decision }}</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Info -->
+        <div class="qc-info">
+            <div class="info-box">
+                <small>{% trans "Verified By" %}</small>
+                <strong>{{ qc.verified_by }}</strong>
+            </div>
+
+            <div class="info-box">
+                <small>{% trans "Verified On" %}</small>
+                <strong>{{ qc.verified_on }}</strong>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base_user.html" %}
+{% block content %}
+
+<div class="container mt-4">
+  <h4>Issue Raw Material for MO: {{ mo.mo_no }}</h4>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label>Select Batch</label>
+        <select name="batch" class="form-control" required>
+          {% for b in batches %}
+            <option value="{{ b.id }}">
+              {{ b.batch_no }} | {{ b.quantity }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label>Issue Quantity</label>
+        <input type="number" step="0.01" name="qty" class="form-control" required>
+      </div>
+    </div>
+
+    <button class="btn btn-success">Confirm Issue</button>
+  </form>
+</div>
+
+{% endblock %}

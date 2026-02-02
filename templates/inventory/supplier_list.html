@@ -1,0 +1,114 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Supplier List" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/procurement_officer/supplier_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="supplier-container">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Supplier " %}</span>
+                {% trans " List" %}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <form method="GET" class="filter-form">
+        <select name="filter">
+            <option value="name" {% if filter_by == "name" %}selected{% endif %}>
+                {% trans "Supplier Name" %}
+            </option>
+            <option value="username" {% if filter_by == "username" %}selected{% endif %}>
+                {% trans "Username" %}
+            </option>
+        </select>
+    
+        <input
+            type="text"
+            name="search"
+            placeholder="{% trans 'Search suppliers...' %}"
+            value="{{ search_query }}"
+        >
+        <button type="submit">{% trans "Search" %}</button>
+    </form>
+    
+    
+
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>{% trans "Supplier Name" %}</th>
+                        <th>{% trans "Username" %}</th>
+                        <th>{% trans "Total POs" %}</th>
+                        <th>{% trans "Dispatched POs" %}</th>
+                        <th>{% trans "Last Dispatch" %}</th>
+                        <th>{% trans "Action" %}</th>
+                    </tr>
+                </thead>
+    
+                <tbody>
+                    {% for supplier in suppliers %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ supplier.supplier_name }}</td>
+                        <td>{{ supplier.user.username }}</td>
+                        <td>{{ supplier.total_pos }}</td>
+                        <td>
+                            <span class="status-badge received">
+                                {{ supplier.dispatched_pos }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if supplier.last_dispatch_date %}
+                                {{ supplier.last_dispatch_date|date:"d M Y" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a
+                                href="{% url 'procurement_officer:supplier_dispatch_list' supplier.id %}"
+                                class="action-btn normal"
+                            >
+                            {% trans "View Dispatches" %}
+                            </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="no-data">
+                            {% trans "No suppliers found." %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+            <!-- Pagination Controls -->
+    <div class="pagination-container" id="tablePagination"></div>
+    </div>    
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

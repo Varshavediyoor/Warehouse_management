@@ -1,0 +1,65 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Edit PO Item" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/procurement_officer/edit_po_item.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="form-wrapper">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1>
+              <span>{% trans "Edit " %}</span>
+              {% trans " PO Items" %}
+          </h1>
+      </div>
+      <div class="wh-header-right">
+          <a href="javascript:history.back()" class="btn-back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+  </div>
+
+  <!-- Card -->
+  <div class="form-card">
+
+    <form method="post" class="po-form">
+      {% csrf_token %}
+
+      <div class="input-grid">
+        {% for field in form %}
+          <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+              <small class="error-text">{{ field.errors|striptags }}</small>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Buttons -->
+      <div class="form-buttons">
+        <a href="{% url 'procurement_officer:purchaseorder_items' item.purchase_order.id %}"
+           class="btn-cancel">
+           {% trans "Cancel" %}
+        </a>
+
+        <button type="submit" class="btn-submit">
+          {% trans "Update Item" %}
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+{% endblock %}

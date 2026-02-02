@@ -1,0 +1,16 @@
+{% extends "base_user.html" %}
+{% block content %}
+
+<h2>Receive Stock</h2>
+
+<p><strong>Product:</strong> {{ transfer.product_name }}</p>
+<p><strong>Quantity:</strong> {{ transfer.quantity }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">
+        Confirm Received
+    </button>
+</form>
+
+{% endblock %}

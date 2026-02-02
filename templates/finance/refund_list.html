@@ -1,0 +1,47 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>Order ID</th>
+      <th>Customer</th>
+      <th>Paid Amount</th>
+      <th>Refund Amount</th>
+      <th>Payment Mode</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for refund in refunds %}
+    <tr>
+      <td>{{ refund.order.order_no }}</td>
+      <td>{{ refund.order.customer }}</td>
+      <td>{{ refund.paid_amount }}</td>
+      <td>{{ refund.refund_amount }}</td>
+      <td>{{ refund.payment_method }}</td>
+      <td>{{ refund.status }}</td>
+      <td>
+        {% if refund.status == "PENDING" %}
+          <a href="{% url 'finance:refund_detail' refund.id %}" class="btn">
+            Review
+          </a>
+        {% endif %}
+      </td>
+      <td>{% if refund.status == "PENDING" %}
+  <form method="post">
+    {% csrf_token %}
+    <button name="action" value="approve">Approve</button>
+    <button name="action" value="reject">Reject</button>
+  </form>
+{% endif %}
+
+{% if refund.status == "APPROVED" %}
+  <a href="{% url 'finance:process_refund' refund.id %}">
+    Process Refund
+  </a>
+{% endif %}
+</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

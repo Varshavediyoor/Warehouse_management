@@ -1,0 +1,67 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "GRN List" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/grn_list.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="grn-list-wrapper">
+
+    <div class="grn-card">
+            <!-- header  -->
+    <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1><span>{% trans "GRN" %}</span> {% trans " List" %}</h1>
+      </div>
+      <div class="wh-header-right">          
+          <a href="#" class="btn-back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+    </div>
+
+        <div class="table-wrapper">
+            <table class="grn-table">
+                <thead>
+                    <tr>
+                        <th>GRN No</th>
+                        <th>QC Status</th>
+                        <th>QC Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for grn in grns %}
+                    <tr>
+                        <td><strong>{{ grn.grn_number }}</strong></td>
+
+                        <td>
+                            <span class="status-badge {{ grn.qc_status|lower }}">
+                                {{ grn.qc_status }}
+                            </span>
+                        </td>
+
+                        <td class="action-links">
+                            <a href="{% url 'quality_controller:inbound_qc' grn.id %}">Inbound</a>
+                            <a href="{% url 'quality_controller:picking_qc' grn.id %}">Picking</a>
+                            <a href="{% url 'quality_controller:packing_qc' grn.id %}">Packing</a>
+                            <a href="{% url 'quality_controller:outbound_qc' grn.id %}">Outbound</a>
+                            <a href="{% url 'quality_controller:return_qc' grn.id %}">Return</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="no-data">No GRNs found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

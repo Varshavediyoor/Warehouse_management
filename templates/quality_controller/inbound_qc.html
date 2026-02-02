@@ -1,0 +1,340 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Inbound QC" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/inbound_qc.css' %}">
+<style>
+/* CAMERA UI */
+.camera-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.camera-box {
+    width: 100%;
+    max-width: 620px;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+#camera-video, #camera-canvas {
+    width: 100%;
+}
+
+.camera-actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    background: #111;
+}
+
+.camera-actions button {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.capture-btn { background: #2c8cfb; color: #fff; }
+.confirm-btn { background: #28a745; color: #fff; }
+.retake-btn { background: #ffc107; }
+.cancel-btn { background: #dc3545; color: #fff; }
+
+.camera-btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid #2c8cfb;
+    background: #eef4ff;
+    cursor: pointer;
+}
+
+.preview-img {
+    margin-top: 8px;
+    width: 100%;
+    border-radius: 8px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="qc-page">
+
+    <!-- HEADER -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Inbound QC - " %}</span>
+                {% trans "GRN" %} {{ grn.grn_number }}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="qc-card">
+
+        <!-- INFO -->
+        <div class="qc-info">
+            <img src="{% static 'images/total-sku.png' %}">
+            <h3>{% trans "Inbound Quality Check" %}</h3>
+            <p>{% trans "Verify documents, batch details, quantity, packaging, barcode and temperature during inbound process." %}</p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="qc-form">
+            {% csrf_token %}
+            <div class="form-grid">
+
+                <!-- PO -->
+                <!-- QC ITEM -->
+                <div class="qc-item">
+                    <div class="qc-check">
+                        <input type="checkbox" name="po_matched" value="1">
+                        <label>{% trans "PO Matched" %}</label>
+                    </div>
+
+                    <div class="qc-image">
+                        <img id="po-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('po')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="po_matched_image" id="po-input" hidden>
+                    </div>
+                </div>
+
+
+                <!-- Invoice -->
+                <div class="qc-item">
+                    <div class="qc-check">
+                        <input type="checkbox" name="invoice_verified" value="1">
+                        <label>{% trans "Invoice Verified" %}</label>
+                    </div>
+
+                    <div class="qc-image">
+                        <img id="invoice-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('invoice')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="invoice_image" id="invoice-input" hidden>
+                    </div>
+                </div>
+
+
+                <!-- Quantity -->
+                <div class="qc-item">
+                    <div class="qc-check">
+                        <input type="checkbox" name="quantity_ok" value="1">
+                        <label>{% trans "Quantity OK" %}</label>
+                    </div>
+
+                    <div class="qc-image">
+                        <img id="quantity-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('quantity')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="quantity_image" id="quantity-input" hidden>
+                    </div>
+                </div>
+
+                <!-- Packaging -->
+                <div class="qc-item">
+                    <div class="qc-check">
+                        <input type="checkbox" name="packaging_ok" value="1">
+                        <label>{% trans "Packaging OK" %}</label>
+                    </div>
+
+                    <div class="qc-image">
+                        <img id="packaging-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('packaging')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="packaging_image" id="packaging-input" hidden>
+                    </div>
+                </div>
+
+                <!-- Damage -->
+                <div class="qc-item">
+                    <div class="qc-check">
+                        <input type="checkbox" name="damage_found" value="1">
+                        <label>{% trans "Damage Found" %}</label>
+                    </div>
+
+                    <div class="qc-image">
+                        <img id="damage-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('damage')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="damage_image" id="damage-input" hidden>
+                    </div>
+                </div>
+
+                <!-- Barcode -->
+                <div class="qc-item">
+                    <div class="qc-check">
+                        <input type="checkbox" name="barcode_verified" value="1">
+                        <label>{% trans "Barcode Verified" %}</label>
+                    </div>
+
+                    <div class="qc-image">
+                        <img id="barcode-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('barcode')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="barcode_image" id="barcode-input" hidden>
+                    </div>
+                </div>
+
+                <!-- Temperature -->
+                <div class="qc-item">
+                    <div class="qc-check">
+                        <input type="checkbox" name="temperature_ok" value="1">
+                        <label>{% trans "Temperature OK" %}</label>
+                    </div>
+
+                    <div class="qc-image">
+                        <img id="temperature-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('temperature')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="temperature_image" id="temperature-input" hidden>
+                    </div>
+                </div>
+
+                <!-- Batch Section -->
+                <div class="batch-section">
+                    <div class="field">
+                        <label>{% trans "Batch Number" %}</label>
+                        <input type="text" name="batch_number" required>
+                    </div>
+
+                    <div class="field">
+                        <label>{% trans "Batch Image" %}</label>
+                        <button type="button" class="camera-btn" onclick="openCamera('batch')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <img id="batch-preview" class="preview-img" hidden>
+                        <input type="file" name="batch_image" id="batch-input" hidden>
+                    </div>
+                </div>
+
+
+                <!-- Remarks -->
+                <div class="field">
+                    <label>{% trans "Remarks" %}</label>
+                    <textarea name="remarks" rows="3"></textarea>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="action-btn submit">
+                    {% trans "Submit Inbound QC" %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- CAMERA MODAL -->
+<div class="camera-modal" id="camera-modal">
+    <div class="camera-box">
+        <video id="camera-video" autoplay playsinline></video>
+        <canvas id="camera-canvas" hidden></canvas>
+
+        <div class="camera-actions">
+            <button class="cancel-btn" onclick="closeCamera()">✖ Cancel</button>
+            <button class="retake-btn" id="retakeBtn" onclick="retakePhoto()" hidden>🔄 Retake</button>
+            <button class="confirm-btn" id="confirmBtn" onclick="confirmPhoto()" hidden> Confirm</button>
+            <button class="capture-btn" id="captureBtn" onclick="capturePhoto()">📸 Capture</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let stream;
+let activeInput, activePreview;
+
+const cameraModal = document.getElementById('camera-modal');
+const cameraVideo = document.getElementById('camera-video');
+const cameraCanvas = document.getElementById('camera-canvas');
+const captureBtn = document.getElementById('captureBtn');
+const confirmBtn = document.getElementById('confirmBtn');
+const retakeBtn = document.getElementById('retakeBtn');
+
+function openCamera(prefix) {
+    activeInput = document.getElementById(prefix + '-input');
+    activePreview = document.getElementById(prefix + '-preview');
+
+    cameraModal.style.display = 'flex';
+
+    navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+        audio: false
+    }).then(s => {
+        stream = s;
+        cameraVideo.srcObject = stream;
+        cameraVideo.play();
+    }).catch(err => {
+        alert("Camera blocked or insecure site");
+        closeCamera();
+    });
+}
+
+function capturePhoto() {
+    cameraCanvas.width = cameraVideo.videoWidth;
+    cameraCanvas.height = cameraVideo.videoHeight;
+    cameraCanvas.getContext('2d').drawImage(cameraVideo, 0, 0);
+
+    cameraVideo.hidden = true;
+    cameraCanvas.hidden = false;
+    captureBtn.hidden = true;
+    confirmBtn.hidden = false;
+    retakeBtn.hidden = false;
+}
+
+function confirmPhoto() {
+    cameraCanvas.toBlob(blob => {
+        const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        activeInput.files = dt.files;
+
+        activePreview.src = URL.createObjectURL(file);
+        activePreview.hidden = false;
+        closeCamera();
+    }, "image/jpeg", 0.9);
+}
+
+function retakePhoto() {
+    cameraCanvas.hidden = true;
+    cameraVideo.hidden = false;
+    captureBtn.hidden = false;
+    confirmBtn.hidden = true;
+    retakeBtn.hidden = true;
+}
+
+function closeCamera() {
+    cameraModal.style.display = 'none';
+    if (stream) stream.getTracks().forEach(t => t.stop());
+
+    cameraVideo.hidden = false;
+    cameraCanvas.hidden = true;
+    captureBtn.hidden = false;
+    confirmBtn.hidden = true;
+    retakeBtn.hidden = true;
+}
+</script>
+
+{% endblock %}

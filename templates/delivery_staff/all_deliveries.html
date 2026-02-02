@@ -1,0 +1,104 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "All Deliveries" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/delivery_dashboard/all_deliveries.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="deliveries-container">
+
+  <div class="wh-header-section">
+    <div class="wh-header-left">
+      <h1><span>{% trans "All" %}</span> Deliveries</h1>
+      <p class="subtext">{% trans "Overview of all deliveries and their status" %}</p>
+    </div>
+		<div class="wh-header-right">          
+			<a href="javascript:history.back()" class="btn-back">
+				<i class="bi bi-arrow-left"></i> {% trans "Back" %}
+			</a>
+		</div>
+	</div>
+
+    <!-- FILTERS SECTION -->
+    <div class="filter-container">
+      <!-- Left Filters -->
+      <div class="filters-left">
+          <!-- DO Number -->
+          <div class="filter-item">
+              <input type="text" class="filter-input" placeholder="{% trans 'Customer Name' %}">
+          </div>
+      
+          <!-- Packing Status Dropdown -->
+          <div class="filter-item">
+              <select name="packing" class="filter-input">
+                  <option value="">{% trans "Delivery Status" %}</option>
+                  <option value="created">{% trans "Delivered" %}</option>
+                  <option value="pending">{% trans "Pending" %}</option>
+                  <option value="pending">{% trans "In transit" %}</option>
+              </select>
+          </div>
+      </div>
+      
+      <!-- Filter Buttons -->
+      <div class="filters-right">
+          <button class="btn-back filter-btn">{% trans "Filter" %}</button>
+      </div>
+    </div>
+
+  <!-- Table Section -->
+  <div class="table-scroll-wrapper">
+    <div class="table-container">
+    {% if deliveries %}
+    <table class="table-content" id="tableContent">
+      <thead>
+        <tr>
+          <th>{% trans "ID" %}</th>
+          <th>{% trans "Order No" %}</th>
+          <th>{% trans "Customer" %}</th>
+          <th>{% trans "Delivery Boy" %}</th>
+          <th>{% trans "Status" %}</th>
+          <th>{% trans "Assigned Date" %}</th>
+          <th>{% trans "Update" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in deliveries %}
+        <tr>
+          <td>{{ d.id }}</td>
+          <td>{% if d.picklist and d.picklist.order %}{{ d.picklist.order.order_no }}{% else %}N/A{% endif %}</td>
+          <td>{% if d.picklist and d.picklist.order %}{{ d.picklist.order.customer_name }}{% else %}N/A{% endif %}</td>
+          <td>{% if d.delivery_boy and d.delivery_boy.user %}{{ d.delivery_boy.user.username }}{% else %}N/A{% endif %}</td>
+          <td>
+            <span class="status-badge status-{{ d.delivery_status|lower|slugify }}">
+              {{ d.delivery_status }}
+            </span>
+          </td>
+          <td>{{ d.assigned_date|date:"Y-m-d H:i" }}</td>
+          <td>
+            <a href="{% url 'delivery_staff:update_delivery_status' d.id %}" class="btn-update">
+              <i class="bi bi-pencil-square"></i> {% trans "Update" %}
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+        <tr>
+          {% else %}
+          <td colspan="12" class="no-data">{% trans "No deliveries assigned." %}</td>
+          {% endif %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+   <!-- Pagination Controls -->
+   <div class="pagination-container" id="tablePagination"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,23 @@
+<h2>Purchase Orders</h2>
+<a href="{% url 'purchase_order_create' %}">Create Purchase Order</a>
+
+<table border="1">
+    <tr>
+        <th>PO Number</th>
+        <th>Vendor</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    {% for po in pos %}
+    <tr>
+        <td>{{ po.po_number }}</td>
+        <td>{{ po.vendor.vendor_name }}</td>
+        <td>{{ po.status }}</td>
+        <td>
+            <a href="{% url 'purchase_order_update' po.id %}">Edit</a>
+            |
+            <a href="{% url 'purchase_order_delete' po.id %}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>

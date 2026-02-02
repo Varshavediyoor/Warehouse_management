@@ -1,0 +1,277 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Packing Details" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/warehouse_manager/outbound/packing_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <div class="page-header-left">
+            <h1 class="page-title">
+                {% trans "Packing Details" %} – <span> DO {{ packing.delivery_order.delivery_no }}</span>
+            </h1>
+        </div>
+        <div class="page-header-right">
+            <a href="{% url 'warehouse_manager:packing_list' %}" class="btn-back">
+                ← {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="packing-container">
+        <!-- BOX CREATION -->
+        <div class="panel box-panel">
+            <h2>{% trans "Create a New Box" %}</h2>
+
+            {% if packing.status == 'PACKED' %}
+                <p class="text-success">{% trans "Packing completed. Cannot create new boxes." %}</p>
+            {% else %}
+                <form method="POST" action="{% url 'warehouse_manager:create_box' packing.id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>{% trans "Weight (kg)" %}</label>
+                        <input type="number" name="weight" step="0.01" required>
+                    </div>
+                    <div class="dimensions">
+                        <div class="form-group">
+                            <label>{% trans "Length" %}</label>
+                            <input type="number" name="length" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>{% trans "Width" %}</label>
+                            <input type="number" name="width" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>{% trans "Height" %}</label>
+                            <input type="number" name="height" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="submit-button">
+                        <button type="submit" class="btn-submit">{% trans "Create Box" %}</button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+
+        <!-- BOX SUMMARY -->
+        <div class="panel summary-panel">
+            <h2>{% trans "Boxes for this Delivery Order" %}</h2>
+            <div class="table-wrap">
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Box No" %}</th>
+                            <th>{% trans "Weight" %}</th>
+                            <th>{% trans "Dimensions (L×W×H)" %}</th>
+                            <th>{% trans "Items Count" %}</th>
+                            <th>{% trans "Label" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for box in boxes %}
+                            <tr>
+                                <td>Box-{{ box.id }}</td>
+                                <td>{{ box.weight }} kg</td>
+                                <td>{{ box.length }}×{{ box.width }}×{{ box.height }}</td>
+                                <td>{{ box.items.count }}</td>
+                                <td>
+                                    <button class="print-btn"
+                                        onclick="window.open('{% url 'warehouse_manager:print_box_label' box.id %}', '_blank')">
+                                        🖨 {% trans "Print" %}
+                                    </button>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="no-box">{% trans "No boxes created yet." %}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- PICKED ITEMS -->
+    <div class="panel fullwidth-panel item-panel">
+        <h2>{% trans "Picked Items" %}</h2>
+
+        {% if picked_items %}
+        <div class="table-wrap">
+            <table class="item-table">
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th>Product</th>
+                        <th>Picked Qty</th>
+                        <th>Packed Qty</th>
+                        <th>Assign to Box</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in picked_items %}
+                        <tr>
+                            <td>{{ item.order_item.sku }}</td>
+                            <td>
+                                {{ item.order_item.product.name }}
+                                {% if item.batch %}
+                                    <br><small>Batch: {{ item.batch.batch_no }} (Exp: {{ item.batch.expiry_date }})</small>
+                                {% endif %}
+                            </td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.packed_quantity|default:0 }}</td>
+                            <td>
+                                {% if item.packed_quantity|default:0 >= item.quantity %}
+                                    <span class="text-success">{% trans "Fully Packed" %} ✅</span>
+                                {% elif item.assigned_boxes.all %}
+                                    {% for box_item in item.assigned_boxes.all %}
+                                        Box-{{ box_item.box.id }} ({{ box_item.quantity }})<br>
+                                    {% endfor %}
+                                {% else %}
+                                    {% if boxes %}
+                                    <form method="POST" action="{% url 'warehouse_manager:assign_item_box' item.id %}" class="assign-box-form">
+                                        {% csrf_token %}
+                                        
+                                        <select name="box_id" class="assign-select" required>
+                                            <option value="">{% trans "Select Box" %}</option>
+                                            {% for box in boxes %}
+                                                <option value="{{ box.id }}">Box-{{ box.id }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    
+                                        <input type="hidden" name="packing_id" value="{{ packing.id }}">
+                                    
+                                        <button type="submit" class="btn-back assign-btn">{% trans "Assign" %}</button>
+                                    </form>
+                                    
+                                    {% else %}
+                                        <span>{% trans "Create a box first" %}</span>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p>{% trans "No picked items found for this packing." %}</p>
+        {% endif %}
+    </div>
+
+    <!-- CARRIER & SHIPMENT -->
+
+    <div class="carrier-panel-content">
+
+        {% if packing.shipment %}
+            <div class="shipment-info-card">
+                <h3 class="shipment-title">{% trans "Shipment Details" %}</h3>
+
+                <div class="shipment-row">
+                    <span class="label">{% trans "Carrier:" %}</span>
+                    <span class="value">{{ packing.shipment.carrier.name }}</span>
+                </div>
+
+                <div class="shipment-row">
+                    <span class="label">{% trans "Delivery Rate:" %}</span>
+                    <span class="value">{{ packing.shipment.delivery_rate }}</span>
+                </div>
+
+                <div class="shipment-row">
+                    <span class="label">{% trans "Expected Delivery Date:" %}</span>
+                    <span class="value">{{ packing.shipment.expected_delivery_date }}</span>
+                </div>
+
+                <div class="shipment-row">
+                    <span class="label">{% trans "Tracking Number:" %}</span>
+                    <span class="value">{{ packing.shipment.tracking_number }}</span>
+                </div>
+
+                <div class="shipment-first-buttons">
+                    <button class="btn-back btn-print"
+                        onclick="window.open('{% url 'warehouse_manager:print_shipping_label' packing.shipment.id %}', '_blank')">
+                        🖨 {% trans "Print Shipping Label" %}
+                    </button>
+
+                    {% if not packing.shipment.dispatched %}
+                        <form method="POST" action="{% url 'warehouse_manager:dispatch_shipment' packing.shipment.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-back btn-dispatch">
+                                {% trans "Dispatch Shipment" %}
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+
+                {% if packing.shipment.dispatched %}
+                    <p class="shipment-status">{% trans "Shipment Dispatched" %} ✅</p>
+                {% endif %}
+            </div>
+
+            {% elif packing.status == 'PACKED' %}
+                <form method="POST"
+                    action="{% url 'warehouse_manager:generate_shipment' packing.id %}"
+                    class="shipment-form">
+                    {% csrf_token %}
+
+                    <h3 class="carrier-title">{% trans "Carrier Details" %}</h3>
+
+                    <div class="form-group shipment-group">
+                        <label class="shipment-label">{% trans "Select Carrier" %}</label>
+                        <select name="carrier_id" class="shipment-select" required>
+                            <option value="">{% trans "Select Carrier" %}</option>
+                            {% for carrier in carriers %}
+                                <option value="{{ carrier.id }}">{{ carrier.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="shipment-buttons">
+                        <button type="submit" class="btn-back shipment-btn">
+                            {% trans "Generate Shipment" %}
+                        </button>
+                    </div>
+                </form>
+
+            {% else %}
+                <p class="incomplete-subtitle">
+                    {% trans "Packing not complete. Complete packing to generate shipment." %}
+                </p>
+            {% endif %}
+
+        </div>
+
+
+    <!-- ACTION BAR -->
+    <div class="bottom-action-bar">
+        <button class="btn-back packing-btn"
+            onclick="window.open('{% url 'warehouse_manager:print_packing_slip' packing.id %}', '_blank')">
+            🖨 {% trans "Print Packing Slip" %}
+        </button>
+
+        {% if packing.status == 'PACKED' %}
+        <span class="packing-completed-badge">
+            ✓ {% trans "Packing Completed" %}
+        </span>    
+        {% else %}
+            <form method="POST" action="{% url 'warehouse_manager:complete_packing' packing.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-back mark-btn">
+                    {% trans "Mark Packing Complete" %} ✓
+                </button>
+            </form>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock %}

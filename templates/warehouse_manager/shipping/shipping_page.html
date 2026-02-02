@@ -1,0 +1,190 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}
+{% trans "Shipping Details" %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/warehouse_manager/shipping_page.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <div class="page-header-left">
+            <h1 class="page-title">
+                {% trans "Shipping Details" %} – <span>DO {{ delivery_order.delivery_no }}</span>
+            </h1>
+        </div>
+        <div class="page-header-right">
+            <a href="{% url 'warehouse_manager:packing_list' %}" class="btn-back">
+                ← {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- PACKING SUMMARY -->
+    <div class="panel summary-panel">
+        <h2>{% trans "Packing Summary" %}</h2>
+
+        <div class="summary-row">
+            <span class="label">{% trans "Packing ID:" %}</span>
+            <span class="value">{{ packing.id }}</span>
+        </div>
+
+        <div class="summary-row">
+            <span class="label">{% trans "Status:" %}</span>
+            <span class="value">{{ packing.status }}</span>
+        </div>
+
+        <div class="summary-row">
+            <span class="label">{% trans "Total Boxes:" %}</span>
+            <span class="value">{{ boxes.count }}</span>
+        </div>
+    </div>
+
+    <!-- BOX DETAILS -->
+    <div class="panel">
+        <h2>{% trans "Boxes & Items" %}</h2>
+
+        {% for box in boxes %}
+        <div class="box-card">
+            <div class="box-header">
+                <h3>
+                    {% trans "Box" %}-{{ box.id }}
+                    <small>
+                        ({{ box.weight }} kg,
+                        {{ box.length }}×{{ box.width }}×{{ box.height }})
+                    </small>
+                </h3>
+
+                <ul class="item-list first">
+                    {% for item in box.items.all %}
+                        <li>
+                            {{ item.order_item.product_name }}
+                            <span>× {{ item.quantity }}</span>
+                        </li>
+                    {% empty %}
+                        <li class="no-items">{% trans "No items in this box" %}</li>
+                    {% endfor %}
+                </ul>
+
+                <button class="btn-back print-btn first"
+                    onclick="window.open('{% url 'warehouse_manager:print_box_label' box.id %}', '_blank')">
+                    🖨 {% trans "Print Box Label" %}
+                </button>
+            </div>
+
+            <ul class="item-list second">
+                {% for item in box.items.all %}
+                    <li>
+                        {{ item.order_item.product_name }}
+                        <span>× {{ item.quantity }}</span>
+                    </li>
+                {% empty %}
+                    <li class="no-items">{% trans "No items in this box" %}</li>
+                {% endfor %}
+            </ul>
+
+            <div class="print-buttons">
+                <button class="btn-back print-btn"
+                    onclick="window.open('{% url 'warehouse_manager:print_box_label' box.id %}', '_blank')">
+                    🖨 {% trans "Print Box Label" %}
+                </button>
+            </div>
+        </div>
+        {% empty %}
+            <p class="no-box">{% trans "No boxes created yet." %}</p>
+        {% endfor %}
+    </div>
+
+    <!-- SHIPMENT SECTION -->
+    <div class="panel">
+
+        {% if shipment %}
+        <!-- <div class="shipment-info-card"> -->
+            <h3 class="shipment-title">{% trans "Shipment Details" %}</h3>
+
+            <div class="shipment-row">
+                <span class="label">{% trans "Carrier:" %}</span>
+                <span class="value">{{ shipment.carrier.name }}</span>
+            </div>
+
+            <div class="shipment-row">
+                <span class="label">{% trans "Delivery Rate:" %}</span>
+                <span class="value">{{ shipment.delivery_rate }}</span>
+            </div>
+
+            <div class="shipment-row">
+                <span class="label">{% trans "Tracking Number:" %}</span>
+                <span class="value">{{ shipment.tracking_number }}</span>
+            </div>
+
+            <div class="shipment-row">
+                <span class="label">{% trans "Dispatched:" %}</span>
+                <span class="value">
+                    {% if shipment.dispatched %}
+                        ✅ {% trans "Yes" %}
+                    {% else %}
+                        ❌ {% trans "No" %}
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="shipment-first-buttons">
+                <button class="btn-back btn-print"
+                    onclick="window.open('{% url 'warehouse_manager:print_shipping_label' shipment.id %}', '_blank')">
+                    🖨 {% trans "Print Shipping Label" %}
+                </button>
+
+                {% if not shipment.dispatched %}
+                <form method="POST" action="{% url 'warehouse_manager:dispatch_shipment' shipment.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-back btn-dispatch">
+                        {% trans "Dispatch Shipment" %}
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+
+            {% if shipment.dispatched %}
+                <p class="shipment-status">{% trans "Shipment Dispatched" %} ✅</p>
+            {% endif %}
+        </div>
+
+        {% elif packing.status == 'PACKED' %}
+        <form method="POST" class="shipment-form">
+            {% csrf_token %}
+
+            <h3 class="carrier-title">{% trans "Generate Shipment" %}</h3>
+
+            <div class="form-group shipment-group">
+                <label class="shipment-label">{% trans "Select Carrier" %}</label>
+                <select name="carrier_id" class="shipment-select" required>
+                    <option value="">{% trans "Select Carrier" %}</option>
+                    {% for carrier in carriers %}
+                        <option value="{{ carrier.id }}">{{ carrier.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="shipment-buttons">
+                <button type="submit" class="btn-back shipment-btn">
+                    {% trans "Generate Shipment" %}
+                </button>
+            </div>
+        </form>
+
+        {% else %}
+            <p class="incomplete-subtitle">
+                {% trans "Packing not complete. Complete packing to generate shipment." %}
+            </p>
+        {% endif %}
+
+    </div>
+
+</div>
+{% endblock %}

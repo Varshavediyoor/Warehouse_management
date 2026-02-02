@@ -1,0 +1,343 @@
+{% extends 'base_admin.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Register User" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/register_user.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="register-wrapper">
+
+  <!-- 🌐 Left Section -->
+  <div class="left-panel">
+    <div class="instruction-image">
+      <img src="{% static 'images/freepik__upload__49138.png' %}" alt="Register Illustration">
+    </div>
+    <ul class="instruction-list">
+      <li>{% trans "Streamline your daily work and communication" %}</li>
+      <li>{% trans "Stay informed with real-time notifications and events" %}</li>
+      <li>{% trans "Collaborate easily with your teammates and clients" %}</li>
+    </ul>
+  </div>
+
+  <!-- 🧾 Right Section -->
+  <div class="right-panel">
+    <div class="register-header">
+      <form-header-left>
+        <h1 class="form-title">
+          {% if is_edit %}
+            {% trans "Edit User" %} –
+            <span>{{ edit_user_obj.username }}</span>
+          {% else %}
+            {% trans "User" %} <span>{% trans "Registration" %}</span>
+          {% endif %}
+        </h1>
+        
+        {% if form.non_field_errors %}
+        <div class="error-message">
+            {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </form-header-left>
+      <a href="{% url 'custom_admin_dashboard' %}">
+        <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+      </a>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="register-form" novalidate autocomplete="off" id="register-form">
+      {% csrf_token %}
+
+      <!-- NOTE:
+           To prevent layout jumps we wrap the steps in .form-steps.
+           Each .form-step will be toggled using classes (no display:block/none reflows).
+      -->
+      <div class="form-steps">
+
+        <!-- ✅ STEP 1 -->
+        <div id="step-1" class="form-step active" aria-hidden="false">
+          <div class="input-grid" id="main-fields-grid">
+            {% for field in form %}
+            <div class="form-group">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+
+              {% if field.name == 'password' %}
+              <div class="password-info">
+                <div id="password-rules" class="password-dropdown">
+                  <div class="password-hint-header">
+                    <p>{% trans "Password Must meet the following requirements" %}</p>
+                  </div>
+                  <ul>
+                    <li>8–20 {% trans "characters" %}</li>
+                    <li>1 {% trans "uppercase" %} (A–Z)</li>
+                    <li>1 {% trans "lowercase" %} (a–z)</li>
+                    <li>1 {% trans "number" %} (0–9)</li>
+                    <li>1 {% trans "special" %} (@, #, $, %, &amp;)</li>
+                    <li>{% trans "No spaces" %}</li>
+                  </ul>
+                </div>
+              </div>
+              {% endif %}
+
+              {% if field.name == 'confirm_password' %}
+              <div class="password-info">
+                <div id="confirm-password-rules" class="password-dropdown">
+                  <div class="password-hint-header">
+                    <p>{% trans "Confirm Password Requirement" %}</p>
+                  </div>
+                  <ul>
+                    <li>{% trans "Must match the password" %}</li>
+                  </ul>
+                </div>
+              </div>
+              {% endif %}
+              
+              {% if field.errors %}
+                <div class="error-message">
+                  {% for error in field.errors %}
+                  {{ error }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- ✅ STEP 2 (Supplier / DeliveryBoy) -->
+        <div id="step-2" class="form-step" aria-hidden="true">
+          <div id="supplier-fields" class="extra-section" aria-hidden="true">
+            <h3>{% trans "Supplier Details" %}</h3>
+            <div class="input-grid">
+              <div class="form-group">
+                <label for="contact_person">{% trans "Contact Person" %}</label>
+                <!-- data-group used to identify group in JS -->
+                <input type="text" name="contact_person" id="contact_person" data-required-group="supplier">
+              </div>
+              <div class="form-group">
+                <label for="gst_no">{% trans "GST Number" %}</label>
+                <input type="text" name="gst_no" id="gst_no" data-required-group="supplier">
+              </div>
+              <div class="form-group">
+                <label for="address">{% trans "Address" %}</label>
+                <input type="text" name="address" id="address" data-required-group="supplier">
+              </div>
+            </div>
+          </div>
+
+          <div id="deliveryboy-fields" class="extra-section" aria-hidden="true">
+            <h3>{% trans "Delivery Boy Details" %}</h3>
+            <div class="input-grid">
+              <div class="form-group">
+                <label for="address_delivery">{% trans "Address" %}</label>
+                <input type="text" name="address" id="address_delivery" data-required-group="delivery">
+              </div>
+              <div class="form-group">
+                <label for="city">{% trans "City" %}</label>
+                <input type="text" name="city" id="city" data-required-group="delivery">
+              </div>
+              <div class="form-group">
+                <label for="state">{% trans "State" %}</label>
+                <input type="text" name="state" id="state" data-required-group="delivery">
+              </div>
+              <div class="form-group">
+                <label for="pincode">{% trans "Pincode" %}</label>
+                <input type="text" name="pincode" id="pincode" data-required-group="delivery">
+              </div>
+              <div class="form-group">
+                <label for="vehicle_number">{% trans "Vehicle Number" %}</label>
+                <input type="text" name="vehicle_number" id="vehicle_number" data-required-group="delivery">
+              </div>
+              <div class="form-group">
+                <label for="vehicle_type">{% trans "Vehicle Type" %}</label>
+                <input type="text" name="vehicle_type" id="vehicle_type" data-required-group="delivery">
+              </div>
+              <div class="form-group">
+                <label for="license_number">{% trans "License Number" %}</label>
+                <input type="text" name="license_number" id="license_number" data-required-group="delivery">
+              </div>
+              <div class="form-group">
+                <label for="assigned_area">{% trans "Assigned Area" %}</label>
+                <input type="text" name="assigned_area" id="assigned_area" data-required-group="delivery">
+              </div>
+              <div class="form-group">
+                <label for="remarks">{% trans "Remarks" %}</label>
+                <input type="text" name="remarks" id="remarks" data-required-group="delivery">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /.form-steps -->
+
+      <!-- ✅ Buttons -->
+      <div class="form-actions" style="margin-top:20px; display:flex; gap:12px;">
+        <button type="button" id="next-btn" class="btn-register" style="display:none;">
+          {% trans "Next" %}
+          <i class="bi bi-chevron-right ms-2"></i>
+        </button>
+        <button type="button" id="prev-btn" class="btn-register">
+          <i class="bi bi-chevron-left ms-2"></i> {% trans "Previous" %}
+        </button>
+        <button type="submit" id="register-btn" class="btn-register">
+          {% if is_edit %}
+            {% trans "Update User" %}
+          {% else %}
+            {% trans "Register" %}
+          {% endif %}
+        </button>
+        
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const passwordField = document.querySelector('input[name="password"]');
+    const confirmPasswordField = document.querySelector('input[name="confirm_password"]');
+    const passwordRulesBox = document.getElementById("password-rules");
+    const confirmRulesBox = document.getElementById("confirm-password-rules");
+    const passwordRules = passwordRulesBox ? passwordRulesBox.querySelectorAll("li") : [];
+    const confirmRule = confirmRulesBox ? confirmRulesBox.querySelector("li") : null;
+  
+    const checks = [
+      /.{8,20}/,          // 8–20 characters
+      /[A-Z]/,            // Uppercase
+      /[a-z]/,            // Lowercase
+      /\d/,               // Number
+      /[!@#$%^&*(),.?":{}|<>]/, // Special char
+      /^[^\s]+$/          // No spaces
+    ];
+  
+    // Show/Hide dropdowns
+    const showBox = (box) => { if (box) box.style.display = "block"; };
+    const hideBox = (box) => { if (box) setTimeout(() => box.style.display = "none", 200); };
+  
+    if (passwordField) {
+      passwordField.addEventListener("focus", () => showBox(passwordRulesBox));
+      passwordField.addEventListener("blur", () => hideBox(passwordRulesBox));
+    }
+    if (confirmPasswordField) {
+      confirmPasswordField.addEventListener("focus", () => showBox(confirmRulesBox));
+      confirmPasswordField.addEventListener("blur", () => hideBox(confirmRulesBox));
+    }
+  
+    // ✅ Password live validation
+    if (passwordField) {
+      passwordField.addEventListener("input", () => {
+        const value = passwordField.value;
+        checks.forEach((regex, index) => {
+          if (!passwordRules[index]) return;
+          if (regex.test(value)) {
+            passwordRules[index].classList.add("valid");
+            passwordRules[index].classList.remove("invalid");
+          } else {
+            passwordRules[index].classList.add("invalid");
+            passwordRules[index].classList.remove("valid");
+          }
+        });
+    
+        // Also recheck confirm password if user is editing main password
+        if (confirmPasswordField && confirmPasswordField.value !== "") {
+          if (confirmPasswordField.value === passwordField.value) {
+            confirmRule && confirmRule.classList.add("valid");
+            confirmRule && confirmRule.classList.remove("invalid");
+          } else {
+            confirmRule && confirmRule.classList.add("invalid");
+            confirmRule && confirmRule.classList.remove("valid");
+          }
+        }
+      });
+    }
+  
+    // ✅ Confirm password live validation
+    if (confirmPasswordField) {
+      confirmPasswordField.addEventListener("input", () => {
+        if (confirmPasswordField.value === (passwordField ? passwordField.value : "") && (passwordField ? passwordField.value !== "" : false)) {
+          confirmRule && confirmRule.classList.add("valid");
+          confirmRule && confirmRule.classList.remove("invalid");
+        } else {
+          confirmRule && confirmRule.classList.add("invalid");
+          confirmRule && confirmRule.classList.remove("valid");
+        }
+      });
+    }
+
+    /**
+     * New: Conditional required handling for supplier/delivery groups
+     * - Fields have data-required-group attribute set to 'supplier' or 'delivery'
+     * - We only enforce "required" on fields whose group container is visible (aria-hidden="false" and offsetParent !== null)
+     * - On submit we toggle required attributes and call reportValidity() to let browser show default messages.
+     */
+    const form = document.getElementById('register-form');
+    const supplierSection = document.getElementById('supplier-fields');
+    const deliverySection = document.getElementById('deliveryboy-fields');
+
+    function isSectionVisible(section) {
+      if (!section) return false;
+      // If aria-hidden explicitly 'false' AND it's rendered (offsetParent !== null) -> visible
+      const ariaHidden = section.getAttribute('aria-hidden');
+      const rendered = section.offsetParent !== null; // works across common hide techniques
+      return (ariaHidden === 'false' && rendered);
+    }
+
+    function updateGroupRequiredAttributes() {
+      // For all inputs that have data-required-group, set required only when their section visible
+      const groupInputs = form.querySelectorAll('[data-required-group]');
+      groupInputs.forEach(input => {
+        const grp = input.getAttribute('data-required-group');
+        if (grp === 'supplier') {
+          input.required = isSectionVisible(supplierSection);
+        } else if (grp === 'delivery') {
+          input.required = isSectionVisible(deliverySection);
+        }
+      });
+    }
+
+    // Update on load (in case section already visible)
+    updateGroupRequiredAttributes();
+
+    // Also keep things in sync if other scripts toggle aria-hidden or classes.
+    // Use a small MutationObserver on the two sections to update attributes when aria-hidden or style changes.
+    const observerConfig = { attributes: true, attributeFilter: ['aria-hidden', 'style', 'class'] };
+    const moCallback = function(mutationsList) {
+      for (const m of mutationsList) {
+        if (m.type === 'attributes') {
+          updateGroupRequiredAttributes();
+        }
+      }
+    };
+    const observer = new MutationObserver(moCallback);
+    if (supplierSection) observer.observe(supplierSection, observerConfig);
+    if (deliverySection) observer.observe(deliverySection, observerConfig);
+
+    // On submit: ensure required attributes set correctly and let browser validate
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        // update required attributes based on current visibility
+        updateGroupRequiredAttributes();
+
+        // If form invalid, prevent submission so browser can show messages (reportValidity)
+        if (!form.checkValidity()) {
+          // Show native validation bubbles
+          form.reportValidity();
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+        // otherwise allow normal submission to happen
+      });
+    }
+  });
+  </script>
+  
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/admin/register_user.js' %}"></script>
+{% endblock %}

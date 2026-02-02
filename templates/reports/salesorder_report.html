@@ -1,0 +1,152 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}Sales Order Report{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/admin_report_table.css' %}">
+<style>
+.report-container { margin:1rem; font-size:0.85rem; }
+.kpi-row { display:flex; gap:1rem; margin-bottom:1rem; flex-wrap:wrap; }
+.kpi-card {
+    flex:1 1 200px;
+    background:#fff;
+    padding:1rem;
+    border-radius:6px;
+    box-shadow:0 1px 4px rgba(0,0,0,0.1);
+    text-align:center;
+}
+.kpi-card h3 { font-size:0.85rem; color:#666; }
+.kpi-card p { font-size:1.4rem; font-weight:bold; margin:0; }
+.graph { background:#fff; padding:1rem; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,0.1); }
+.graphs-container { display:flex; gap:1rem; flex-wrap:wrap; margin:1rem 0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="report-container">
+
+<h1>Sales Order Report</h1>
+
+<!-- KPIs -->
+<div class="kpi-row">
+    <div class="kpi-card">
+        <h3>Total Orders</h3>
+        <p style="color:#007bff;">{{ total_orders }}</p>
+    </div>
+    <div class="kpi-card">
+        <h3>Total Sales</h3>
+        <p style="color:#28a745;">{{ total_sales|floatformat:2 }}</p>
+    </div>
+    <div class="kpi-card">
+        <h3>Total Refund</h3>
+        <p style="color:#dc3545;">{{ total_refund|floatformat:2 }}</p>
+    </div>
+</div>
+
+<!-- Filters -->
+<form method="get" class="filter-row">
+    <input type="text" name="search" placeholder="Search" value="{{ search_query }}">
+    <select name="status">
+        <option value="">All Status</option>
+        {% for k,v in status_choices %}
+            <option value="{{ k }}" {% if status_filter == k %}selected{% endif %}>{{ v }}</option>
+        {% endfor %}
+    </select>
+    <select name="month">
+        <option value="">All Months</option>
+        {% for m in months %}
+            <option value="{{ m.number }}" {% if month == m.number|stringformat:"s" %}selected{% endif %}>{{ m.name }}</option>
+        {% endfor %}
+    </select>
+    <select name="year">
+        <option value="">All Years</option>
+        {% for y in years %}
+            <option value="{{ y }}" {% if year == y|stringformat:"s" %}selected{% endif %}>{{ y }}</option>
+        {% endfor %}
+    </select>
+    <button class="btn btn-primary">Filter</button>
+</form>
+
+<div class="download-buttons" style="margin:1rem 0;">
+    <a href="{% url 'sales_order_report_excel' %}?search={{ search_query }}&status={{ status_filter }}&month={{ month }}&year={{ year }}"
+       class="btn btn-primary" target="_blank">
+        Download Excel
+    </a>
+
+    <a href="{% url 'sales_order_report_pdf' %}?search={{ search_query }}&status={{ status_filter }}&month={{ month }}&year={{ year }}"
+       class="btn btn-primary" target="_blank">
+        Download PDF
+    </a>
+</div>
+
+
+<!-- Charts -->
+<div class="graphs-container">
+    <div class="graph" style="flex:1 1 30%;">
+        <h3>Monthly Sales</h3>
+        <canvas id="monthlyChart"></canvas>
+    </div>
+
+    <div class="graph" style="flex:1 1 30%;">
+        <h3>Order Status</h3>
+        <canvas id="statusChart"></canvas>
+    </div>
+
+    <div class="graph" style="flex:1 1 100%;">
+        <h3>Trending Products</h3>
+        {% if trending_products|length > 0 %}
+
+            <canvas id="trendingChart"></canvas>
+        {% else %}
+            <p style="text-align:center;">No products found</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Orders Table -->
+<table class="report-table">
+<thead>
+<tr>
+    <th>Order No</th>
+    <th>Customer</th>
+    <th>Date</th>
+    <th>Status</th>
+    <th>Total</th>
+</tr>
+</thead>
+<tbody>
+{% for o in orders %}
+<tr>
+    <td>{{ o.order_no }}</td>
+    <td>{{ o.customer_name }}</td>
+    <td>{{ o.order_date|date:"d-m-Y" }}</td>
+    <td>{{ o.status_display }}</td>
+    <td>{{ o.total_amount }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="5" style="text-align:center;">No orders found</td></tr>
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+new Chart(monthlyChart, {
+    type:'bar',
+    data:{ labels:{{ month_labels|safe }}, datasets:[{ data:{{ monthly_totals|safe }} }] }
+});
+new Chart(statusChart, {
+    type:'pie',
+    data:{ labels:{{ status_labels|safe }}, datasets:[{ data:{{ status_counts|safe }} }] }
+});
+{% if trending_products %}
+new Chart(trendingChart, {
+    type:'bar',
+    data:{ labels:{{ trending_names|safe }}, datasets:[{ data:{{ trending_qtys|safe }} }] }
+});
+{% endif %}
+</script>
+{% endblock %}

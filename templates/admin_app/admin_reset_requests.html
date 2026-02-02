@@ -1,0 +1,64 @@
+{% extends 'base_admin.html' %}
+{% load static i18n %}
+
+{% block title %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/admin_reset_requests.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin/admin_report_table.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="password-reset-request-container">
+      <!-- header  -->
+      <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Password" %}</span> {% trans "Reset Requests" %}</h1>
+        </div>
+        <div class="wh-header-right">          
+            <a href="{% url 'custom_admin_dashboard' %}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+      </div>
+
+    {% if pending %}
+      <!-- Table -->
+  <div class="table-scroll-wrapper">
+    <div class="table-container">
+      <table class="report-table" id="reportTable">
+        <thead>
+          <tr>
+            <th>Email</th><th>User</th><th>Reason</th><th>Requested At</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for p in pending %}
+          <tr>
+            <td>{{ p.email }}</td>
+            <td>{{ p.user.username }}</td>
+            <td>{{ p.reason|linebreaksbr }}</td>
+            <td>{{ p.requested_at }}</td>
+            <td>
+              <div class="action-buttons">
+                <a class="action-btn normal" href="{% url 'approve_reset_request' p.id %}">Review</a>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No pending requests.</p>
+    {% endif %}
+    </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="tablePagination"></div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/admin/admin_report_tables.js' %}"></script>
+{% endblock %}

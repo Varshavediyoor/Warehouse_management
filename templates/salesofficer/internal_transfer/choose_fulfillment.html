@@ -1,0 +1,26 @@
+{% extends "base_user.html" %}
+{% block content %}
+
+<h3>Choose Fulfillment Method</h3>
+
+<p><strong>Request No:</strong> {{ transfer.request_no }}</p>
+
+<form method="post">
+    {% csrf_token %}
+
+    <button type="submit"
+            name="fulfillment_mode"
+            value="warehouse"
+            class="btn btn-success me-2">
+        Warehouse Transfer
+    </button>
+
+    <button type="submit"
+            name="fulfillment_mode"
+            value="client"
+            class="btn btn-primary">
+        Client Delivery
+    </button>
+</form>
+
+{% endblock %}

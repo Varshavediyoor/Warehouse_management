@@ -1,0 +1,87 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "QC Task Detail" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/task_detail.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+<div class="qc-detail-container">
+  <!-- Page Header -->
+	<div class="header-section">
+		<h1><span>{% trans "QC Task" %}</span> #{{ task.id }}</h1>
+		<div class="view-stock-header-right">          
+			<a href="" class="btn-back">
+				<i class="bi bi-arrow-left"></i> {% trans "Back" %}
+			</a>
+		</div>
+	</div>
+     
+	<div class="qc-middle">
+		<div class="qc-details-box">
+			<p><strong>{% trans "Reference:" %}</strong> {{ task.reference_type }} - {{ task.reference_id }}</p>
+			<p><strong>{% trans "Location:" %}</strong> {{ task.location.code }}</p>
+			<p><strong>{% trans "Status:" %} </strong><span class="qc-status {{ task.status }}">
+				{{ task.status|title }}
+		   </span></p>
+		</div>
+	
+		<div class="qc-buttons">
+			<a class="btn-back inspection-btn" href="{% url 'quality_controller:qc_inspect' task.id %}"><i class="bi bi-search"></i> {% trans "Start Inspection" %}</a>
+	
+			<a class="btn-back approve-btn" href="{% url 'quality_controller:qc_pass' task.id %}"> {% trans "Approve" %}</a>
+	
+			<a class="btn-back reject-btn" href="{% url 'quality_controller:qc_fail' task.id %}"> {% trans "Reject to Scrap" %}</a>
+		</div>
+	</div>
+	
+
+
+	<div class="table-heading">
+		<h4>{% trans "QC Line Items" %}</h4>
+	</div>
+
+	<div class="table-scroll-wrapper">
+		<div class="table-container">
+			<table class="table-content" id="tableContent">
+				<thead>
+					<tr>
+						<th>{% trans "Product" %}</th>
+						<th>{% trans "Ordered" %}</th>
+						<th>{% trans "Inspected" %}</th>
+						<th>{% trans "Accepted" %}</th>
+						<th>{% trans "Rejected" %}</th>
+						<th>{% trans "Batch No" %}</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					{% for item in items %}
+					<tr>
+						<td>{{ item.product.name }}</td>
+						<td>{{ item.ordered_qty }}</td>
+						<td>{{ item.inspected_qty }}</td>
+						<td>{{ item.accepted_qty }}</td>
+						<td>{{ item.rejected_qty }}</td>
+						<td>{{ item.batch_no }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		<!-- Pagination Controls -->
+		<div class="pagination-container" id="tablePagination"></div>
+	</div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

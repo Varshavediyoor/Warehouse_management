@@ -1,0 +1,150 @@
+body {
+    margin: 0;
+    background: #f2f2f2; /* light contrast to see label */
+    font-family: Arial, Helvetica, sans-serif;
+
+    /* CENTER ON SCREEN */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* 4x6 LABEL */
+.label-container {
+    width: 4in;
+    height: 6in;
+    padding: 10px;
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid #000;
+}
+
+
+/* HEADER */
+.label-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #000;
+}
+
+.company-logo {
+    width: 42px;
+}
+
+.company-title {
+    line-height: 1.2;
+}
+
+.company-name {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.company-sub {
+    font-size: 10px;
+}
+
+/* ADDRESS */
+.address-grid {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.address-box {
+    width: 50%;
+    border: 1px solid #000;
+    padding: 6px;
+    font-size: 10px;
+}
+
+.address-box.to {
+    background: #f8f8f8;
+}
+
+.box-title {
+    font-size: 11px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    border-bottom: 1px solid #000;
+}
+
+/* INFO BLOCK */
+.info-block {
+    margin-top: 6px;
+    border: 1px solid #000;
+    padding: 6px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    padding: 2px 0;
+    border-bottom: 1px dotted #000;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+/* PACKAGE */
+.package-block {
+    margin-top: 6px;
+    border: 1px solid #000;
+    display: flex;
+    justify-content: space-between;
+    padding: 6px;
+    font-size: 10px;
+}
+
+/* INVOICE */
+.invoice-block {
+    margin-top: 6px;
+    border: 1px solid #000;
+    padding: 6px;
+    font-size: 10px;
+}
+
+.cod-amount {
+    margin-top: 4px;
+    font-weight: bold;
+}
+
+/* BARCODE */
+.barcode-block {
+    margin-top: 8px;
+    text-align: center;
+}
+
+.barcode {
+    border: 2px solid #000;
+    padding: 10px;
+    font-size: 14px;
+    letter-spacing: 2px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+/* FOOTER */
+.label-footer {
+    margin-top: 8px;
+    font-size: 9px;
+}
+
+.signature {
+    margin-top: 8px;
+}
+
+/* PRINT */
+@media print {
+    body {
+        margin: 0;
+    }
+    .label-container {
+        border: none;
+    }
+}

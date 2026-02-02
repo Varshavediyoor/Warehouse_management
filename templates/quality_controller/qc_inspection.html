@@ -1,0 +1,83 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "QC Inspection" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/qc_inspection.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="qc-inspection-container">
+
+    <div class="header-section">
+        <h1><span>{% trans "QC Inspection —" %}</span> #{{ task.id }}</h1>
+        <div class="view-stock-header-right">          
+            <a href="" class="btn-back">
+            <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <form class="qc-form" method="post">
+        {% csrf_token %}
+        <div class="form-table-headers">
+          <p class="sub-info">
+            <strong>Reference:</strong> {{ task.reference_type }} - {{ task.reference_id }} &nbsp; | &nbsp;
+            <strong>Location:</strong> {{ task.location.code }}
+          </p>
+        </div>
+        <!-- TABLE WRAPPER -->
+        <div class="qc-table-wrapper">
+            <table class="qc-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Ordered</th>
+                        <th>Inspected</th>
+                        <th>Accepted</th>
+                        <th>Rejected</th>
+                        <th>Batch</th>
+                        <th>Expiry</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+
+                        <td>{{ item.ordered_qty }}</td>
+
+                        <td><input type="number" step="0.01" name="inspected_{{ item.id }}" value="{{ item.inspected_qty }}" class="qc-input"></td>
+
+                        <td><input type="number" step="0.01" name="accepted_{{ item.id }}" value="{{ item.accepted_qty }}" class="qc-input green"></td>
+
+                        <td><input type="number" step="0.01" name="rejected_{{ item.id }}" value="{{ item.rejected_qty }}" class="qc-input red"></td>
+
+                        <td><input type="text" name="batch_{{ item.id }}" value="{{ item.batch_no }}" class="qc-input"></td>
+
+                        <td><input type="date" name="expiry_{{ item.id }}" value="{{ item.expiry_date }}" class="qc-input"></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- REMARKS -->
+        <div class="remarks-box">
+            <label>Remarks</label>
+            <textarea name="remarks">{{ task.remarks }}</textarea>
+        </div>
+
+        <!-- STICKY ACTION BAR -->
+        <div class="action-bar">
+            <button class="btn-back submit-btn">Submit Inspection</button>
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

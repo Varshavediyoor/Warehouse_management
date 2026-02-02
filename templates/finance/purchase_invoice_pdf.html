@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Invoice {{ invoice.invoice_no }}</title>
+
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            font-size: 12px;
+            color: #1f2937;
+            margin: 0;
+            padding: 0;
+            background: #f3f4f6;
+        }
+
+        .invoice-wrapper {
+            max-width: 900px;
+            margin: 30px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        /* HEADER */
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .company-section img {
+            max-height: 55px;
+            margin-bottom: 6px;
+        }
+
+        .company-section h2 {
+            margin: 4px 0;
+            font-size: 20px;
+        }
+
+        .company-section p {
+            margin: 0;
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .invoice-meta {
+            text-align: right;
+        }
+
+        .invoice-meta h1 {
+            font-size: 30px;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .invoice-meta p {
+            margin: 4px 0;
+            font-size: 12px;
+        }
+
+        /* STATUS */
+        .inv-status {
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            display: inline-block;
+        }
+
+        .inv-status.paid { background: #22c55e; color: #fff; }
+        .inv-status.pending { background: #ef4444; color: #fff; }
+        .inv-status.partially-paid { background: #f59e0b; color: #fff; }
+
+        /* INFO GRID */
+        .info-grid {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+
+        .info-card {
+            width: 48%;
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .info-card h4 {
+            margin-bottom: 8px;
+            font-size: 14px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 4px;
+        }
+
+        .info-card p {
+            margin: 4px 0;
+            font-size: 12px;
+        }
+
+        /* TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        thead {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        th {
+            padding: 10px;
+            font-size: 12px;
+            text-align: left;
+            border: none;
+        }
+
+        td {
+            padding: 9px;
+            font-size: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        /* TOTALS */
+        .totals-box {
+            width: 320px;
+            margin-top: 20px;
+            margin-left: auto;
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .totals-box table {
+            width: 100%;
+        }
+
+        .totals-box th,
+        .totals-box td {
+            padding: 6px 0;
+            font-size: 13px;
+            text-align: right;
+            border: none;
+        }
+
+        .totals-box th {
+            color: #374151;
+        }
+
+        .grand th,
+        .grand td {
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        /* SIGNATURE */
+        .signature-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 50px;
+        }
+
+        .signature-box {
+            text-align: center;
+        }
+
+        .line {
+            border-top: 1px solid #000;
+            width: 180px;
+            margin-bottom: 5px;
+        }
+
+        /* FOOTER */
+        .invoice-end {
+            text-align: center;
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 35px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="invoice-wrapper">
+
+    <!-- HEADER -->
+    <div class="invoice-header">
+        <div class="company-section">
+            <img src="{{ logo_path }}" class="company-logo">
+            <h2>CodEdu Software Technologies</h2>
+            <p>123 Business Street, Chennai, India</p>
+        </div>
+
+        <div class="invoice-meta">
+            <h1>INVOICE</h1>
+            <p><strong>Invoice No:</strong> {{ invoice.invoice_no }}</p>
+            <p><strong>Date:</strong> {{ invoice.invoice_date|date:"d M Y" }}</p>
+        </div>
+    </div>
+
+    <!-- INFO -->
+    <div class="info-grid">
+        <div class="info-card">
+            <h4>Bill To</h4>
+            <p><strong>{{ invoice.purchase_order.supplier.name }}</strong></p>
+            <p>{{ invoice.purchase_order.supplier.address|default:"-" }}</p>
+            <p>📞 {{ invoice.purchase_order.supplier.phone|default:"-" }}</p>
+            <p>✉ {{ invoice.purchase_order.supplier.email|default:"-" }}</p>
+        </div>
+
+        <div class="info-card">
+            <h4>Order Details</h4>
+            <p><strong>PO No:</strong> {{ invoice.purchase_order.order_no }}</p>
+            <p><strong>Order Date:</strong> {{ invoice.purchase_order.order_date|date:"d M Y" }}</p>
+        </div>
+    </div>
+
+    <!-- ITEMS -->
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in invoice.purchase_order.items.all %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.product_name }}</td>
+                <td>{{ item.quantity_ordered }}</td>
+                <td>{{ item.unit_price|floatformat:2 }}</td>
+                <td>{{ item.quantity_ordered|multiply:item.unit_price|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- TOTALS -->
+    <div class="totals-box">
+        <table>
+            <tr>
+                <th>Subtotal</th>
+                <td>{{ invoice.subtotal|floatformat:2 }} {{ currency }}</td>
+            </tr>
+            <tr>
+                <th>{{ invoice.tax_type }}</th>
+                <td>{{ invoice.vat_amount|floatformat:2 }} {{ currency }}</td>
+            </tr>
+            <tr class="grand">
+                <th>Grand Total</th>
+                <td>{{ invoice.total_amount|floatformat:2 }} {{ currency }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- SIGNATURE -->
+    <div class="signature-row">
+        <div class="signature-box">
+            <div class="line"></div>
+            Authorized Signature
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="invoice-end">
+        📞 9898767898 | ✉ company@gmail.com | 🌐 www.website.com
+    </div>
+
+</div>
+
+</body>
+</html>

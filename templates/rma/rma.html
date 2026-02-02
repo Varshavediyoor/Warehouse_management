@@ -1,0 +1,260 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "RMA Dashboard" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/rma/rma_dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/user_dashboard_table.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+<div class="rma-dashboard">
+
+      <!-- Header -->
+      <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "RMA " %}</span>
+                {% trans " Dashboard" %}
+            </h1>
+            <p>Monitor returns, QC, inventory & finance impact</p>
+        </div>
+        <div class="wh-header-right">
+          <a href="#" class="btn-back">
+              <i class="bi bi-plus-circle"></i>
+              {% trans "Create RMA" %}
+          </a>
+      
+          <a href="#" class="btn-back">
+              <i class="bi bi-bar-chart"></i>
+              {% trans "Export Report" %}
+          </a>
+      </div>      
+    </div>
+
+    <!-- EXECUTIVE KPI PANELS -->
+    <div class="rma-kpis">
+
+      <div class="kpi-panel blue">
+          <div class="kpi-header blue">
+              <span>Total Returns</span>
+              <i class="bi bi-box-seam kpi-icon"></i>
+          </div>
+          <div class="kpi-value">1,248</div>
+          <div class="kpi-footer blue">All customer returns received</div>
+      </div>
+
+      <div class="kpi-panel amber">
+          <div class="kpi-header orange">
+              <span>Pending QC</span>
+              <i class="bi bi-search kpi-icon"></i>
+          </div>
+          <div class="kpi-value">126</div>
+          <div class="kpi-footer orange">Awaiting quality inspection</div>
+      </div>
+
+      <div class="kpi-panel red">
+          <div class="kpi-header red">
+              <span>QC Failed</span>
+              <i class="bi bi-x-circle kpi-icon"></i>
+          </div>
+          <div class="kpi-value">82</div>
+          <div class="kpi-footer red">Returned to inventory</div>
+      </div>
+
+      <div class="kpi-panel green">
+          <div class="kpi-header green">
+              <span>Refund Pending</span>
+              <i class="bi bi-cash-stack kpi-icon"></i>
+          </div>
+          <div class="kpi-value">64</div>
+          <div class="kpi-footer green">Finance approval required</div>
+      </div>
+
+    </div>
+
+
+
+    <!-- RMA WORKFLOW -->
+    <div class="workflow-card">
+      <h2 class="workflow-title">RMA Processing Workflow</h2>
+
+      <div class="workflow-timeline">
+
+          <div class="workflow-step done">
+              <div class="step-icon">
+                  <i class="bi bi-box-arrow-in-down"></i>
+              </div>
+              <div class="step-label">Returned</div>
+          </div>
+
+          <div class="workflow-step active">
+              <div class="step-icon">
+                  <i class="bi bi-search"></i>
+              </div>
+              <div class="step-label">QC Inspection</div>
+          </div>
+
+          <div class="workflow-step">
+              <div class="step-icon">
+                  <i class="bi bi-clipboard-check"></i>
+              </div>
+              <div class="step-label">Inventory Update</div>
+          </div>
+
+          <div class="workflow-step">
+              <div class="step-icon">
+                  <i class="bi bi-cash-coin"></i>
+              </div>
+              <div class="step-label">Finance Review</div>
+          </div>
+
+          <div class="workflow-step">
+              <div class="step-icon">
+                  <i class="bi bi-arrow-repeat"></i>
+              </div>
+              <div class="step-label">Refund / Replacement</div>
+          </div>
+
+      </div>
+    </div>
+
+
+    <!-- QC & FINANCE RULES -->
+    <div class="rules-card">
+      <h2 class="rules-title">QC & Finance Rules</h2>
+
+      <div class="rules-grid">
+
+          <div class="rule-item danger">
+              <div class="rule-icon">
+                  <i class="bi bi-shield-x"></i>
+              </div>
+              <div class="rule-content">
+                  <h4>No QC Pass</h4>
+                  <p>No Invoice generated and no revenue recognized</p>
+              </div>
+          </div>
+
+          <div class="rule-item info">
+              <div class="rule-icon">
+                  <i class="bi bi-box-seam"></i>
+              </div>
+              <div class="rule-content">
+                  <h4>QC Failed Items</h4>
+                  <p>Automatically returned to inventory stock</p>
+              </div>
+          </div>
+
+          <div class="rule-item success">
+              <div class="rule-icon">
+                  <i class="bi bi-cash-coin"></i>
+              </div>
+              <div class="rule-content">
+                  <h4>COGS Trigger</h4>
+                  <p>Cost of goods booked only after QC approval</p>
+              </div>
+          </div>
+
+          <div class="rule-item warning">
+              <div class="rule-icon">
+                  <i class="bi bi-receipt"></i>
+              </div>
+              <div class="rule-content">
+                  <h4>Refund Processing</h4>
+                  <p>Refunds executed post finance team approval</p>
+              </div>
+          </div>
+
+      </div>
+    </div>
+
+
+<!-------------------- recent activities table ------------------>
+    <div class="recent-activities">
+      <h2>{% trans "Recent Activities" %}</h2>
+
+      <!-- TABLE PREVIEW SECTION -->
+      <div class="dashboard-table-wrap">
+        <div class="table-scroll">
+          <table class="dashboard-table">
+            <thead>
+              <tr>
+                <th>Activity</th>
+                <th>Reference</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>RMA Created</td>
+                <td>RMA-1048</td>
+                <td>₹12,500</td>
+                <td><span class="badge info">Initiated</span></td>
+                <td>Today, 09:20 AM</td>
+              </tr>
+
+              <tr>
+                <td>QC Inspection Completed</td>
+                <td>RMA-1042</td>
+                <td>₹8,300</td>
+                <td><span class="badge success">QC Passed</span></td>
+                <td>Today, 10:05 AM</td>
+              </tr>
+
+              <tr>
+                <td>QC Inspection Failed</td>
+                <td>RMA-1039</td>
+                <td>₹5,750</td>
+                <td><span class="badge warning">QC Failed</span></td>
+                <td>Today, 10:45 AM</td>
+              </tr>
+
+              <tr>
+                <td>Inventory Updated</td>
+                <td>RMA-1039</td>
+                <td>₹5,750</td>
+                <td><span class="badge info">Stock Returned</span></td>
+                <td>Yesterday, 05:30 PM</td>
+              </tr>
+
+              <tr>
+                <td>Refund Approved</td>
+                <td>RMA-1027</td>
+                <td>₹9,200</td>
+                <td><span class="badge success">Finance Approved</span></td>
+                <td>Yesterday, 04:10 PM</td>
+              </tr>
+
+              <tr>
+                <td>Refund Processed</td>
+                <td>RMA-1027</td>
+                <td>₹9,200</td>
+                <td><span class="badge success">Completed</span></td>
+                <td>Yesterday, 06:45 PM</td>
+              </tr>
+
+              <!-- Empty state -->
+              <!--
+              <tr>
+                <td colspan="5" class="no-box">No RMA activities available.</td>
+              </tr>
+              -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+<!-- ---------------------------------------------------------- -->
+
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends "base_user.html" %}
+{% load static i18n %}
+
+{% block title %}Product Tracking Report{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/product_tracking.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="ptr-page">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Product " %}</span>
+                {% trans " Tracking Report" %}
+            </h1>
+            <p>Search and track product stock, locations, and movement history in real time.</p>
+        </div>
+        <div class="wh-header-right">
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- SEARCH CARD -->
+    <div class="ptr-search-card">
+        <form method="get" class="ptr-search-form">
+            <input type="text"
+                name="q"
+                placeholder="Search by Product Name / SKU / Barcode"
+                value="{{ search|default_if_none:'' }}"
+                autofocus>
+
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    {% if report %}
+    <!-- PRODUCT SUMMARY -->
+    <div class="ptr-summary">
+        <div class="summary-card">
+            <h4>{{ report.product.name }}</h4>
+            <span>SKU: {{ report.product.sku }}</span>
+        </div>
+
+        <div class="summary-card">
+            <p>Total Stock</p>
+            <strong>{{ report.total_stock }}</strong>
+        </div>
+
+        <div class="summary-card">
+            <p>Inward Qty</p>
+            <strong>{{ report.inward_qty }}</strong>
+        </div>
+
+        <div class="summary-card">
+            <p>Outward Qty</p>
+            <strong>{{ report.outward_qty }}</strong>
+        </div>
+
+        <div class="summary-card">
+            <p>Picked Qty</p>
+            <strong>{{ report.picked_qty }}</strong>
+        </div>
+
+        <div class="summary-card highlight">
+            <p class="last-p">Unit Price</p>
+            <strong>₹{{ report.product.unit_price }}</strong>
+        </div>
+    </div>
+
+    <!-- CURRENT STOCK TABLE -->
+    <div class="ptr-card">
+        <h3>Current Stock Locations</h3>
+        <div class="table-responsive">
+            <table class="ptr-table">
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th>Category</th>
+                        <th>Batch</th>
+                        <th>Qty</th>
+                        <th>Rack</th>
+                        <th>Zone</th>
+                        <th>Shelf</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in report.stocks %}
+                    <tr>
+                        <td>{{ stock.sku }}</td>
+                        <td>{{ stock.category }}</td>
+                        <td>{{ stock.batch_number|default:"-" }}</td>
+                        <td>{{ stock.quantity }}</td>
+                        <td>{{ stock.rack|default:"-" }}</td>
+                        <td>{{ stock.zone|default:"-" }}</td>
+                        <td>{{ stock.shelf|default:"-" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="empty">No stock found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MOVEMENT HISTORY -->
+    <div class="ptr-card">
+        <h3>Stock Movement History</h3>
+        <div class="table-responsive">
+            <table class="ptr-table dark">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Qty</th>
+                        <th>Reference</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for move in report.movements %}
+                    <tr>
+                        <td>{{ move.moved_at|date:"d-m-Y H:i" }}</td>
+                        <td>{{ move.from_location|default:"-" }}</td>
+                        <td>{{ move.to_location|default:"-" }}</td>
+                        <td>{{ move.quantity }}</td>
+                        <td>{{ move.reference|default:"-" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="empty">No movement history found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% elif search %}
+    <div class="ptr-alert">
+        No product found for <strong>"{{ search }}"</strong>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

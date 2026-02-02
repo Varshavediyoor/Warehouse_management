@@ -1,0 +1,149 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Sales Orders" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/salesofficer/sales_order_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="sales-order-container">
+    <!-- header  -->
+    <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1><span>{% trans "Sales " %}</span> {% trans " Orders" %}</h1>
+      </div>
+      <div class="wh-header-right">          
+          <a href="{% url 'salesofficer_dashboard' %}" class="btn-back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+  </div>
+
+  <!-- META INFO -->
+  <div class="order-meta">
+    <div class="order-meta-content-left">
+      <span class="records-count">
+        {% trans "Total Orders:" %} <strong>{{ orders|length }}</strong>
+      </span>
+      <span class="generated-date">
+        <i class="bi bi-clock"></i>
+        {% trans "Updated on:" %} {{ now|date:"d M Y, H:i" }}
+      </span>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-scroll-wrapper">
+    <div class="table-container">
+
+      <table class="table-content" id="tableContent">
+        <thead>
+          <tr>
+            <th>{% trans "Order No" %}</th>
+            <th>{% trans "Customer Name" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Order Date" %}</th>
+            <th>{% trans "Actions" %}</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for order in orders %}
+          <tr>
+            <td>{{ order.order_no }}</td>
+            <td>{{ order.customer_name }}</td>
+
+            <!-- STATUS -->
+            <td>
+              {% if order.status %}
+                <span class="status-badge status-{{ order.status|lower }}">
+                  {{ order.status }}
+                </span>
+              {% else %}
+                <span class="status-badge status-pending">
+                  {% trans "Pending" %}
+                </span>
+              {% endif %}
+            </td>
+
+            <td>{{ order.order_date|date:"Y-m-d H:i" }}</td>
+
+            <!-- ACTIONS -->
+            <td>
+              <div class="action-buttons sales">
+                {% with order_status=order.status|default:""|lower %}
+
+                <!-- VIEW (Always visible) -->
+                <a href="{% url 'salesofficer:view_sales_order' order.id %}"
+                   class="action-btn normal">
+                  View
+                </a>
+
+                <!-- DRAFT -->
+                {% if order_status == "draft" %}
+                  <a href="{% url 'salesofficer:submit_sales_order' order.id %}"
+                     class="action-btn approve">
+                    Submit
+                  </a>
+
+                <!-- SUBMITTED -->
+                {% elif order_status == "submitted" %}
+                  {% if "Approve Sales Order" in user_functions %}
+                    <a href="{% url 'salesofficer:approve_sales_order' order.id %}"
+                       class="action-btn normal">
+                      Approve
+                    </a>
+                  {% else %}
+                    <span class="text-muted">Waiting for approval</span>
+                  {% endif %}
+
+                <!-- APPROVED -->
+                {% elif order_status == "approved" %}
+                  <span class="text-success">Approved</span>
+
+                <!-- READY FOR DELIVERY -->
+                {% elif order_status == "ready_for_delivery" %}
+                  <a href="{% url 'salesofficer:create_delivery_assignment' order.id %}"
+                     class="action-btn normal">
+                    Assign Delivery
+                  </a>
+
+                <!-- DISPATCHED -->
+                {% elif order_status == "dispatched" %}
+                  <span class="text-info">Dispatched</span>
+
+                <!-- OTHER -->
+                {% else %}
+                  <span class="text-secondary">
+                    {{ order.status|default:"N/A" }}
+                  </span>
+                {% endif %}
+
+              {% endwith %}
+              </div>
+            </td>
+          </tr>
+
+          {% empty %}
+          <tr>
+            <td colspan="5" class="no-data">
+              {% trans "No Sales Orders Found" %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </div>
+
+    <div class="pagination-container" id="tablePagination"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

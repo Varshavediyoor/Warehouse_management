@@ -1,0 +1,314 @@
+{% extends "base_user.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Inbound QC" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/inbound_qc_supplier.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="supplier-container">
+
+    <!-- HEADER -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Inbound " %}</span>
+                {% trans "Quality Check" %}
+            </h1>
+            <p><strong>{% trans "PO Number:" %}</strong> {{ po.po_number }}</p>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- PO ITEM TABLE -->
+    <div class="table-scroll-x po-table-wrapper">
+        <table class="po-item-table">
+            <thead class="po-table-head">
+                <tr>
+                    <th>S.No</th>
+                    <th>{% trans "Product Name" %}</th>
+                    <th>{% trans "Category" %}</th>
+                    <th>{% trans "Ordered Qty" %}</th>
+                    <th>{% trans "Unit Price" %}</th>
+                    <th>{% trans "Total Price" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td class="product-name">{{ item.product.name }}</td>
+                    <td>{{ item.category }}</td>
+                    <td>{{ item.quantity_ordered }}</td>
+                    <td>₹ {{ item.unit_price }}</td>
+                    <td class="total-price">₹ {{ item.line_total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- QC FORM -->
+    <form method="post" enctype="multipart/form-data" class="qc-form">
+        {% csrf_token %}
+
+        <div class="form-grid">
+
+            <!-- PO MATCH -->
+            <div class="qc-item">
+                <div class="qc-check">
+                    <input type="checkbox" name="po_matched" {% if qc and qc.po_matched %}checked{% endif %}>
+                    <label>{% trans "PO Matched" %}</label>
+                </div>
+                <div class="qc-image">
+                    <img id="po-preview" class="preview-img">
+                    <button type="button" class="camera-btn" onclick="openCamera('po')">📷 {% trans "Take Photo" %}</button>
+                    <input type="file" name="po_matched_image" id="po-input" hidden>
+                    <textarea name="po_matched_remark" placeholder="{% trans 'PO match remarks' %}">{{ qc.po_matched_remark }}</textarea>
+                </div>
+            </div>
+
+            <!-- INVOICE -->
+            <div class="qc-item">
+                <div class="qc-check">
+                    <input type="checkbox" name="invoice_verified" {% if qc and qc.invoice_verified %}checked{% endif %}>
+                    <label>{% trans "Invoice Verified" %}</label>
+                </div>
+                <div class="qc-image">
+                    <img id="invoice-preview" class="preview-img">
+                    <button type="button" class="camera-btn" onclick="openCamera('invoice')">📷 {% trans "Take Photo" %}</button>
+                    <input type="file" name="invoice_image" id="invoice-input" hidden>
+                    <textarea name="invoice_remark" placeholder="{% trans 'Invoice remarks' %}">{{ qc.invoice_remark }}</textarea>
+                </div>
+            </div>
+
+            {% if has_furniture %}
+            <div class="qc-item">
+                <div class="qc-check">
+                    <input type="checkbox" name="furniture_ok" {% if qc and qc.furniture_ok %}checked{% endif %}>
+                    <label>{% trans "Furniture Condition OK" %}</label>
+                </div>
+                <div class="qc-image">
+                    <img id="furniture-preview" class="preview-img">
+                    <button type="button" class="camera-btn" onclick="openCamera('furniture')">📷 {% trans "Take Photo" %}</button>
+                    <input type="file" name="furniture_image" id="furniture-input" hidden>
+                    <textarea name="furniture_remark">{{ qc.furniture_remark }}</textarea>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if has_electronics %}
+            <div class="qc-item">
+                <div class="qc-check">
+                    <input type="checkbox" name="electronics_ok" {% if qc and qc.electronics_ok %}checked{% endif %}>
+                    <label>{% trans "Electronics Functional" %}</label>
+                </div>
+                <div class="qc-image">
+                    <img id="electronics-preview" class="preview-img">
+                    <button type="button" class="camera-btn" onclick="openCamera('electronics')">📷 {% trans "Take Photo" %}</button>
+                    <input type="file" name="electronics_image" id="electronics-input" hidden>
+                    <textarea name="electronics_remark">{{ qc.electronics_remark }}</textarea>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if has_expiry %}
+            <div class="qc-item">
+                <div class="qc-check">
+                    <input type="checkbox" name="expiry_ok" {% if qc and qc.expiry_ok %}checked{% endif %}>
+                    <label>{% trans "Expiry Date OK" %}</label>
+                </div>
+                <div class="qc-image">
+                    <img id="expiry-preview" class="preview-img">
+                    <button type="button" class="camera-btn" onclick="openCamera('expiry')">📷 {% trans "Take Photo" %}</button>
+                    <input type="file" name="expiry_image" id="expiry-input" hidden>
+                    <textarea name="expiry_remark">{{ qc.expiry_remark }}</textarea>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- QUANTITY -->
+            <div class="qc-item">
+                <div class="qc-check">
+                    <input type="checkbox" name="quantity_ok" {% if qc and qc.quantity_ok %}checked{% endif %}>
+                    <label>{% trans "Quantity OK" %}</label>
+                </div>
+                <div class="qc-image">
+                    <img id="quantity-preview" class="preview-img">
+                    <button type="button" class="camera-btn" onclick="openCamera('quantity')">📷 {% trans "Take Photo" %}</button>
+                    <input type="file" name="quantity_image" id="quantity-input" hidden>
+
+                    <div class="quantity-grid">
+                        <input type="number" name="received_qty" placeholder="Received Qty" value="{{ qc.received_qty }}">
+                        <input type="number" name="accepted_qty" placeholder="Accepted Qty" value="{{ qc.accepted_qty }}">
+                        <input type="number" name="rejected_qty" placeholder="Rejected Qty" value="{{ qc.rejected_qty }}">
+                    </div>
+
+                    <textarea name="quantity_remark">{{ qc.quantity_remark }}</textarea>
+                </div>
+            </div>
+
+            <!-- PACKAGING -->
+            <div class="qc-item">
+                <div class="qc-check">
+                    <input type="checkbox" name="packaging_ok" {% if qc and qc.packaging_ok %}checked{% endif %}>
+                    <label>{% trans "Packaging OK" %}</label>
+                </div>
+                <div class="qc-image">
+                    <img id="packaging-preview" class="preview-img">
+                    <button type="button" class="camera-btn" onclick="openCamera('packaging')">📷 {% trans "Take Photo" %}</button>
+                    <input type="file" name="packaging_image" id="packaging-input" hidden>
+                    <textarea name="packaging_remark">{{ qc.packaging_remark }}</textarea>
+                </div>
+            </div>
+
+            <!-- DAMAGE -->
+            <div class="qc-item">
+                <div class="qc-check">
+                    <input type="checkbox" name="damage_found" {% if qc and qc.damage_found %}checked{% endif %}>
+                    <label>{% trans "Damage Found" %}</label>
+                </div>
+                <div class="qc-image">
+                    <img id="damage-preview" class="preview-img">
+                    <button type="button" class="camera-btn" onclick="openCamera('damage')">📷 {% trans "Take Photo" %}</button>
+                    <input type="file" name="damage_image" id="damage-input" hidden>
+                    <textarea name="damage_remark">{{ qc.damage_remark }}</textarea>
+                </div>
+            </div>
+
+            <!-- BARCODE -->
+            <div class="qc-item">
+                <div class="qc-check">
+                    <input type="checkbox" name="barcode_verified" {% if qc and qc.barcode_verified %}checked{% endif %}>
+                    <label>{% trans "Barcode Verified" %}</label>
+                </div>
+                <div class="qc-image">
+                    <img id="barcode-preview" class="preview-img">
+                    <button type="button" class="camera-btn" onclick="openCamera('barcode')">📷 {% trans "Take Photo" %}</button>
+                    <input type="file" name="barcode_image" id="barcode-input" hidden>
+                    <textarea name="barcode_remark">{{ qc.barcode_remark }}</textarea>
+                </div>
+            </div>
+
+            {% if has_temperature %}
+            <div class="qc-item">
+                <div class="qc-check">
+                    <input type="checkbox" name="temperature_ok" {% if qc and qc.temperature_ok %}checked{% endif %}>
+                    <label>{% trans "Temperature Maintained" %}</label>
+                </div>
+                <div class="qc-image">
+                    <img id="temperature-preview" class="preview-img">
+                    <button type="button" class="camera-btn" onclick="openCamera('temperature')">📷 {% trans "Take Photo" %}</button>
+                    <input type="file" name="temperature_image" id="temperature-input" hidden>
+                    <textarea name="temperature_remark">{{ qc.temperature_remark }}</textarea>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- STATUS -->
+            <div class="field">
+                <label>{% trans "Inbound QC Status" %}</label>
+                <select name="qc_status" required>
+                    <option value="">{% trans "-- Select Status --" %}</option>
+                    <option value="PASSED" {% if qc.qc_status == "PASSED" %}selected{% endif %}>Passed</option>
+                    <option value="FAILED" {% if qc.qc_status == "FAILED" %}selected{% endif %}>Failed</option>
+                    <option value="PENDING" {% if qc.qc_status == "PENDING" %}selected{% endif %}>Pending</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="action-btn submit">
+                {% trans "Submit Inbound QC" %}
+            </button>
+        </div>
+    </form>
+
+</div>
+
+<!-- CAMERA MODAL -->
+<div class="camera-modal" id="cameraModal">
+    <div class="camera-box">
+        <video id="cameraVideo" autoplay playsinline></video>
+        <canvas id="cameraCanvas" hidden></canvas>
+        <div class="camera-actions">
+            <button type="button" class="cancel-btn" onclick="closeCamera()">✖ Cancel</button>
+            <button type="button" class="retake-btn" onclick="retakePhoto()" hidden>🔄 Retake</button>
+            <button type="button" class="confirm-btn" onclick="confirmPhoto()" hidden>✔ Confirm</button>
+            <button type="button" class="capture-btn" onclick="capturePhoto()">📸 Capture</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let stream, activeInput, activePreview;
+
+const modal = document.getElementById('cameraModal');
+const video = document.getElementById('cameraVideo');
+const canvas = document.getElementById('cameraCanvas');
+
+function openCamera(prefix) {
+    activeInput = document.getElementById(prefix + '-input');
+    activePreview = document.getElementById(prefix + '-preview');
+    modal.style.display = 'flex';
+
+    navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+        audio: false
+    }).then(s => {
+        stream = s;
+        video.srcObject = stream;
+    });
+}
+
+function capturePhoto() {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+
+    video.hidden = true;
+    canvas.hidden = false;
+
+    document.querySelector('.capture-btn').hidden = true;
+    document.querySelector('.confirm-btn').hidden = false;
+    document.querySelector('.retake-btn').hidden = false;
+}
+
+function confirmPhoto() {
+    canvas.toBlob(blob => {
+        const file = new File([blob], 'qc.jpg', { type: 'image/jpeg' });
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        activeInput.files = dt.files;
+
+        activePreview.src = URL.createObjectURL(file);
+        activePreview.classList.add('show');
+
+        closeCamera();
+    }, 'image/jpeg', 0.9);
+}
+
+function retakePhoto() {
+    canvas.hidden = true;
+    video.hidden = false;
+    document.querySelector('.capture-btn').hidden = false;
+    document.querySelector('.confirm-btn').hidden = true;
+    document.querySelector('.retake-btn').hidden = true;
+}
+
+function closeCamera() {
+    modal.style.display = 'none';
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    video.hidden = false;
+    canvas.hidden = true;
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Warehouse Locations" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/inventory_manager/location/location_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="warehouse_location_container">
+    <!-- header  -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Warehouse" %}</span> {% trans " Locations" %}</h1>
+        </div>
+        <div class="wh-header-right">       
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="meta-action-buttons">
+        <a href="{% url 'location_create' %}" class="add-btn">+ Add New Location</a>   
+    </div>
+
+    <!-- table  -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Warehouse</th>
+                        <th>Location</th>
+                        <th>Type</th>
+                        <th>FIFO</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for location in locations %}
+                    <tr>
+                        <td>{{ location.company.name }}</td>
+                        <td>{{ location.warehouse.name }}</td>
+                        <td>{{ location.full_path }}</td>
+                        <td>{{ location.location_type }}</td>
+                        <td>{{ location.fifo_enabled }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{% url 'location_update' location.id %}" class="action-btn edit">Edit</a>
+                                <a href="{% url 'location_delete' location.id %}" class="action-btn delete">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align:center;">No locations found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

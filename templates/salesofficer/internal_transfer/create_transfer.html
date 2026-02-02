@@ -1,0 +1,105 @@
+{% extends "base_user.html" %}
+
+{% block content %}
+<h2>Create Internal Transfer Request</h2>
+
+<form id="transferForm" method="post">
+    {% csrf_token %}
+
+    <!-- From Warehouse -->
+    <label for="from_warehouse">From Warehouse</label>
+    <select name="from_warehouse" id="from_warehouse" required>
+        <option value="">Select Warehouse</option>
+        {% for wh in all_warehouses %}
+            <option value="{{ wh.code }}">{{ wh.name }} ({{ wh.code }})</option>
+        {% endfor %}
+    </select>
+
+    <!-- To Warehouse -->
+    <label for="to_warehouse">To Warehouse</label>
+    <select name="to_warehouse" required>
+        <option value="">Select Warehouse</option>
+        {% for wh in central_warehouses %}
+            <option value="{{ wh.code }}">{{ wh.name }} ({{ wh.code }})</option>
+        {% endfor %}
+    </select>
+
+    <!-- Product Table -->
+    <h3>Products</h3>
+    <table id="productTable">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <select name="products[]" class="product-select" required>
+                        <option value="">Select Product</option>
+                        {% for p in products %}
+                            <option value="{{ p.id }}">{{ p.name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td><input type="number" name="quantities[]" min="1" required></td>
+                <td><button type="button" onclick="removeRow(this)">Remove</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="button" onclick="addRow()">Add Product</button>
+
+    <br><br>
+    <button type="submit">Submit Transfer Request</button>
+</form>
+
+<script>
+let productOptionsHTML = document.querySelector('.product-select').innerHTML;
+
+// Add a new row
+function addRow() {
+    let table = document.getElementById('productTable').getElementsByTagName('tbody')[0];
+    let newRow = table.rows[0].cloneNode(true);
+    newRow.querySelectorAll('input, select').forEach(el => el.value = '');
+    newRow.querySelector('.product-select').innerHTML = productOptionsHTML;
+    table.appendChild(newRow);
+}
+
+// Remove a row
+function removeRow(button) {
+    let table = document.getElementById('productTable').getElementsByTagName('tbody')[0];
+    if(table.rows.length > 1){
+        button.closest('tr').remove();
+    }
+}
+
+// AJAX submit
+document.addEventListener('DOMContentLoaded', function(){
+    document.getElementById('transferForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        console.log("Submitting transfer request...");
+
+        fetch("{% url 'salesofficer:create_transfer' %}", {
+            method: 'POST',
+            body: new FormData(this)
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log("Response:", data);
+            if(data.success){
+                alert('Transfer request created successfully!');
+                window.location.href = "{% url 'salesofficer:a_requests' %}";
+            } else {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(err => {
+            console.error("AJAX error:", err);
+            alert("An unexpected error occurred!");
+        });
+    });
+});
+</script>
+{% endblock %}

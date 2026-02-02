@@ -1,0 +1,53 @@
+<h2>Start Picking – Delivery Order {{ delivery_order.id }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <!-- PICK METHOD -->
+    <div class="mb-3">
+        <label class="form-label">Pick Method</label>
+        <select id="pick_method" class="form-control" onchange="togglePickType()" required>
+            <option value="">-- Select Method --</option>
+            <option value="MANUAL">Manual</option>
+            <option value="SHIPPING">Shipping</option>
+        </select>
+    </div>
+
+    <!-- PICK TYPE (ONLY FOR SHIPPING) -->
+    <div class="mb-3" id="pickTypeDiv" style="display:none;">
+        <label class="form-label">Pick Type</label>
+        <select id="shipping_pick_type" class="form-control">
+            <option value="SINGLE">Single Step (Pick → Ship)</option>
+            <option value="TWO">Two Step (Pick → Pack → Ship)</option>
+            <option value="THREE">Three Step (Pick → Pack → QC → Ship)</option>
+        </select>
+    </div>
+
+    <!-- ACTUAL FIELD SENT TO BACKEND -->
+    <input type="hidden" name="pick_type" id="final_pick_type">
+
+    <button type="submit" class="btn btn-primary mt-3"
+            onclick="setFinalPickType()">
+        Start Picking
+    </button>
+</form>
+
+<script>
+function togglePickType() {
+    const method = document.getElementById("pick_method").value;
+    document.getElementById("pickTypeDiv").style.display =
+        method === "SHIPPING" ? "block" : "none";
+}
+
+function setFinalPickType() {
+    const method = document.getElementById("pick_method").value;
+
+    if (method === "MANUAL") {
+        document.getElementById("final_pick_type").value = "MANUAL";
+    } else {
+        document.getElementById("final_pick_type").value =
+            document.getElementById("shipping_pick_type").value;
+    }
+}
+</script>
+

@@ -1,0 +1,90 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Create Vendor Return" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/inventory_manager/vendor_return/create.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="vendor-return-page">
+    <!-- header  -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Create" %}</span> {% trans "Vendor Return" %} – {{ grn.grn_number }}</h1>
+        </div>
+        <div class="wh-header-right">          
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+<div class="page-card">
+    <h3 class="supplier-info">
+    <strong>Supplier:</strong> {{ grn.supplier.supplier_name }}
+    </h3>
+
+    {% if messages %}
+    <ul class="alert-messages">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post">
+    {% csrf_token %}
+
+    <div class="form-group">
+        <label for="reason">Reason for Return:</label>
+        <input type="text" id="reason" name="reason" required>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="return-table">
+        <thead>
+            <tr>
+            <th>Product</th>
+            <th>Batch No</th>
+            <th>Qty Received</th>
+            <th>Qty to Return</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in grn.items.all %}
+            <tr>
+            <td>{{ item.product_name }}</td>
+            <td>{{ item.batch_no }}</td>
+            <td>{{ item.quantity_received }}</td>
+            <td>
+                <input
+                type="number"
+                name="quantity_{{ item.id }}"
+                min="0"
+                max="{{ item.quantity_received }}"
+                value="0"
+                >
+            </td>
+            </tr>
+            {% empty %}
+            <tr>
+            <td colspan="4" class="no-data">No items found in this GRN.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
+
+    <div class="action-buttons">
+        <button type="submit" class="action-btn">
+        Create Vendor Return
+        </button>
+    </div>
+    </form>
+</div>
+
+</div>
+  
+{% endblock %}

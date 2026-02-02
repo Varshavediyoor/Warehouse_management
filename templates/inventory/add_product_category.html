@@ -1,0 +1,48 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Add Product Category" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/inventory_manager/add_product_category.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="category-page">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Add" %}</span>
+                {% trans "Product Category" %}
+            </h1>
+            <p class="subtitle">{% trans "Create and manage product categories easily" %}</p>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+  <!-- Form Card -->
+  <div class="category-card">
+    <form method="POST" class="category-form">
+      {% csrf_token %}
+
+      <div class="form-grid">
+        {{ form.as_p }}
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-save">
+          <i class="bi bi-check-circle"></i> {% trans "Save Category" %}
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}
+

@@ -1,0 +1,92 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}Shipping Details{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1>Shipping Details – DO {{ delivery_order.delivery_no }}</h1>
+        <p>Shipment ID: {{ shipment.id }} | Status: {{ shipment.status }} {% if shipment.dispatched %}✅ Dispatched{% endif %}</p>
+    </div>
+
+    <!-- CARRIER & TRACKING -->
+    <div class="panel">
+        <h2>Carrier & Shipment</h2>
+        <p><strong>Carrier:</strong> {{ shipment.carrier.name }}</p>
+        <p><strong>Delivery Rate:</strong> {{ shipment.delivery_rate }}</p>
+        <p><strong>Expected Delivery:</strong> {{ shipment.expected_delivery_date }}</p>
+        <p><strong>Tracking Number:</strong> {{ shipment.tracking_number }}</p>
+    </div>
+
+    <!-- BOXES -->
+    <div class="panel">
+        <h2>Boxes</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Box No</th>
+                    <th>Weight</th>
+                    <th>Dimensions (L×W×H)</th>
+                    <th>Items Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for box in boxes %}
+                <tr>
+                    <td>Box-{{ box.id }}</td>
+                    <td>{{ box.weight }} kg</td>
+                    <td>{{ box.length }}×{{ box.width }}×{{ box.height }}</td>
+                    <td>{{ box.items.count }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">No boxes created</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ITEMS -->
+    <div class="panel">
+        <h2>Packed Items</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>SKU</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Box</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in packed_items %}
+                <tr>
+                    <td>{{ item.order_item.sku }}</td>
+                    <td>{{ item.order_item.product_name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{% if item.box %}Box-{{ item.box.id }}{% else %}-{% endif %}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">No packed items</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="panel">
+        {% if not shipment.dispatched %}
+            <form method="post" action="{% url 'warehouse_manager:dispatch_shipment' shipment.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-primary">Dispatch Shipment</button>
+            </form>
+        {% else %}
+            <p class="text-success">Shipment dispatched ✅</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

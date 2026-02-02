@@ -1,0 +1,100 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "User Profile" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/user_profile.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Profile Header Section -->
+<section class="profile-header-section">
+  <div class="profile-header-content">
+    
+    <!-- Left: Avatar + Info -->
+    <div class="profile-header-left">
+      <div class="profile-avatar">
+        {% if user.userprofile.profile_photo %}
+          <img src="{{ user.userprofile.profile_photo.url }}" alt="{% trans 'User Image' %}">
+        {% else %}
+          <img src="{% static 'images/default-profile-icon.png' %}" alt="{% trans 'User Image' %}">
+        {% endif %}
+      </div>
+
+      <div class="profile-info">
+        <h2 class="username">{{ request.user.first_name }} {{ request.user.last_name }}</h2>
+        <p class="user-role">{{ user.userprofile.get_role_display }}</p>
+        <a href="{% url 'user_profile_edit' %}" class="btn-edit-profile"><i class="bi bi-pencil-fill"></i> {% trans "Edit Profile" %}</a>
+      </div>
+    </div>
+
+    <!-- Right: Personal Information -->
+    <div class="profile-header-right">
+      <div class="profile-section">
+        <h3 class="section-title"><i class="bi bi-person-circle"></i> {% trans "Personal Information" %}</h3>
+        <div class="details-grid">
+          <div class="detail-card">
+            <span class="label">{% trans "Full Name" %}</span>
+            <span class="value">{{ request.user.first_name }} {{ request.user.last_name }}</span>
+          </div>
+          <div class="detail-card">
+            <span class="label">{% trans "Email" %}</span>
+            <span class="value">{{ request.user.email }}</span>
+          </div>
+          <div class="detail-card">
+            <span class="label">{% trans "Phone Number" %}</span>
+            <span class="value">{{ user.userprofile.phone_number|default:"Not Set" }}</span>
+          </div>
+          <div class="detail-card">
+            <span class="label">{% trans "Designation" %}</span>
+            <span class="value">{{ user.userprofile.get_role_display }}</span>
+          </div>
+          <div class="detail-card">
+            <span class="label">{% trans "Gender" %}</span>
+            <span class="value">{{ user.userprofile.gender|default:"-" }}</span>
+          </div>
+          <div class="detail-card">
+            <span class="label">{% trans "Nationality" %}</span>
+            <span class="value">{{ user.userprofile.nationality|default:"-" }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Profile Settings Section -->
+<section class="profile-content">
+  <div class="profile-section">
+    <h3 class="section-title"><i class="bi bi-gear"></i> {% trans "Account Settings" %}</h3>
+    <div class="settings-list">
+<div class="setting-item">
+        <div class="setting-info">
+          <h4>{% trans "Change Password" %}</h4>
+          <p>{% trans "Update your account password regularly for better security." %}</p>
+        </div>
+        <a href="{% url 'reset_password' %}" class="btn-setting">
+    <i class="bi bi-lock"></i> {% trans "Update" %}
+  </a>
+      </div>
+      <div class="setting-item">
+        <div class="setting-info">
+          <h4>{% trans "Notification Preferences" %}</h4>
+          <p>{% trans "Choose how you receive updates and notifications." %}</p>
+        </div>
+        <button class="btn-setting"><i class="bi bi-bell"></i> {% trans "Manage" %}</button>
+      </div>
+      <div class="setting-item">
+        <div class="setting-info">
+          <h4>{% trans "Language" %}</h4>
+          <p>{% trans "Select your preferred language for the dashboard." %}</p>
+        </div>
+        <button class="btn-setting"><i class="bi bi-translate"></i> {% trans "Change" %}</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

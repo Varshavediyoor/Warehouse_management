@@ -1,0 +1,97 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% trans "Box Label" %} - {{ box.box_no }}</title>
+
+    <link rel="stylesheet" href="{% static 'css/user/warehouse_manager/box_label.css' %}">
+</head>
+
+<body>
+
+<div class="label-preview">
+
+    <div class="label">
+
+        <!-- HEADER -->
+        <div class="label-header">
+            <div class="company">
+                <img src="{% static 'images/logo-png.png' %}" alt="Company Logo">
+                <div>
+                    <h1>Codedu Software Technologies</h1>
+                    <span>{% trans "Internal Packing Identification" %}</span>
+                </div>
+            </div>
+
+            <div class="box-id">
+                <strong>{% trans "BOX NO" %}</strong>
+                <span>{{ box.box_no }}</span>
+            </div>
+        </div>
+
+        <!-- META INFORMATION -->
+        <div class="meta-grid">
+            <div class="meta-card">
+                <label>{% trans "Weight" %}</label>
+                <p>{{ box.weight }} kg</p>
+            </div>
+
+            <div class="meta-card">
+                <label>{% trans "Items Count" %}</label>
+                <p>{{ box.items.count }}</p>
+            </div>
+
+            <div class="meta-card">
+                <label>{% trans "Dimensions (cm)" %}</label>
+                <p>{{ box.length }} × {{ box.width }} × {{ box.height }}</p>
+            </div>
+
+            <div class="meta-card">
+                <label>{% trans "Box ID" %}</label>
+                <p>{{ box.box_no }}</p>
+            </div>
+        </div>
+
+        <!-- ITEMS LIST -->
+        <div class="items-section">
+            <h3>{% trans "Packed Items" %}</h3>
+
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "SKU" %}</th>
+                        <th>{% trans "Product Name" %}</th>
+                        <th>{% trans "Qty" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in box.items.all %}
+                        <tr>
+                            <td>{{ item.order_item.product.sku }}</td>
+                            <td>{{ item.order_item.product.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="empty">
+                                {% trans "No items packed in this box." %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="label-footer">
+            <p>{% trans "Scan & Verify Before Dispatch" %}</p>
+            <small>{% trans "Warehouse Use Only" %}</small>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

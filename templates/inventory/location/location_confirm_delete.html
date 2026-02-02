@@ -1,0 +1,36 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Confirm Delete Location" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/inventory_manager/location/location_confirm_delete.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="delete-modal-content">
+    <h3>
+        <span>{% trans "Delete" %}</span> {% trans "Location" %}
+    </h3>
+
+    <p>
+        {% trans "Are you sure you want to delete the location" %}
+        <strong>{{ location.full_path }}</strong>?
+    </p>
+
+    <div class="action-buttons">
+        <a href="{% url 'location_list' %}" class="action-btn cancel">
+            {% trans "Cancel" %}
+        </a>
+
+        <form method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="action-btn confirm">
+                {% trans "Yes, Delete" %}
+            </button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

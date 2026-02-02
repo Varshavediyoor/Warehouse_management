@@ -1,0 +1,48 @@
+{% extends 'base_admin.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Assign Permissions" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/assign_roles.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="assign-container">
+
+  <!-- Header -->
+  <div class="assign-header">
+    <div class="assign-header-left">
+      <h1>{% trans "Assign" %} <span>{% trans "Permissions" %}</span></h1>
+      <p class="subtext">{% trans "Select and manage permissions for the role" %}: <strong>{{ role }}</strong></p>
+    </div>
+    <a href="{% url 'role_list' %}" class="btn-back">
+      <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+    </a>
+  </div>
+
+  <!-- Form Container -->
+  <div class="assign-card">
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="checkbox-grid">
+        {% for f in all_functions %}
+        <div class="checkbox-item">
+            <input type="checkbox" id="func_{{ f.id }}" name="functions" value="{{ f.id }}"
+                   {% if f.id in assigned_ids %}checked{% endif %}>
+            <label for="func_{{ f.id }}">{{ f.name }}</label>
+        </div>
+        {% endfor %}
+      </div>        
+      <div class="submit-section">
+        <button type="submit" class="btn-submit">
+            <i class="bi bi-check2-circle"></i> {% trans "Save Permissions" %}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

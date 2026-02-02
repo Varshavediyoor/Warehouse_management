@@ -1,0 +1,117 @@
+{% extends "base_user.html" %}
+{% load static %}
+{% load price_filters %}
+{% block title %}Inbound QC Rejected{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Header -->
+  <div class="alert alert-danger">
+    <h4 class="mb-1">❌ Inbound Quality Check Rejected</h4>
+    <p class="mb-0">
+      <strong>PO Number:</strong> {{ po.po_number }} |
+      <strong>Status:</strong> REJECTED
+    </p>
+  </div>
+
+  <!-- Summary -->
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <div class="card border-danger">
+        <div class="card-body">
+          <p><strong>Total Ordered Qty:</strong> {{ qc.approved_quantity|add:qc.damaged_quantity }}</p>
+          <p class="text-danger">
+            <strong>Damaged Qty:</strong> {{ qc.damaged_quantity }}
+          </p>
+          <p class="text-success">
+            <strong>Approved Qty:</strong> {{ qc.approved_quantity }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rejected Items Table -->
+  <div class="card">
+    <div class="card-header bg-danger text-white">
+      Rejected / Partially Approved Items
+    </div>
+
+    <div class="card-body p-0">
+      <table class="table table-bordered mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>S.No</th>
+            <th>Product Name</th>
+            <th>Ordered Qty</th>
+            <th>Approved Qty</th>
+            <th>Unit Price</th>
+            <th>Approved Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>
+              {% if forloop.first %}
+                {{ qc.approved_quantity }}
+              {% else %}
+                {{ item.quantity }}
+              {% endif %}
+            </td>
+            <td>₹ {{ item.unit_price }}</td>
+            <td>
+              ₹ {{ item.quantity|multiply_price:item.unit_price }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- QC Images -->
+  <div class="card mt-4">
+    <div class="card-header">
+      QC Evidence Images
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+
+        {% if qc.damage_image %}
+        <div class="col-md-3 text-center">
+          <p class="mb-1 text-danger">Damage Proof</p>
+          <img src="{{ qc.damage_image.url }}" class="img-fluid img-thumbnail">
+        </div>
+        {% endif %}
+
+        {% if qc.quantity_image %}
+        <div class="col-md-3 text-center">
+          <p class="mb-1">Quantity Check</p>
+          <img src="{{ qc.quantity_image.url }}" class="img-fluid img-thumbnail">
+        </div>
+        {% endif %}
+
+        {% if qc.packaging_image %}
+        <div class="col-md-3 text-center">
+          <p class="mb-1">Packaging</p>
+          <img src="{{ qc.packaging_image.url }}" class="img-fluid img-thumbnail">
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Remarks -->
+  <div class="alert alert-danger mt-4">
+    <strong>QC Remarks:</strong><br>
+    {{ qc.remarks }}
+  </div>
+
+</div>
+{% endblock %}

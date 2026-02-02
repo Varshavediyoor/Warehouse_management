@@ -1,0 +1,691 @@
+:root {
+    --blue: #2563eb;
+    --green: #16a34a;
+    --red: #dc2626;
+    --orange: #f97316;
+    --purple: #7c3aed;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #1e293b;
+}
+
+.rma-dashboard{
+    /* Animation */
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(25px) scale(0.98);
+        filter: blur(6px);
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+/* ---------------------------- Header ---------------------------- */
+
+.wh-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  
+  @keyframes slideFromRight {
+    0% {
+    transform: translateX(80px); /* Start slightly off-screen to the right */
+    opacity: 0;
+    }
+    100% {
+    transform: translateX(0); /* End in place */
+    opacity: 1;
+    }
+    }
+  
+  .wh-header-section h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c4c71;
+  
+    animation: slideFromRight 0.9s ease-out forwards;
+    opacity: 0; /* Start invisible */
+  }
+  
+  .wh-header-section h1 span {
+    color: #2c8cfb;
+  }
+  
+  .wh-header-section p{
+    font-size: 13px;
+  }
+  
+  .wh-header-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+  }
+  
+  .btn-back {
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border-radius: 30px;
+    color: #fff;
+    padding: .6rem 1rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden; /* ✅ Keeps shine animation inside button */
+    position: relative;
+  
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  
+  .btn-back:hover {
+    transform: scale(1.05);
+  }
+    
+  .btn-back::before {
+    content: "";
+    position: absolute;
+    width: 80px; /* ✅ Slightly smaller for smooth edge transition */
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+    
+  .btn-back:hover::before {
+    animation: shine 1.5s ease-out infinite;
+  }
+    
+  @keyframes shine {
+    0% {
+        left: -80px;
+    }
+    60% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+  }
+  
+  
+  @media (max-width: 845px) {
+    .wh-header-section {
+        margin-top: 0rem;
+    }
+  
+  .wh-header-section h1{
+    font-size: 28px;
+  }
+  
+  .wh-header-right{
+    gap: 0.5rem;
+  }
+  
+  .wh-header-right a{
+    font-size: 12px;
+    padding: .5rem 1rem;
+  }
+  }
+  
+  @media (max-width: 670px) {
+    .wh-header-section h1{
+      font-size: 26px;
+      max-width: 400px;
+    }
+  
+    .wh-header-section p{
+      font-size: 12px;
+    }
+  
+    .wh-header-right{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .wh-header-right a{
+        width: 140px;
+    }
+  
+  }
+  
+  @media (max-width: 550px) {
+    .wh-header-section h1{
+      font-size: 20px;
+      max-width: 350px;
+    }
+    .wh-header-left p{
+      max-width: 200px;
+    }
+
+    .wh-header-right a{
+        font-size: 11px;
+        padding: .4rem .5rem;
+        width: 110px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .wh-header-section h1{
+      font-size: 20px;
+      max-width: 250px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .wh-header-section h1{
+      font-size: 20px;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .wh-header-section h1{
+      font-size: 16px;
+      max-width: 200px;
+    }
+  }
+
+  /* -------------------------------------------------------- */
+
+/* ===============================
+   EXECUTIVE KPI PANELS
+================================ */
+
+.rma-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    margin-bottom: 1rem;
+}
+
+/* PANEL BASE */
+.kpi-panel {
+    position: relative;
+    padding: 26px 24px 22px;
+    border-radius: 20px;
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    box-shadow:
+        0 20px 45px rgba(15, 23, 42, 0.08),
+        inset 0 0 0 1px rgba(255,255,255,0.8);
+    transition: all 0.35s ease;
+    overflow: hidden;
+}
+
+/* ACCENT GLOW */
+.kpi-panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top left, rgba(0,0,0,0.04), transparent 70%);
+    pointer-events: none;
+}
+
+/* HEADER */
+.kpi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: #64748b;
+}
+
+.kpi-header i {
+    font-size: 22px;
+}
+
+.kpi-header.blue i {
+    font-size: 22px;
+    color: #2c8cfb;
+}
+
+.kpi-header.orange i {
+    font-size: 22px;
+    color: #f59e0b;
+}
+
+.kpi-header.red i {
+    font-size: 22px;
+    color: #ef4444;
+}
+
+.kpi-header.green i {
+    font-size: 22px;
+    color: #22c55e;
+}
+
+/* ICON */
+.kpi-icon {
+    font-size: 18px;
+    opacity: 0.8;
+}
+
+/* VALUE */
+.kpi-value {
+    margin: 18px 0 10px;
+    font-size: 44px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1;
+}
+
+/* FOOTER */
+.kpi-footer {
+    font-size: 13px;
+    color: #94a3b8;
+    padding-top: 12px;
+}
+
+.kpi-footer.blue {
+    border-top: 1px dashed #2c8cfb;
+}
+
+.kpi-footer.orange {
+    border-top: 1px dashed #f59e0b;
+}
+
+.kpi-footer.red {
+    border-top: 1px dashed #ef4444;
+}
+
+.kpi-footer.green {
+    border-top: 1px dashed #22c55e;
+}
+
+/* HOVER – SUBTLE, EXECUTIVE */
+.kpi-panel:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 28px 65px rgba(15, 23, 42, 0.14);
+}
+
+/* COLOR THEMES */
+.kpi-panel.blue .kpi-value { color: #2c8cfb; }
+.kpi-panel.amber .kpi-value { color: #d97706; }
+.kpi-panel.red .kpi-value { color: #dc2626; }
+.kpi-panel.green .kpi-value { color: #16a34a; }
+
+/* TOP BORDER ACCENT */
+.kpi-panel.blue { border: 2px solid #2c8cfb; border-top: 6px solid #2c8cfb;  }
+.kpi-panel.amber { border: 2px solid #f59e0b; border-top: 6px solid #f59e0b; }
+.kpi-panel.red { border: 2px solid #ef4444; border-top: 6px solid #ef4444; }
+.kpi-panel.green { border: 2px solid #22c55e; border-top: 6px solid #22c55e; }
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 768px) {
+    .kpi-value {
+        font-size: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    .kpi-panel {
+        padding: 22px;
+    }
+
+    .kpi-value {
+        font-size: 32px;
+    }
+}
+
+
+
+/* ===============================
+   WORKFLOW – MODERN ERP TIMELINE
+================================ */
+
+.workflow-card {
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    padding: 26px;
+    border: 1px solid #5cacfa;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+}
+
+.workflow-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 26px;
+    color: #2c4c71;
+}
+
+/* TIMELINE */
+.workflow-timeline {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* CONNECTING LINE */
+.workflow-timeline::before {
+    content: "";
+    position: absolute;
+    top: 28px;
+    left: 5%;
+    right: 5%;
+    height: 4px;
+    background: linear-gradient(90deg, #22c55e, #3b82f6, #e5e7eb);
+    border-radius: 4px;
+    z-index: 0;
+}
+
+/* STEP */
+.workflow-step {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    width: 100%;
+}
+
+/* ICON CIRCLE */
+.step-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #64748b;
+    box-shadow:
+        inset 0 0 0 3px #ffffff,
+        0 10px 25px rgba(0,0,0,0.08);
+    transition: all 0.35s ease;
+}
+
+/* LABEL */
+.step-label {
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+}
+
+/* DONE */
+.workflow-step.done .step-icon {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #fff;
+}
+
+.workflow-step.done .step-label {
+    color: #166534;
+}
+
+/* ACTIVE (PULSE) */
+.workflow-step.active .step-icon {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #fff;
+    animation: pulse 1.8s infinite;
+}
+
+.workflow-step.active .step-label {
+    color: #1d4ed8;
+}
+
+/* PENDING */
+.workflow-step:not(.done):not(.active) .step-icon {
+    background: #e5e7eb;
+}
+
+/* HOVER */
+.workflow-step:hover .step-icon {
+    transform: scale(1.08);
+}
+
+/* PULSE ANIMATION */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.6);
+    }
+    70% {
+        box-shadow: 0 0 0 12px rgba(37, 99, 235, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+    }
+}
+
+/* ===============================
+   WORKFLOW – PERFECT RESPONSIVE FIX
+================================ */
+
+@media (max-width: 768px) {
+
+    .workflow-timeline {
+        position: relative;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 28px;
+        padding-left: 36px;
+    }
+
+    /* Vertical connector line */
+    .workflow-timeline::before {
+        top: 0;
+        left: 28px;
+        right: auto;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(
+            180deg,
+            #22c55e,
+            #3b82f6,
+            #e5e7eb
+        );
+    }
+
+    .workflow-step {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        text-align: left;
+    }
+
+    .step-icon {
+        margin: 0;
+        flex-shrink: 0;
+    }
+
+    .step-label {
+        margin-top: 0;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .workflow-timeline {
+        padding-left: 32px;
+        gap: 22px;
+    }
+
+    .step-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+
+    .step-label {
+        font-size: 13px;
+    }
+}
+
+
+
+/* RULES */
+/* ===============================
+   RULES – QC & FINANCE GOVERNANCE
+================================ */
+
+.rules-card {
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    border: 1px solid #5cacfa;
+    padding: 28px;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+}
+
+.rules-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #2c4c71;
+}
+
+/* GRID */
+.rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+/* RULE ITEM */
+.rule-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow:
+        0 12px 28px rgba(0,0,0,0.2),
+        inset 0 0 0 1px rgba(226,232,240,0.8);
+    transition: all 0.3s ease;
+}
+
+/* ICON */
+.rule-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+/* CONTENT */
+.rule-content h4 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #2c4c71;
+}
+
+.rule-content p {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+/* HOVER */
+.rule-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 45px rgba(0,0,0,0.4);
+}
+
+/* COLOR THEMES */
+.rule-item.danger .rule-icon {
+    background: rgba(220,38,38,0.12);
+    color: #dc2626;
+}
+
+.rule-item.info .rule-icon {
+    background: rgba(37,99,235,0.12);
+    color: #2563eb;
+}
+
+.rule-item.success .rule-icon {
+    background: rgba(22,163,74,0.12);
+    color: #16a34a;
+}
+
+.rule-item.warning .rule-icon {
+    background: rgba(217,119,6,0.12);
+    color: #d97706;
+}
+
+/* ===============================
+   RESPONSIVE – CLEAN & EXECUTIVE
+================================ */
+
+@media (max-width: 768px) {
+    .rules-card {
+        padding: 22px;
+    }
+
+    .rule-item {
+        padding: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .rule-item {
+        align-items: center;
+    }
+
+    .rule-content h4 {
+        font-size: 14px;
+    }
+
+    .rule-content p {
+        font-size: 12.5px;
+    }
+}
+
+
+
+.recent-activities{
+    margin-top: 2rem;
+  }
+  
+  .recent-activities h2{
+    font-size: 22px;
+    font-weight: 700;
+  }

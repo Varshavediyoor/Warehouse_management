@@ -1,0 +1,53 @@
+{% extends "base_user.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}Stock Movements{% endblock %}
+
+{% block content %}
+
+<div class="db-header">
+    <h1><span>{% trans "Stock" %}</span> {% trans "Movements" %}</h1>
+    <p>{% trans "QC to GRN / Scrap movement history" %}</p>
+</div>
+
+<div class="dashboard-layout">
+
+    <div class="table-container">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>{% trans "Date" %}</th>
+                    <th>{% trans "Product" %}</th>
+                    <th>{% trans "From Location" %}</th>
+                    <th>{% trans "To Location" %}</th>
+                    <th>{% trans "Quantity" %}</th>
+                    <th>{% trans "Reference" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in movements %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ m.created_at|date:"Y-m-d H:i" }}</td>
+                    <td>{{ m.product }}</td>
+                    <td>{{ m.from_location }}</td>
+                    <td>{{ m.to_location }}</td>
+                    <td>{{ m.quantity }}</td>
+                    <td>{{ m.reference }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">
+                        {% trans "No stock movements found." %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}

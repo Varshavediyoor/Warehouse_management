@@ -1,0 +1,98 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Gate Product Verification" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/security/gate_product_verification.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="gpv-wrapper">
+
+    <!-- HEADER -->
+  <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1><span>{% trans "Gate " %}</span>{% trans "Product Verification" %}</h1>
+      </div>
+      <div class="wh-header-right">
+          <a href="#" class="btn-back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+  </div>
+
+  <!-- VERIFICATION CARD -->
+  <form method="post" class="gpv-card">
+    <div class="gpv-card-header">
+      <p class="sub-text">
+        {% trans "Vehicle" %}: <strong>{{ entry.vehicle_number }}</strong> |
+        {% trans "Dispatch ID" %}: <strong>#{{ entry.dispatch.id }}</strong>
+      </p>
+    </div>
+    {% csrf_token %}
+
+    <!-- CHECK ITEM -->
+
+    <div class="verify-item highlight">
+      <label class="verify-check">
+        <input type="checkbox" name="physical_check">
+        <span class="checkmark"></span>
+        <div>
+          <strong>{% trans "Physical Condition" %}</strong>
+          <small>{% trans "No damage, leakage, or tampering" %}</small>
+        </div>
+      </label>
+    </div>
+
+    <div class="verify-item highlight">
+      <label class="verify-check">
+        <input type="checkbox" name="barcode_verified">
+        <span class="checkmark"></span>
+        <div>
+          <strong>{% trans "Barcode Verification" %}</strong>
+          <small>{% trans "Barcode matched with system data" %}</small>
+        </div>
+      </label>
+    </div>
+
+    <div class="verify-item highlight">
+      <label class="verify-check">
+        <input type="checkbox" name="expiry_verified">
+        <span class="checkmark"></span>
+        <div>
+          <strong>{% trans "Expiry & Batch Validation" %}</strong>
+          <small>{% trans "Expiry date and batch are valid" %}</small>
+        </div>
+      </label>
+    </div>
+
+    <div class="verify-item highlight">
+      <div class="quantity-info">
+        <span>{% trans "Expected Quantity" %}</span>
+        <strong>{{ entry.dispatch.total_quantity }}</strong>
+      </div>
+
+      <label class="verify-check">
+        <input type="checkbox" name="quantity_verified">
+        <span class="checkmark"></span>
+        <div>
+          <strong>{% trans "Quantity Match" %}</strong>
+          <small>{% trans "Physical quantity equals dispatch quantity" %}</small>
+        </div>
+      </label>
+    </div>
+
+    <!-- ACTION -->
+    <div class="action-buttons">
+      <button type="submit" class="action-btn">
+        <i class="bi bi-check-circle"></i> {% trans "Submit Verification" %}
+      </button>
+    </div>
+
+  </form>
+
+</section>
+
+{% endblock %}

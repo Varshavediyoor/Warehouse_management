@@ -1,0 +1,22 @@
+<table border="1" cellpadding="8">
+    <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for vendor in vendors %}
+    <tr>
+        <td>{{ vendor.vendor_name }}</td>
+        <td>{{ vendor.email }}</td>
+        <td>{{ vendor.phone_number }}</td>
+        <td>{{ vendor.is_active|yesno:"Active,Inactive" }}</td>
+        <td>
+            <a href="{% url 'vendor_update' vendor.id %}">Edit</a> |
+            <a href="{% url 'vendor_delete' vendor.id %}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>

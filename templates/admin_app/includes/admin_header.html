@@ -1,0 +1,102 @@
+{% load i18n static dict_extras %}
+
+<header class="dashboard-header">
+    <div class="header-left">
+        <label class="burger-toggle for-sidebar" id="toggle-btn">
+            <input type="checkbox" id="burger-check">
+            <span></span>
+            <span></span>
+            <span></span>
+        </label> 
+        
+        <label class="burger-toggle for-slidebar" id="slide-toggle">
+            <input type="checkbox" id="burger-check">
+            <span></span>
+            <span></span>
+            <span></span>
+        </label> 
+        
+        <div class="header-logo">
+            <img src="{% static 'images/warevos.png' %}" alt="Codedu Logo">
+        </div>
+    </div>
+
+    <div class="header-right">
+    
+        <!-- Notification Icon -->
+        <a href="{% url 'admin_notifications' %}" class="notification-button">
+          <svg viewBox="0 0 448 512" class="bell"><path d="M224 0c-17.7 0-32 14.3-32 32V49.9C119.5 61.4 64 124.2 64 200v33.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416H424c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6C399.5 322.9 384 278.8 384 233.4V200c0-75.8-55.5-138.6-128-150.1V32c0-17.7-14.3-32-32-32zm0 96h8c57.4 0 104 46.6 104 104v33.4c0 47.9 13.9 94.6 39.7 134.6H72.3C98.1 328 112 281.3 112 233.4V200c0-57.4 46.6-104 104-104h8zm64 352H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7s18.7-28.3 18.7-45.3z"></path></svg>
+        
+          {% if unread_count > 0 %}
+          <span class="notif-count 
+            {% if unread_count > 99 %}
+                triple
+            {% elif unread_count > 9 %}
+                double
+            {% endif %}
+            ">
+              {{ unread_count }}
+            </span>
+          {% endif %}
+        </a>
+
+        <div class="language-switcher">
+            <ul class="language-switch">
+                {% with current_company_code|default:"default" as current_company %}
+
+                    {% for lang in settings.LANGUAGE_OPTIONS|get_item:current_company %}
+                        <li>
+                            <a href="{% url 'switch_language' lang %}" class="lang-button {% if LANGUAGE_CODE == lang %}active{% endif %}">
+                                {% if lang == "en" %}
+                                    English
+                                {% elif lang == "ar" %}
+                                    العربية
+                                {% else %}
+                                    {{ lang|upper }}
+                                {% endif %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                {% endwith %}
+            </ul>
+        </div>
+
+
+
+        <div class="header-profile-section">
+            <div class="user-welcome">
+                <h4>{% trans "Welcome" %},<span> {{ request.user.username }}</span></h4>
+                <p>{% trans "Admin" %}</p>
+            </div>
+
+            <div class="admin-profile-dropdown">
+                {% if request.user.is_authenticated %}
+                    {% with profile=request.user.adminprofile %}
+                        {% if profile.profile_photo %}
+                            <img src="{{ profile.profile_photo.url }}" alt="Profile Picture" class="profile-pic">
+                        {% else %}
+                            <img src="{% static 'images/default-profile-icon.png' %}" alt="Default Profile" class="profile-pic">
+                        {% endif %}
+                    {% endwith %}
+                {% else %}
+                    <img src="{% static 'images/default-profile-icon.png' %}" alt="Default Profile" class="profile-pic">
+                {% endif %}
+                
+                  <div class="profile-dropdown-menu">
+                    <h4>{% trans "Hi" %},<span> {{ request.user.username }}</span></h4>
+                    <p class="login-time">{% trans "Admin" %}</p>
+                    <p class="login-time">{% trans "Login Time:" %} {{ user.last_login|date:"h:i A" }}</p>
+                    <a href="#" class="logout-btn" id="logoutBtn">
+                      <i class="fa-solid fa-right-from-bracket"></i> {% trans "Logout" %}
+                    </a>
+                  </div>
+            </div>
+        </div>
+        <!-- Profile Picture -->
+
+    </div>
+    
+  </header>
+  
+
+  

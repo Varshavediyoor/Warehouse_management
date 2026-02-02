@@ -1,0 +1,351 @@
+/* MAIN WRAPPER */
+.qc-container {
+    max-width: 950px;
+    margin: auto;
+    margin-top: 1rem;
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeSlideIn {
+    0% {
+      opacity: 0;
+      transform: translateY(25px) scale(0.98);
+      filter: blur(6px);
+    }
+    70% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+    }
+
+/* Header */
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+@keyframes slideFromRight {
+    0% {
+    transform: translateX(80px); /* Start slightly off-screen to the right */
+    opacity: 0;
+    }
+    100% {
+    transform: translateX(0); /* End in place */
+    opacity: 1;
+    }
+    }
+
+.header-section h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c4c71;
+
+    animation: slideFromRight 0.9s ease-out forwards;
+    opacity: 0; /* Start invisible */
+}
+
+.header-section h1 span {
+    color: #2c8cfb;
+}
+
+.header-section p{
+    font-size: 13px;
+}
+
+.view-stock-header-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+}
+
+.btn-back {
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border-radius: 30px;
+    color: #fff;
+    padding: .4rem 2rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden; /* ✅ Keeps shine animation inside button */
+    position: relative;
+}
+
+.btn-back:hover {
+    transform: scale(1.05);
+}
+    
+.btn-back::before {
+    content: "";
+    position: absolute;
+    width: 80px; /* ✅ Slightly smaller for smooth edge transition */
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+    
+.btn-back:hover::before {
+    animation: shine 1.5s ease-out infinite;
+}
+    
+@keyframes shine {
+    0% {
+        left: -80px;
+    }
+    60% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* CARDS */
+.qc-card {
+    background: #fff;
+    padding: 1.4rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-top: 1rem;
+}
+
+.qc-card-title {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+/* GRID LAYOUT */
+.qc-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+}
+
+.qc-field label{
+ font-size: 13px;
+ font-weight: 600;
+}
+
+.qc-field input,
+.qc-field select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #5cacfa;
+    color: #2c4c71;
+    outline: none;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 8px rgba(44, 140, 251, 0.05);
+}
+
+.qc-field input:focus,
+.qc-field select:focus {
+    box-shadow: 0 0 10px rgba(10, 124, 255, 0.75);
+}
+
+/* TABLE */
+.qc-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; /* smooth scrolling */
+}
+
+.qc-table-wrapper::-webkit-scrollbar {
+    height: 6px;                    /* Scrollbar height */
+}
+
+.qc-table-wrapper::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+
+.qc-table-wrapper::-webkit-scrollbar-thumb {
+    background: #2c8cfb;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover animation */
+.qc-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #0066ff;
+    transform: scaleX(1.2);
+}
+
+.qc-table {
+    width: 100%;
+    min-width: 700px;   /* 👈 IMPORTANT: Prevents content from shrinking */
+    border-collapse: collapse;
+    margin-top: 1rem;
+    min-height: 80px;
+}
+
+
+.qc-table th {
+    background: #2c8cfb;
+    color: white;
+    padding: 10px;
+    white-space: nowrap;
+}
+
+.qc-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap;
+}
+
+.qc-table select,
+.qc-table input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #5cacfa;
+    color: #2c4c71;
+    outline: none;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 8px rgba(44, 140, 251, 0.05);
+}
+
+.qc-table select{
+    appearance: auto !important;
+    -webkit-appearance: auto !important;
+    -moz-appearance: auto !important;
+}
+
+.qc-table select:focus,
+.qc-table input:focus {
+    box-shadow: 0 0 10px rgba(10, 124, 255, 0.75);
+}
+
+.remove-btn {
+    background: #dc3545;
+    border: none;
+    color: white;
+    padding: 6px 20px;
+}
+
+.btn-back.create {
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border: none;
+    width: 200px;
+}
+
+.qc-submit-row {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+/* FLEX */
+.qc-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* MOBILE */
+@media(max-width: 768px) {
+    .qc-grid {
+        grid-template-columns: 1fr;
+    }
+    .qc-field.full-width {
+        grid-column: 1 / 2;
+    }
+}
+
+
+
+@media (max-width: 845px) {
+    .header-section {
+        margin-top: 0rem;
+    }
+
+  .header-section h1{
+    font-size: 28px;
+  }
+
+  .view-stock-header-right a{
+    font-size: 12px;
+    padding: .3rem .6rem;
+  }
+
+  .btn-back.add-btn{
+    font-size: 12px;
+    padding: .4rem .8rem;
+  }
+
+  .btn-back.remove-btn{
+    font-size: 12px;
+    padding: .4rem .8rem;
+  }
+
+  .btn-back.create {
+    font-size: 16px;
+    font-weight: 600;
+    padding: 8px 18px;
+    border: none;
+    width: 200px;
+}
+}
+
+@media (max-width: 670px) {
+    .header-section h1{
+      font-size: 26px;
+    }
+
+    .header-section p{
+        display: none;
+    }
+
+    .btn-back.add-btn{
+        font-size: 12px;
+        padding: .3rem .8rem;
+    }
+
+    .btn-back.remove-btn{
+        font-size: 12px;
+        padding: .3rem .8rem;
+    }
+
+    .btn-back.create {
+        font-size: 14px;
+        font-weight: 600;
+        padding: 8px 18px;
+        border: none;
+        width: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-section h1{
+      font-size: 22px;
+    }
+}

@@ -1,0 +1,42 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Receive Returned Items" %}{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+
+    <div class="page-header">
+        <h3>{% trans "Return Receiving" %} - Picking #{{ picking.id }}</h3>
+    </div>
+
+    <div class="card p-3">
+        <form method="post">
+            {% csrf_token %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Item" %}</th>
+                        <th>{% trans "Return Qty" %}</th>
+                        <th>{% trans "Received" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in picking.items.all %}
+                    <tr>
+                        <td>{{ i.order_item.product }}</td>
+                        <td>{{ i.quantity }}</td>
+                        <td>
+                            <input type="number" name="received_{{ i.id }}" value="{{ i.quantity }}" class="form-control">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <button class="btn btn-success">{% trans "Confirm Receipt" %}</button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

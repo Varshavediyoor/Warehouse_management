@@ -1,0 +1,43 @@
+{% extends "base_user.html" %}
+{% block content %}
+
+<div class="container mt-4">
+  <h4>RM Requirements for MO: {{ mo.mo_no }}</h4>
+
+  <table class="table table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>Raw Material</th>
+        <th>Required</th>
+        <th>Issued</th>
+        <th>Remaining</th>
+        <th>Available Stock</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for row in rm_data %}
+      <tr>
+        <td>{{ row.line.product }}</td>
+        <td>{{ row.line.required_qty }}</td>
+        <td>{{ row.line.issued_qty }}</td>
+        <td>{{ row.remaining }}</td>
+        <td>{{ row.available }}</td>
+
+        <td>
+          {% if user.userprofile.role == "StoreKeeper" and row.remaining > 0 %}
+          <a href="{% url 'manufacturing:rm_issue' mo.id %}" class="btn btn-sm btn-primary">
+            Issue RM
+          </a>
+          {% else %}
+            -
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

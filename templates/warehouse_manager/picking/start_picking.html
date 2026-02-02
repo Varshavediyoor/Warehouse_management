@@ -1,0 +1,11 @@
+{% extends 'base_user.html' %}
+
+{% block content %}
+<h1>Start Picking - Delivery Order {{ delivery_order.id }}</h1>
+
+<ul>
+    {% for task in pick_tasks %}
+    <li>{{ task.product.name }} - {{ task.quantity }} - Status: {{ task.status }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

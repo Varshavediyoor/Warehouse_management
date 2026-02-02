@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Admin Access Verification" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/admin_access_key.css' %}">
+<link rel="stylesheet" href="{% static 'css/error_message.css' %}">
+<link rel="stylesheet" href="{% static 'css/password_hide.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<section class="access-section">
+    <div class="access-card">
+        <h2 class="access-title"><span>{% trans "Admin " %}</span>  {% trans "Access Verification" %}</h2>
+        <p class="access-subtitle">{% trans "Enter your secure admin access key to continue." %}</p>
+
+        <form method="POST" class="access-form">
+            {% csrf_token %}
+            <div class="input-group password-field">
+                <label for="access_key">Security Key:<span class="required-star">*</span></label>
+                <div class="password-wrapper">
+                    <input type="password" id="access_key" name="access_key" placeholder="Enter access key" required>
+                    <i class="bi bi-eye-slash-fill toggle-password"></i>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-verify">{% trans "Verify Key" %}</button>
+        </form>
+
+        <p class="hint-text">{% trans "Need help? Contact your administrator." %}</p>
+
+        <div class="error-container">
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="form-error-message {{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/error_message.js' %}"></script>
+<script src="{% static 'js/password_hide.js' %}"></script>
+{% endblock %}

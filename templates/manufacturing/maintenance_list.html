@@ -1,0 +1,23 @@
+{% extends "base_user.html" %}
+{% block content %}
+<h4>Maintenance Tickets</h4>
+
+<table class="table table-bordered">
+<tr class="table-dark">
+  <th>Machine</th><th>Issue</th><th>Status</th><th>Action</th>
+</tr>
+
+{% for t in tickets %}
+<tr>
+  <td>{{ t.machine }}</td>
+  <td>{{ t.issue }}</td>
+  <td>{{ t.status }}</td>
+  <td>
+    {% if t.status != "RESOLVED" %}
+    <a href="{% url 'manufacturing:resolve_ticket' t.id %}" class="btn btn-sm btn-success">Resolve</a>
+    {% endif %}
+  </td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

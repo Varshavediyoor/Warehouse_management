@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Invoice</title>
+</head>
+<body>
+
+<h2>Upload Invoice for QC</h2>
+
+<form id="invoiceForm" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <label>Select Invoice PDF</label><br><br>
+  <input type="file" id="invoiceFile" accept="application/pdf"><br><br>
+
+  <button type="button" onclick="uploadInvoice()">
+    Upload & Process
+  </button>
+</form>
+
+<hr>
+
+<div id="result"></div>
+
+<script>
+function uploadInvoice() {
+  const fileInput = document.getElementById("invoiceFile");
+  const file = fileInput.files[0];
+
+  if (!file) {
+    alert("Please select a PDF invoice");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("invoice", file);
+
+  fetch("/en/qc/api/qc/ocr/", {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": document.querySelector(
+        'input[name=csrfmiddlewaretoken]'
+      ).value
+    },
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.error) {
+      alert(data.error);
+      return;
+    }
+
+    let html = `
+      <h3>Invoice Processed</h3>
+      <p><b>Invoice Number:</b> ${data.invoice_number}</p>
+      <p><b>Category:</b> ${data.category}</p>
+      <p><b>QC Records Created:</b></p>
+      <ul>
+    `;
+
+    data.qc_ids.forEach(id => {
+      html += `
+        <li>
+          <a href="/en/qc/qc/${id}/" target="_blank">
+            Open QC #${id}
+          </a>
+        </li>
+      `;
+    });
+
+    html += "</ul>";
+    document.getElementById("result").innerHTML = html;
+  })
+  .catch(err => {
+    alert("Upload failed");
+    console.error(err);
+  });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,870 @@
+.page-wrapper {
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(25px) scale(0.98);
+        filter: blur(6px);
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+/* HEADER */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page-header-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.page-title {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c8cfb;
+    margin-bottom: .3rem;
+}
+
+.page-title span {
+    color: #2c4c71;
+}
+
+.btn-back {
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border-radius: 30px;
+    color: #fff;
+    padding: .4rem 2rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+
+    display: inline-block;   /* 🔥 FIX 1 */
+    position: relative;      /* 🔥 FIX 2 */
+    overflow: hidden;        /* 🔥 FIX 3 */
+}
+
+.btn-back:hover { transform: scale(1.05); }
+
+.btn-back::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.btn-back:hover::before {
+    animation: shine 1.5s ease-out infinite;
+}
+
+@keyframes shine {
+    0% { left: -80px; }
+    60% { left: 100%; }
+    100% { left: 100%; }
+}
+
+/*------------------------ FILTERS ----------------------------*/
+.filters {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-item label {
+    color: #2c4c71;
+}
+
+.filter-item.toggle-check {
+    flex-direction: row !important;
+    align-items: center;
+    margin-top: 0 !important;
+}
+
+.filter-input {
+    padding: 7px 12px;
+    border-radius: 10px;
+    color: #2c4c71;
+    border: 1px solid #2c8cfb;
+}
+
+.filter-input:focus {
+    border: 1px solid #2c8cfb;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(44, 140, 251, 0.25);
+    transition: 0.2s;
+}
+
+.btn-filter {
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border: none;
+    padding: 4px 25px;
+    border-radius: 30px;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+
+    display: inline-block;   /* 🔥 FIX 1 */
+    position: relative;      /* 🔥 FIX 2 */
+    overflow: hidden;        /* 🔥 FIX 3 */
+}
+
+
+.btn-filter::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 100%;
+    background-image: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .btn-filter:hover::before { animation: shine 1.5s ease-out infinite; }
+
+.checkbox {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Toggle Style Checkbox */
+.toggle-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toggle-check input[type="checkbox"] {
+    width: 0;
+    height: 0;
+    opacity: 0;
+    position: absolute;
+}
+
+.toggle-check label {
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    position: relative;
+    padding-left: 55px;
+}
+
+/* Toggle Track */
+.toggle-check label::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 45px;
+    height: 22px;
+    background: #d1d1d1;
+    border-radius: 50px;
+    transition: 0.3s ease;
+}
+
+/* Toggle Knob */
+.toggle-check label::after {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* When Checked */
+.toggle-check input:checked + label::before {
+    background: #4caf50;  /* green highlight */
+}
+
+.toggle-check input:checked + label::after {
+    left: 24px;  /* move knob */
+}
+
+
+/*----------------- MAIN LAYOUT – NOW ONLY 2 COLUMNS ---------------*/
+.packing-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* ← changed */
+    gap: 20px;
+    width: 100%;
+    overflow-x: hidden;
+    padding: 30px 10px;
+}
+
+
+/* PANELS */
+.panel {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+}
+
+.box-panel {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.summary-panel {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.item-panell {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.carrier-panel{
+    margin-top: 1rem;
+}
+
+.panel h2 {
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    padding: 8px 10px;
+    border: 1px solid #5cacfa;
+    border-radius: 6px;
+}
+
+.form-group input:focus {
+    box-shadow: 0 0 0 3px rgba(44, 140, 251, 0.25);
+    transition: 0.2s;
+    outline: none;
+}
+
+/* Dimensions Row */
+.dimensions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;   /* 🟢 THIS FIXES 90% OF FLEX OVERFLOW ISSUES */
+}
+
+/* Make each dimension box fit equally */
+.dimensions .form-group {
+    flex: 1;
+    min-width: 0;  /* prevents child inputs from pushing out */
+}
+
+.submit-button {
+    display: flex;
+    justify-content: center;
+}
+
+/* From Uiverse.io by mrhyddenn */ 
+.btn-submit {
+    padding: 10px 30px;
+    border: none;
+    width: 180px;
+    border-radius: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    color: #fff;
+    transition: all 1000ms;
+    font-size: 16px;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+
+    display: inline-block;   /* 🔥 FIX 1 */
+    position: relative;      /* 🔥 FIX 2 */
+    overflow: hidden;        /* 🔥 FIX 3 */
+  }
+
+.btn-submit:hover { transform: scale(1.05); }
+
+.btn-submit::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.btn-submit:hover::before {
+    animation: shine 1.2s ease-out infinite;
+}
+
+/* TABLES */
+.table-wrap {
+    background: #fff;
+    border: 1px solid #b0b4b8;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+    margin-top: 10px;
+    overflow: auto;
+    white-space: nowrap;
+    scrollbar-width: thin;
+    scrollbar-color: #2c8cfb #f1f1f1;
+}
+
+/* Stylish scrollbar (Chrome, Safari, Edge) */
+.table-container::-webkit-scrollbar {
+    height: 8px;                    /* Scrollbar height */
+  }
+  
+  .table-container::-webkit-scrollbar-track {
+    border-radius: 10px;
+  }
+  
+  .table-container::-webkit-scrollbar-thumb {
+    background: #2c8cfb;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Hover animation */
+  .table-container::-webkit-scrollbar-thumb:hover {
+    background: #0066ff;
+    transform: scaleX(1.2);
+  }
+
+table {
+    width: max-content;
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+table thead {
+    background: linear-gradient(90deg, #2c4c71, #2c8cfb);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+table th,
+table td {
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+}
+
+table td{
+    font-size: 13px;
+}
+
+.no-box {
+    text-align: center !important;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.drag-note {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* RIGHT: SUMMARY TABLE */
+.print-btn {
+    background: #10b981;
+    border: none;
+    padding: 4px 20px;
+    border-radius: 30px;
+    color: white;
+    cursor: pointer;
+}
+
+
+/* Custom Select Wrapper */
+.custom-select-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 120px; /* Adjust width as needed */
+}
+
+.custom-select-wrapper select {
+    appearance: none;          /* Remove default arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    width: 100%;
+    padding: 8px 35px 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #2c8cfb;
+    background-color: #fff;
+    color: #2c4c71;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Hover effect */
+.custom-select-wrapper select:hover {
+    border-color: #3c6696;
+    box-shadow: 0 2px 8px rgba(44, 140, 251, 0.2);
+}
+
+/* Focus effect */
+.custom-select-wrapper select:focus {
+    outline: none;
+    border-color: #3c6696;
+    box-shadow: 0 0 0 3px rgba(44, 140, 251, 0.25);
+}
+
+/* Arrow icon */
+.custom-select-wrapper::after {
+    content: "▾"; /* Down arrow */
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 14px;
+    color: #2c8cfb;
+}
+
+/* Optional: Smooth transition */
+.custom-select-wrapper select {
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+/* FORM WRAPPER */
+.assign-box-form {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* STYLISH SELECT DROPDOWN */
+.assign-select {
+    padding: 10px 14px;
+    min-width: 180px;
+    border: 1px solid #5cacfa;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    background: #f8f9fc;
+    cursor: pointer;
+    color: #2c4c71;
+    transition: all 0.3s ease;
+}
+
+.assign-select:hover {
+    background: #ffffff;
+}
+
+.assign-btn{
+    border: none;
+}
+
+.assign-select:focus {
+    border-color: #6366f1; /* Indigo theme */
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+    outline: none;
+}
+
+/* FORM WRAPPER */
+.carrier-panel-content {
+    display: flex;
+    justify-content: center;   /* horizontal center */
+    align-items: center;       /* vertical center (if height allows) */
+    width: 100%;
+    padding: 20px 0;
+}
+
+.shipment-info-card,
+.shipment-form {
+    max-width: 520px;
+    background: #fff;
+    width: 100%;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* TITLE */
+.shipment-title,
+.carrier-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+/* LABEL */
+.shipment-label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    color: #2c4c71;
+    font-size: 13px;
+}
+
+/* SELECT DROPDOWN */
+.shipment-select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #5cacfa;
+    border-radius: 10px;
+    background: #f9fafb;
+    font-size: 0.95rem;
+    color: #2c4c71;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.shipment-select:focus {
+    background: #fff;
+    box-shadow: 0 0 10px rgba(10, 124, 255, 0.75);
+    transform: translateY(-2px);
+    outline: none;
+}
+
+.shipment-buttons{
+    text-align: center;
+}
+
+.shipment-btn {
+    width: 170px;
+    font-size: 13px;
+    padding: 12px 0;
+    border: none;
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 600px) {
+    .shipment-form {
+        width: 100%;
+        padding: 16px 18px;
+    }
+}
+
+/* ROWS */
+.shipment-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px dashed #e5e7eb;
+}
+
+.shipment-row:last-child {
+    border-bottom: none;
+}
+
+.shipment-row .label {
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.shipment-row .value {
+    font-size: 13px;
+}
+
+.shipment-first-buttons{
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* PRINT BUTTON */
+.btn-print {
+    width: 170px;
+    font-size: 13px;
+    padding: 12px 0;
+    background: #10b981;
+    border: none;
+    color: #fff;
+} 
+
+/* DISPATCH BUTTON */
+.btn-dispatch {
+    width: 170px;
+    font-size: 13px;
+    padding: 12px 0;
+    border: none;
+}
+
+/* STATUS */
+.shipment-status {
+    margin-top: 15px;
+    font-weight: 700;
+    color: #059669;
+    text-align: center;
+    font-size: 15px;
+}
+
+.incomplete-subtitle {
+    font-size: 13px;
+    color: #E03F3F;
+    text-align: center;      /* center text */
+    margin: 15px auto;       /* center block */
+    max-width: 600px;        /* keeps balance on large screens */
+}
+
+
+
+/* BOTTOM ACTION BAR */
+.bottom-action-bar {
+    margin-top: 30px;
+    padding: 15px 25px;
+    background: white;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.btn-back.packing-btn{
+    border: none;
+    background: #10b981;
+    padding: 10px 10px;
+    font-size: 13px;
+    width: 200px;
+}
+
+.btn-back.mark-btn{
+    border: none;
+    padding: 10px 10px;
+    font-size: 13px;
+    width: 200px;
+}
+
+.packing-completed-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 200px;                 /* same as buttons */
+    padding: 10px 10px;
+    font-size: 13px;
+    font-weight: 600;
+
+    border-radius: 30px;
+    border: 2px dashed #10b981;
+
+    background: #ecfdf5;
+    color: #059669;
+
+    cursor: default;
+    user-select: none;
+}
+
+
+
+/* ANIMATION */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1180px) {  
+    .packing-container{
+        display: flex;
+        flex-direction: column;
+    }
+}
+   
+
+@media (max-width: 845px) {  
+  .page-header-left h1{
+    font-size: 28px;
+  }
+
+  .page-header-right a {
+    width: 80px;
+    font-size: 12px;
+    padding: .3rem .6rem;
+  }
+
+  table th{
+    font-size: 13px;
+  }
+
+  table td{
+    font-size: 12px;
+  }
+
+  .assign-select {
+    padding: 8px 14px;
+    min-width: 150px;
+    font-size: 13px;
+  }
+
+  .assign-btn{
+    width: 80px;
+    font-size: 12px;
+    padding: .3rem .6rem;
+  }
+
+  .panel h2 {
+        font-size: 17px;
+    }
+}
+  
+  @media (max-width: 670px) {
+    .page-header-left h1{
+      font-size: 26px;
+    }
+
+    table th{
+        font-size: 12px;
+      }
+    
+      table td{
+        font-size: 11px;
+      }
+
+    .assign-select {
+        padding: 6px 14px;
+        min-width: 120px;
+        font-size: 13px;
+    }
+
+    .btn-submit {
+        padding: 8px 15px;
+        font-size: 14px;
+        width: 150px;
+    }
+
+    .panel h2 {
+        font-size: 16px;
+    }
+
+    .bottom-action-bar {
+        gap: 10px;
+    }
+
+    .btn-back.packing-btn{
+        font-size: 12px;
+        width: 180px;
+    }
+    
+    .btn-back.mark-btn{
+        font-size: 12px;
+        width: 180px;
+    }
+
+    .packing-completed-badge {
+        width: 180px;                 /* same as buttons */
+        font-size: 12px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .page-header-left h1{
+      font-size: 22px;
+    }
+
+    .btn-submit {
+        font-size: 13px;
+        width: 130px;
+    }
+
+    .shipment-first-buttons{
+        gap: 5px;
+    }
+
+    .btn-print {
+        width: 150px;
+        font-size: 12px;
+        padding: 10px 0;
+    }
+
+    /* DISPATCH BUTTON */
+    .btn-dispatch,
+    .shipment-btn {
+        width: 150px;
+        font-size: 12px;
+        padding: 10px 0;
+    }
+
+    .shipment-status {
+        font-size: 13px;
+    }
+
+    .bottom-action-bar {
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .incomplete-subtitle {
+        font-size: 12px;
+    }
+  }
+
+  @media (max-width: 430px) {
+    .page-header-left h1{
+      font-size: 20px;
+      width: 200px;
+    }
+  }

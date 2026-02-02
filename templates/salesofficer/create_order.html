@@ -1,0 +1,176 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Create Sales Order" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/salesofficer/create_order.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="create-order-container">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1>
+              <span>{% trans "Create" %}</span>
+              {% trans "Sales Order" %}
+          </h1>
+          <p class="subtext">{% trans "Add customer and stock details to generate a new sales order" %}</p>
+      </div>
+      <div class="wh-header-right">
+          <a href="{% url 'salesofficer_dashboard' %}" class="btn-back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+  </div>
+
+  <!-- FORM -->
+  <form method="post">
+    {% csrf_token %}
+
+    <!-- CUSTOMER & ORDER DETAILS -->
+    <div class="card">
+      <h1 class="card-title">{% trans "Customer & Order Detail" %}</h1>
+      <div class="grid-form">
+        {{ order_form.as_p }}
+      </div>
+    </div>
+
+    <!-- ORDER ITEMS -->
+    <div class="card table-card">
+      <h2 class="card-title">Order Items</h2>
+      {{ formset.management_form }}
+
+      <div class="table-wrapper">
+        <table id="items-table" class="styled-table">
+          <thead>
+            <tr>
+              <th>Stock</th>
+              <th>SKU</th>
+              <th>Quantity</th>
+              <th>Unit Price</th>
+              <th>Amount</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for form in formset.forms %}
+            <tr>
+              <td>
+                <select name="{{ form.prefix }}-stock" class="stock-select">
+                  <option value="">---------</option>
+                  {% for s in stocks %}
+                  <option value="{{ s.id }}" data-sku="{{ s.sku }}" data-price="{{ s.unit_price }}"
+                    {% if form.instance.stock and s.id == form.instance.stock.id %}selected{% endif %}>
+                    {{ s.product.name }} ({{ s.sku }})
+                  </option>
+                  {% endfor %}
+                </select>
+              </td>
+              <td><input type="text" class="sku-field" readonly value="{% if form.instance.stock %}{{ form.instance.stock.sku }}{% endif %}"></td>
+              <td>{{ form.quantity }}</td>
+              <td><input type="number" name="{{ form.prefix }}-unit_price" class="price-field" step="0.01" value="{% if form.instance.stock %}{{ form.instance.stock.unit_price }}{% endif %}"></td>
+              <td><input type="text" class="amount-field" readonly></td>
+              <td><button type="button" class="remove-row btn-remove"><i class="bi bi-trash"></i></button></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="form-buttons">
+        <div class="order-total"><strong>Total Amount:</strong> ₹ <span id="grand-total">0.00</span></div>
+        <button type="button" id="add-row" class="btn-add"><i class="bi bi-plus-circle"></i> Add Item</button>
+      </div>
+
+    </div>
+
+    <div class="card button-card">
+      <button type="submit" class="btn-submit">Save Order</button>
+    </div>
+  </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+  function calculateRowAmount(tr) {
+    const qty = parseFloat(tr.querySelector('[name$="-quantity"]')?.value || 0);
+    const price = parseFloat(tr.querySelector('.price-field')?.value || 0);
+    const amountField = tr.querySelector('.amount-field');
+    const amount = qty * price;
+    amountField.value = amount.toFixed(2);
+    return amount;
+  }
+
+  function calculateGrandTotal() {
+    let total = 0;
+    document.querySelectorAll('#items-table tbody tr').forEach(tr => {
+      total += calculateRowAmount(tr);
+    });
+    document.getElementById('grand-total').innerText = total.toFixed(2);
+  }
+
+  function updateRowFromSelect(selectEl) {
+    const tr = selectEl.closest('tr');
+    const opt = selectEl.options[selectEl.selectedIndex];
+    const sku = tr.querySelector('.sku-field');
+    const price = tr.querySelector('.price-field');
+
+    if (opt && opt.value) {
+      sku.value = opt.dataset.sku || '';
+      price.value = opt.dataset.price || '';
+    } else {
+      sku.value = '';
+      price.value = '';
+    }
+    calculateGrandTotal();
+  }
+
+  document.querySelectorAll('.stock-select').forEach(sel => {
+    sel.addEventListener('change', function () { updateRowFromSelect(this); });
+    updateRowFromSelect(sel);
+  });
+
+  document.addEventListener('input', function (e) {
+    if (e.target.name?.endsWith('-quantity') || e.target.classList.contains('price-field')) {
+      calculateGrandTotal();
+    }
+  });
+
+  document.getElementById('add-row').addEventListener('click', function () {
+    const tbody = document.querySelector('#items-table tbody');
+    const totalForms = document.querySelector('[name$="-TOTAL_FORMS"]');
+    const index = parseInt(totalForms.value);
+
+    const newRow = tbody.querySelector('tr').cloneNode(true);
+    newRow.querySelectorAll('[name]').forEach(el => {
+      el.name = el.name.replace(/-\d+-/, `-${index}-`);
+      if (el.type !== 'hidden') el.value = '';
+    });
+    newRow.querySelectorAll('.sku-field,.amount-field').forEach(i => i.value = '');
+    tbody.appendChild(newRow);
+    totalForms.value = index + 1;
+
+    const select = newRow.querySelector('.stock-select');
+    select.addEventListener('change', function () { updateRowFromSelect(this); });
+
+    newRow.querySelector('.remove-row').addEventListener('click', function () {
+      newRow.remove();
+      calculateGrandTotal();
+    });
+  });
+
+  document.querySelectorAll('.remove-row').forEach(btn => {
+    btn.addEventListener('click', function () {
+      this.closest('tr').remove();
+      calculateGrandTotal();
+    });
+  });
+
+  calculateGrandTotal();
+});
+</script>
+{% endblock %}

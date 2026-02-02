@@ -1,0 +1,70 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Products List" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/inventory_manager/product_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="product-list-container">
+    <!-- header  -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Products" %}</span> {% trans " List" %}</h1>
+        </div>
+        <div class="wh-header-right">         
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="action-buttons add-product">
+        <a href="{% url 'inventory_manager:add_product' %}" class="action-btn add-product">{% trans "Add Product" %}</a> 
+    </div>
+    <!-- table  -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>{% trans "Name" %}</th>
+                        <th>{% trans "Category" %}</th>
+                        <th>{% trans "Unit Price" %}</th>
+                        <th>{% trans "Serialized" %}</th>
+                        <th>{% trans "Lotted" %}</th>
+                        <th>{% trans "Shelf Type" %}</th>
+                        <th>{% trans "FIFO/FEFO" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.category.name|default:"-" }}</td>
+                <td>{{ product.unit_price }}</td>
+                <td>{{ product.is_serialized|yesno:"Yes,No" }}</td>
+                <td>{{ product.is_lotted|yesno:"Yes,No" }}</td>
+                <td>{{ product.shelf_type_required }}</td>
+                <td>{{ product.fifo_fefo }}</td>
+            </tr>
+            
+                    {% empty %}
+                    <tr><td colspan="7">{% trans "No products found." %}</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

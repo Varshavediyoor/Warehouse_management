@@ -1,0 +1,26 @@
+<h2>Incoming Transfers - {{ current_db }}</h2>
+
+<table border="1" cellpadding="6">
+    <tr>
+        <th>Request No</th>
+        <th>From</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    {% for t in transfers %}
+    <tr>
+        <td>{{ t.request_no }}</td>
+        <td>{{ t.requester_warehouse_code }}</td>
+        <td>{{ t.status|capfirst }}</td>
+        <td>
+            <a href="{% url 'salesofficer:transfer_detail' t.id %}">View</a>
+            {% if t.status == "requested" %}
+                | <a href="{% url 'salesofficer:approve_request' t.id %}">Approve</a>
+                | <a href="{% url 'salesofficer:reject_request' t.id %}">Reject</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4">No transfer requests found.</td></tr>
+    {% endfor %}
+</table>

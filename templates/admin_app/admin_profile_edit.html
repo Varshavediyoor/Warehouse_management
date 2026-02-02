@@ -1,0 +1,93 @@
+{% extends 'base_admin.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Edit Admin Profile" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/admin_profile_edit.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="register-wrapper">
+
+  <!-- Left Panel (illustration & instructions) -->
+  <div class="left-panel">
+    <div class="instruction-image">
+      <img src="{% static 'images/freepik__upload__49138.png' %}" alt="{% trans 'Profile Illustration' %}">
+    </div>
+    <ul class="instruction-list">
+      <li>{% trans "Update your personal information" %}</li>
+      <li>{% trans "Upload a profile photo" %}</li>
+      <li>{% trans "Manage your contact details and preferences" %}</li>
+    </ul>
+  </div>
+
+  <!-- Right Panel (Form) -->
+  <div class="right-panel">
+    <div class="register-header">
+      <form-header-left>
+        <h1 class="form-title">{% trans "Edit" %} <span>{% trans "Profile" %}</span></h1>
+      </form-header-left>
+      <a href="{% url 'custom_admin_dashboard' %}">
+        <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+      </a>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="register-form" novalidate autocomplete="off">
+      {% csrf_token %}
+      <div class="form-steps">
+        <div id="step-1" class="form-step active" aria-hidden="false">
+          <div class="input-grid" id="main-fields-grid">
+
+            <div class="form-group">
+              <label for="{{ form.first_name.id_for_label }}">{% trans "First Name" %}</label>
+              {{ form.first_name }}
+              {% if form.first_name.errors %}
+                <div class="error-message">{{ form.first_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.last_name.id_for_label }}">{% trans "Last Name" %}</label>
+              {{ form.last_name }}
+              {% if form.last_name.errors %}
+                <div class="error-message">{{ form.last_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.email.id_for_label }}">{% trans "Email" %}</label>
+              {{ form.email }}
+              {% if form.email.errors %}
+                <div class="error-message">{{ form.email.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.phoneno.id_for_label }}">{% trans "Phone Number" %}</label>
+              {{ form.phoneno }}
+              {% if form.phoneno.errors %}
+                <div class="error-message">{{ form.phoneno.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.profile_photo.id_for_label }}">{% trans "Profile Photo" %}</label>
+              {{ form.profile_photo }}
+              {% if form.profile_photo.errors %}
+                <div class="error-message">{{ form.profile_photo.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions" style="margin-top:20px;">
+        <button type="submit" class="btn-register">{% trans "Save Changes" %}</button>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

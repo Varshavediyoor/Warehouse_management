@@ -1,0 +1,101 @@
+{% extends 'base_user.html' %}
+{% load i18n static dict_extras %}
+
+{% block title %}{% trans "Security Dashboard" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/security/security_dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="security-header">
+    <h2><span>{% trans "Security" %}</span> {% trans "Staff" %}</h2>
+    <p>{% trans "Manage and monitor security team activity." %}</p>
+    </div>
+
+    <div class="table-heading">
+        <h3>{% trans "Dispatches" %}</h3>
+    </div>
+
+<div class="table-scroll-wrapper">
+    <div class="table-container">
+        <table class="table-content" id="tableContent">
+            <thead>
+                <tr>
+                    <th>{% trans "Dispatch ID" %}</th>
+                    <th>{% trans "Orders" %}</th>
+                    <th>{% trans "Vehicle" %}</th>
+                    <th>{% trans "Carrier" %}</th>
+                    <th>{% trans "Tracking Number" %}</th>
+                    <th>{% trans "Dispatched By" %}</th>
+                    <th>{% trans "Dispatch Date" %}</th>
+                    <th>{% trans "Confirmed" %}</th>
+                    <th>{% trans "Actions" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dispatch in dispatches %}
+                <tr>
+                    <td>{{ dispatch.id }}</td>
+
+                    <!-- List all orders for this dispatch -->
+                    <td>
+                        {% for order in dispatch.orders.all %}
+                            {{ order.order_no }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+
+                    <td>{{ dispatch.vehicle_number|default:"-" }}</td>
+                    <td>{{ dispatch.carrier_name|default:"-" }}</td>
+                    <td>{{ dispatch.tracking_number|default:"-" }}</td>
+                    <td>{% if dispatch.dispatched_by %}{{ dispatch.dispatched_by.username }}{% else %}-{% endif %}</td>
+                    <td>{{ dispatch.dispatch_date|date:"d M Y H:i" }}</td>
+                    <td>
+                        {% if dispatch.confirmed %}
+                            <span class="text-success">{% trans "Yes" %}</span>
+                        {% else %}
+                            <span class="text-danger">{% trans "No" %}</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <div class="action-container">
+
+    
+
+    <a href="{% url 'security:gate_entry_create' dispatch.id %}"
+       class="btn gate-btn">
+        {% trans "Gate Entry" %}
+    </a>
+
+    {% if not dispatch.confirmed %}
+        <a href="{% url 'security:confirm_dispatch' dispatch.id %}"
+           class="btn dispatch-btn">
+            {% trans "Mark Dispatched" %}
+        </a>
+    {% else %}
+        <span class="text-success">{% trans "Dispatched" %}</span>
+    {% endif %}
+
+</div>
+
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center">{% trans "No Dispatches Found" %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+     <!-- Pagination Controls -->
+     <div class="pagination-container" id="tablePagination"></div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

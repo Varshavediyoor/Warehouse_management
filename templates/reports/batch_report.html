@@ -1,0 +1,125 @@
+{% extends 'base_admin.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Batch Report" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/purchase_report.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin/admin_report_table.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="purchase-report-container">
+    <!-- header  -->
+    <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1><span>{% trans "Batch" %}</span> {% trans "Report" %}</h1>
+          <p class="subtext">{% trans "Detailed overview of all batch records and stock status." %}</p>
+      </div>
+      <div class="wh-header-right">          
+          <a href="{% url 'admin_reports' %}" class="btn-back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+    </div>
+
+    <!-- Filter/Search -->
+    <form method="GET" class="filter-form">
+      <input type="text" name="search" placeholder="Search by SKU, Name, Category, Supplier, Batch..." value="{{ search_query }}">
+        <select name="category">
+            <option value="">{% trans "All Categories" %}</option>
+            {% for cat in categories %}
+                <option value="{{ cat }}" {% if cat == category_filter %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+        </select>
+        <select name="supplier">
+            <option value="">{% trans "All Suppliers" %}</option>
+            {% for sup in suppliers %}
+                <option value="{{ sup }}" {% if sup == supplier_filter %}selected{% endif %}>{{ sup }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">{% trans "Filter" %}</button>
+    </form>
+
+  <!-- Meta Info -->
+  <div class="report-meta">
+    <div class="report-meta-content-left">
+      <span class="records-count">{% trans "Total Batches:" %} <strong>{{ batches|length }}</strong></span>
+      <span class="generated-date"><i class="bi bi-clock"></i> {% trans "Generated on:" %} {{ generated_on|date:"d M Y, H:i" }}</span>
+    </div>
+
+    <div class="report-meta-content-right">
+      <a href="{% url 'batch_report_excel' %}" class="action-btn excel">
+        <i class="bi bi-file-earmark-excel"></i>{% trans "Download Excel" %}
+      </a>
+      <a href="{% url 'batch_report_pdf' %}" class="action-btn pdf">
+        <i class="bi bi-file-earmark-pdf"></i>{% trans "Download PDF" %}
+      </a>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-scroll-wrapper">
+    <div class="table-container">
+      <table class="report-table" id="reportTable">
+        <thead>
+          <tr>
+            <th>{% trans "Batch Number" %}</th>
+            <th>{% trans "Product Name" %}</th>
+            <th>{% trans "Category" %}</th>
+            <th>{% trans "Supplier" %}</th>
+            <th>{% trans "Manufacturing Date" %}</th>
+            <th>{% trans "Expiry Date" %}</th>
+            <th>{% trans "Qty Available" %}</th>
+            <th>{% trans "Storage Location" %}</th>
+            <th>{% trans "Assigned Barcode" %}</th>
+            <th>{% trans "Status" %}</th>
+          </tr>
+        </thead>
+          <tbody>
+            {% for batch in batches %}
+            <tr>
+              <td>{{ batch.batch_number }}</td>
+              <td>{{ batch.product_name }}</td>
+              <td>{{ batch.category }}</td>
+              <td>{{ batch.supplier }}</td>
+              <td>{{ batch.manufacturing_date|date:"d M Y" }}</td>
+              <td>{{ batch.expiry_date|date:"d M Y" }}</td>
+              <td>{{ batch.quantity_available }}</td>
+              <td>{{ batch.storage_location }}</td>
+              <td>
+                {% if batch.assigned_barcode %}
+                  <code>{{ batch.assigned_barcode }}</code>
+                {% else %}
+                  <span class="text-muted">-</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if batch.status == "Active" %}
+                  <span class="status-badge received">{{ batch.status }}</span>
+                {% elif batch.status == "Expired" %}
+                  <span class="status-badge pending">{{ batch.status }}</span>
+                {% elif batch.status == "Issued" %}
+                  <span class="status-badge partial">{{ batch.status }}</span>
+                {% else %}
+                  <span class="status-badge pending">{{ batch.status }}</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="10" class="no-data">{% trans "No Batch Records Found" %}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+      </table>
+  </div>
+  <!-- Pagination Controls -->
+  <div class="pagination-container" id="tablePagination"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/admin/admin_report_tables.js' %}"></script>
+{% endblock %}

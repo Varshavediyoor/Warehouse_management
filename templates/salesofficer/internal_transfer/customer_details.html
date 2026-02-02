@@ -1,0 +1,135 @@
+{% extends "base_user.html" %}
+{% block content %}
+
+<h2>Transfer Request – {{ transfer.request_no }}</h2>
+
+<hr>
+
+<h4>Basic Information</h4>
+<p><strong>From Warehouse:</strong>
+    {% if transfer.requested_by %}
+        {{ transfer.requested_by.name }} ({{ transfer.requested_by.code }})
+    {% else %}
+        —
+    {% endif %}
+</p>
+
+<p><strong>To Warehouse:</strong>
+    {{ transfer.supplying_to.name }} ({{ transfer.supplying_to.code }})
+</p>
+
+<p><strong>Status:</strong> {{ transfer.status|capfirst }}</p>
+
+<p><strong>Fulfillment Mode:</strong>
+    {% if transfer.fulfillment_mode %}
+        {{ transfer.fulfillment_mode|capfirst }}
+    {% else %}
+        Not Selected
+    {% endif %}
+</p>
+
+{% if transfer.remarks %}
+<p><strong>Remarks:</strong> {{ transfer.remarks }}</p>
+{% endif %}
+
+<hr>
+
+<h4>Products</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2" class="text-center">No products added</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+
+{# ================= SUPPLYING WAREHOUSE ACTIONS ================= #}
+{% if transfer.status == "requested" and user.userprofile.warehouse == transfer.supplying_to %}
+    <h4>Approval Actions</h4>
+
+    <a href="{% url 'salesofficer:approve_request' transfer.id %}"
+       class="btn btn-success">
+        Approve
+    </a>
+
+    <a href="{% url 'salesofficer:reject_request' transfer.id %}"
+       class="btn btn-danger">
+        Reject
+    </a>
+
+    <hr>
+{% endif %}
+
+
+{# ================= REQUESTING WAREHOUSE ACTIONS ================= #}
+{% if transfer.status == "approved" and user.userprofile.warehouse == transfer.requested_by %}
+
+    {% if not transfer.fulfillment_mode %}
+        <h4>Select Delivery Method</h4>
+
+        <form method="post" action="{% url 'salesofficer:choose_fulfillment' transfer.id %}">
+            {% csrf_token %}
+            <button type="submit" name="mode" value="warehouse" class="btn btn-primary">
+                Warehouse Transfer
+            </button>
+
+            <button type="submit" name="mode" value="client" class="btn btn-info">
+                Client Delivery
+            </button>
+        </form>
+
+        <hr>
+    {% endif %}
+
+    {% if transfer.fulfillment_mode == "client" and not transfer.customer_detail %}
+        <a href="{% url 'salesofficer:send_customer_details' transfer.id %}"
+           class="btn btn-warning">
+            Send Customer Details
+        </a>
+        <hr>
+    {% endif %}
+
+{% endif %}
+
+
+{# ================= CUSTOMER DETAILS (VIEW ONLY) ================= #}
+{% if transfer.customer_detail %}
+<h4>Customer Delivery Details</h4>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Name</th>
+        <td>{{ transfer.customer_detail.name }}</td>
+    </tr>
+    <tr>
+        <th>Phone</th>
+        <td>{{ transfer.customer_detail.phone }}</td>
+    </tr>
+    <tr>
+        <th>Address</th>
+        <td>{{ transfer.customer_detail.address }}</td>
+    </tr>
+</table>
+<hr>
+{% endif %}
+
+<a href="javascript:history.back()" class="btn btn-secondary">
+    Back
+</a>
+
+{% endblock %}

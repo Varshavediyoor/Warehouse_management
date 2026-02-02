@@ -1,0 +1,20 @@
+<h2>Purchase Orders</h2>
+<a href="{% url 'po_create' %}">Create PO</a>
+
+<table border="1">
+<tr><th>PO</th><th>Vendor</th><th>Status</th><th>Action</th></tr>
+{% for po in pos %}
+<tr>
+<td>{{ po.po_number }}</td>
+<td>{{ po.vendor }}</td>
+<td>{{ po.status }}</td>
+<td>
+{% if po.status == "DRAFT" %}
+<a href="{% url 'po_update' po.id %}">Edit</a>
+{% endif %}
+<a href="{% url 'inventory_manager:po_decide' po.id %}">View</a>
+</td>
+</tr>
+{% endfor %}
+</table>
+</table>

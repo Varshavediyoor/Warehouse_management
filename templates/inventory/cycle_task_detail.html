@@ -1,0 +1,23 @@
+<h2>Task {{ task }}</h2>
+
+<table border="1">
+<tr>
+  <th>SKU</th>
+  <th>Expected</th>
+  <th>Counted</th>
+  <th>Variance</th>
+  <th>Action</th>
+</tr>
+
+{% for line in task.lines.all %}
+<tr>
+  <td>{{ line.product.sku }}</td>
+  <td>{{ line.expected_qty }}</td>
+  <td>{{ line.counted_qty }}</td>
+  <td>{{ line.variance }}</td>
+  <td>
+    <a href="{% url 'inventory_manager:submit_physical_count' line.id %}">Count</a>
+  </td>
+</tr>
+{% endfor %}
+</table>

@@ -1,0 +1,155 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Packing – Delivery Orders" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/warehouse_manager/packing_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="header-section">
+        <h1><span>{% trans "Packing –" %}</span> {% trans "Delivery Orders" %}</h1>
+        <div class="view-stock-header-right">          
+            <a href="#" class="btn-back">
+            <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- FILTERS SECTION -->
+    <div class="filter-container">
+        <!-- Left Filters -->
+        <div class="filters-left">
+            <!-- DO Number -->
+            <div class="filter-item">
+                <input type="text" class="filter-input" placeholder="{% trans 'Enter DO Number' %}">
+            </div>
+        
+            <!-- Packing Status Dropdown -->
+            <div class="filter-item">
+                <select name="packing" class="filter-input">
+                    <option value="">{% trans "Packing Status" %}</option>
+                    <option value="created">{% trans "Created" %}</option>
+                    <option value="pending">{% trans "Pending" %}</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Filter Buttons -->
+        <div class="filters-right">
+            <button class="btn-back filter-btn">{% trans "Filter" %}</button>
+        </div>
+    </div>
+
+
+
+    <!-- DELIVERY ORDERS TABLE -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+        <table class="table-content" id="tableContent">
+            <thead>
+                <tr>
+                    <th>{% trans "DO No" %}</th>
+                    <th>{% trans "Customer" %}</th>
+                    <th>{% trans "Picklist" %}</th>
+                    <th>{% trans "Packing" %}</th>
+                    <th>{% trans "Shipped" %}</th>
+                    <th>{% trans "Actions" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for do in delivery_orders %}
+                <tr data-packing="{{ do.has_packing|yesno:'1,0' }}">
+                    <td>{{ do.delivery_no }}</td>
+                    <td>{{ do.order.customer_name }}</td>
+
+                    <!-- PICKLIST STATUS -->
+                    <td>
+                        {% if do.has_picklist_annot %}
+                            <span class="status-badge success">✅ {% trans "Generated" %}</span>
+                        {% else %}
+                            <span class="status-badge pending">❌ {% trans "Pending" %}</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if do.has_packing_annot %}
+                            <span class="status-badge success">✅ {% trans "Created" %}</span>
+                        {% else %}
+                            <span class="status-badge pending">❌ {% trans "Pending" %}</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if do.is_dispatched_annot %}
+                            <span class="status-badge success">✅ {% trans "Yes" %}</span>
+                        {% else %}
+                            <span class="status-badge pending">❌ {% trans "No" %}</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- ACTIONS -->
+<td>
+    <div class="action-buttons">
+        {% if do.has_packing_annot %}
+            <a href="{% url 'warehouse_manager:create_packing' do.id %}"
+               class="action-btn packing-btn">
+                {% trans "View Packing" %}
+            </a>
+        {% elif do.has_picklist_annot %}
+            <a href="{% url 'warehouse_manager:create_packing' do.id %}"
+               class="action-btn packing-btn">
+                {% trans "Create Packing" %}
+            </a>
+        {% else %}
+            <span class="text-muted">{% trans "Picklist not ready" %}</span>
+        {% endif %}
+    </div>
+</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">{% trans "No delivery orders found." %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+         <!-- Pagination Controls -->
+         <div class="pagination-container" id="tablePagination"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Filter rows based on "Packing Completed Only"
+    const packingCheckbox = document.getElementById('packing-completed');
+    packingCheckbox.addEventListener('change', function() {
+        const rows = document.querySelectorAll('tbody tr');
+        const showCompletedOnly = this.checked;
+        rows.forEach(row => {
+            const hasPacking = row.dataset.packing === "1";
+            row.style.display = (showCompletedOnly && !hasPacking) ? 'none' : '';
+        });
+    });
+
+    // Optional: Filter DO No dynamically
+    const doFilter = document.querySelector('.filter-input');
+    doFilter.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const doNo = row.children[0].textContent.toLowerCase();
+            row.style.display = doNo.includes(query) ? '' : 'none';
+        });
+    });
+</script>
+
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+
+{% endblock %}
+

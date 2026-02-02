@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Product Master</title>
+<style>
+body{font-family:Arial;background:#f4f6f9;padding:20px}
+.card{background:#fff;padding:15px;border-radius:10px;margin-bottom:20px}
+input,select{width:100%;padding:6px}
+table{width:100%;border-collapse:collapse;background:#fff}
+th,td{padding:8px;border-bottom:1px solid #ddd;font-size:13px}
+th{background:#212529;color:#fff}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+<h3>Product Master</h3>
+
+<input type="hidden" id="pid">
+
+<label>Product Name</label>
+<input id="pname">
+
+<label>Category</label>
+<select id="category" onchange="loadVariants()"></select>
+
+<div id="variant_fields"></div>
+
+<div id="expiry_div" style="display:none">
+<label>Expiry Date</label>
+<input type="date" id="expiry">
+</div>
+
+<br>
+<button onclick="saveProduct()">Save Product</button>
+</div>
+
+<div class="card">
+<h3>Products</h3>
+<table>
+<thead>
+<tr>
+<th>Name</th><th>Category</th><th>Variants</th><th>Expiry</th><th>Action</th>
+</tr>
+</thead>
+<tbody id="ptable"></tbody>
+</table>
+</div>
+
+<script>
+
+let catApi  = "/en/dashboard/inventory-manager/api/category-list/"
+let prodApi = "/en/dashboard/inventory-manager/api/products/"
+let categories = []
+
+function getCookie(name) {
+    let v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return v ? v[2] : null;
+}
+const csrftoken = getCookie('csrftoken')
+
+/* ---------- LOAD CATEGORIES ---------- */
+fetch(catApi).then(r=>r.json()).then(data=>{
+    categories = data
+    let opt = `<option value="">-- Select --</option>`
+    data.forEach(c=>{
+        opt+=`<option value="${c.id}">${c.name}</option>`
+    })
+    category.innerHTML = opt
+})
+
+/* ---------- VARIANTS ---------- */
+function loadVariants(){
+    let cid = category.value
+    let cat = categories.find(c=>c.id == cid)
+
+    variant_fields.innerHTML = ""
+
+    if(cat && cat.has_expiry){
+        expiry_div.style.display="block"
+    }else{
+        expiry_div.style.display="none"
+        expiry.value=""
+    }
+
+    if(cat){
+        cat.variants.forEach(v=>{
+
+            // ❗ SKIP EXPIRY VARIANT — DATE FIELD ALREADY EXISTS
+            if(v.name.toLowerCase() === "expiry") return;
+
+            variant_fields.innerHTML += `
+            <label>${v.name}</label>
+            <input data-vid="${v.id}">
+            `
+        })
+    }
+}
+
+/* ---------- SAVE ---------- */
+function saveProduct(){
+    let pid = document.getElementById("pid").value
+
+    let vars = []
+    document.querySelectorAll("#variant_fields input").forEach(i=>{
+        if(i.value.trim()){
+            vars.push({
+                variant: i.dataset.vid,
+                value: i.value
+            })
+        }
+    })
+
+    let data = {
+        name: pname.value,
+        category: category.value,
+        expiry_date: expiry.value || null,
+        variant_values: vars
+    }
+
+    fetch(pid ? prodApi+pid+"/" : prodApi,{
+        method: pid ? "PUT":"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "X-CSRFToken":csrftoken
+        },
+        body:JSON.stringify(data)
+    })
+    .then(r=>{
+        if(!r.ok) return r.json().then(e=>{throw e})
+        return r.json()
+    })
+    .then(()=>{ clearForm(); loadProducts() })
+    .catch(e=>{
+        console.error("SAVE ERROR:", e)
+        alert("Save failed. Check console.")
+    })
+}
+
+/* ---------- LOAD PRODUCTS ---------- */
+function loadProducts(){
+    fetch(prodApi).then(r=>r.json()).then(data=>{
+        let rows=""
+        data.forEach(p=>{
+            let cat = categories.find(c=>c.id==p.category)
+            rows+=`
+            <tr>
+            <td>${p.name}</td>
+            <td>${cat ? cat.name : ""}</td>
+            <td>${p.variant_values.map(v => (v.variant_name || "") + ":" + v.value).join(", ")}</td>
+
+            <td>${p.expiry_date || ""}</td>
+            <td>
+                <button onclick='editProd(${JSON.stringify(p)})'>Edit</button>
+                <button onclick='delProd(${p.id})'>Delete</button>
+            </td>
+            </tr>`
+        })
+        ptable.innerHTML = rows
+    })
+}
+
+/* ---------- EDIT ---------- */
+function editProd(p){
+    pid.value = p.id
+    pname.value = p.name
+    category.value = p.category
+    loadVariants()
+
+    expiry.value = p.expiry_date || ""
+
+    p.variant_values.forEach(v=>{
+        let i = document.querySelector(`input[data-vid="${v.variant}"]`)
+        if(i) i.value = v.value
+    })
+}
+
+/* ---------- DELETE ---------- */
+function delProd(id){
+    fetch(prodApi+id+"/",{method:"DELETE",headers:{"X-CSRFToken":csrftoken}})
+    .then(()=>loadProducts())
+}
+
+function clearForm(){
+    pid.value=""
+    pname.value=""
+    category.value=""
+    variant_fields.innerHTML=""
+    expiry.value=""
+    expiry_div.style.display="none"
+}
+
+loadProducts()
+
+</script>
+
+</body>
+</html>
+
+

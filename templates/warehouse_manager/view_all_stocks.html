@@ -1,0 +1,136 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "All Warehouse Stocks" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/warehouse_manager/view_all_stocks.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class="stock-container">
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "All " %}</span>
+                {% trans " Warehouse Stock" %}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <form method="get" class="filter-mini">
+
+        <!-- Warehouse -->
+        <select name="warehouse" onchange="this.form.submit()">
+          <option value="">Warehouse</option>
+          {% for db in warehouses %}
+            <option value="{{ db }}" {% if selected_warehouse == db %}selected{% endif %}>
+              {{ db }}
+            </option>
+          {% endfor %}
+        </select>
+      
+        <!-- Category -->
+        <select name="category">
+          <option value="">Category</option>
+          {% for key, value in categories %}
+            <option value="{{ key }}" {% if category_filter == key %}selected{% endif %}>
+              {{ value }}
+            </option>
+          {% endfor %}
+        </select>
+
+        <!-- Search -->
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text"
+                    name="search"
+                    placeholder="Search"
+                    value="{{ search_query }}">
+            </div>
+      
+        <!-- Button -->
+        <button type="submit" class="btn-mini">
+          <i class="bi bi-funnel"></i>
+        </button>
+      
+      </form>
+      
+  
+
+
+    <!-- Table -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+        <table class="table-content" id="tableContent">
+    
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>SKU</th>
+                <th>Category</th>
+                <th>Supplier</th>
+                <th>Quantity</th>
+                <th>Rack / Zone / Shelf</th>
+                <th>Database</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+    
+            <tbody>
+            {% for stock in stocks %}
+            <tr>
+                <td>{{ stock.name }}</td>
+                <td>{{ stock.sku }}</td>
+                <td>{{ stock.category }}</td>
+                <td>{{ stock.supplier_code }}</td>
+                <td>{{ stock.quantity }}</td>
+                <td>{{ stock.rack }} / {{ stock.zone }} / {{ stock.shelf }}</td>
+                <td>{{ stock.database }}</td>
+    
+                <!-- ACTION -->
+                <td>
+                    <div class="action-buttons">
+                        <a href="mailto:{{ stock.email }}?subject=Quotation Request | {{ stock.name }} ({{ stock.sku }})&body=Supplying Warehouse: {{ stock.database }}%0D%0AProduct: {{ stock.name }}%0D%0ASKU: {{ stock.sku }}%0D%0AAvailable Quantity: {{ stock.quantity }}%0D%0A%0D%0APlease share your quotation."
+                        class="action-btn normal"
+                        title="Request quotation from supplying warehouse">
+                    <i class="bi bi-envelope-paper"></i> Quotation
+                        </a>
+                    </div>
+                </td>
+            </tr>
+    
+            {% empty %}
+            <!-- EMPTY STATE -->
+            <tr class="empty-row">
+                <td colspan="8">
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <p>No stock data available</p>
+                </div>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+    
+        </table>
+        </div>
+        <!-- Pagination -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+  
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}
+

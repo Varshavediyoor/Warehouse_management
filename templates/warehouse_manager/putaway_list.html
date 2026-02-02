@@ -1,0 +1,73 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Putaway Pending GRN" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/warehouse_manager/putaway_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="putaway-container">
+    <!-- Header -->
+    <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1>
+              <span>{% trans "Putaway " %}</span>
+              {% trans " Pending GRN's" %}
+          </h1>
+      </div>
+      <div class="wh-header-right">
+          <a href="javascript:history.back()" class="btn-back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-scroll-wrapper">
+    <div class="table-container">
+      <table class="table-content" id="tableContent">
+        <thead>
+          <tr>
+            <th>GRN No</th>
+            <th>PO</th>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "Action" %}</th>
+          </tr>
+        </thead>
+        
+        {% for grn in grns %}
+        <tr>
+          <td>{{ grn.grn_number }}</td>
+          <td>{{ grn.purchase_order.po_number }}</td>
+          <td>{{ grn.created_at }}</td>
+          <td>
+            <div class="action-buttons">
+              <a href="{% url 'warehouse_manager:putaway_grn' grn.id %}" class="action-btn normal">{% trans "Putaway" %}</a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">
+                {% trans "No pending putaway." %}
+            </td>
+        </tr>
+        {% endfor %}
+        </table>
+    </div>
+  </div>
+  <!-- Pagination Controls -->
+  <div class="pagination-container" id="tablePagination"></div>
+
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

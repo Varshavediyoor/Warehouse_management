@@ -1,0 +1,117 @@
+{% extends "base_user.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+<h4>Manufacturing Dashboard</h4>
+
+<!-- KPI CARDS -->
+<div class="row mb-4">
+
+  <div class="col-md-3">
+    <div class="card p-3 shadow">
+      <h6>Today's Output</h6>
+      <h4>{{ today_output }}</h4>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card p-3 shadow">
+      <h6>This Month Output</h6>
+      <h4>{{ month_output }}</h4>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card p-3 shadow">
+      <h6>Scrap Qty</h6>
+      <h4>{{ scrap_qty }}</h4>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card p-3 shadow">
+      <h6>Rework Count</h6>
+      <h4>{{ rework_count }}</h4>
+    </div>
+  </div>
+
+</div>
+
+<!-- CHARTS -->
+<div class="row mb-4">
+
+  <div class="col-md-6">
+    <canvas id="prodChart"></canvas>
+  </div>
+
+  <div class="col-md-6">
+    <canvas id="qcPie"></canvas>
+  </div>
+
+</div>
+
+<!-- TABLES -->
+<div class="row">
+
+  <div class="col-md-6">
+    <h6>Recent Manufacturing Orders</h6>
+    <table class="table table-sm table-bordered">
+      <tr><th>MO</th><th>Status</th><th>Qty</th></tr>
+      {% for mo in recent_mos %}
+      <tr>
+        <td>{{ mo.mo_no }}</td>
+        <td>{{ mo.status }}</td>
+        <td>{{ mo.quantity }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div class="col-md-6">
+    <h6>Recent Scrap</h6>
+    <table class="table table-sm table-bordered">
+      <tr><th>Product</th><th>Qty</th><th>Loss</th></tr>
+      {% for s in scrap_list %}
+      <tr>
+        <td>{{ s.product }}</td>
+        <td>{{ s.quantity }}</td>
+        <td>{{ s.loss_amount }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+</div>
+
+</div>
+
+<!-- CHART JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+new Chart(document.getElementById('prodChart'), {
+  type: 'bar',
+  data: {
+    labels: {{ days|safe }},
+    datasets: [{
+      label: 'Daily Production',
+      data: {{ output_values|safe }}
+    }]
+  }
+});
+
+new Chart(document.getElementById('qcPie'), {
+  type: 'pie',
+  data: {
+    labels: ['Pass','Scrap','Rework'],
+    datasets: [{
+      data: [{{ pass_count }}, {{ scrap_count }}, {{ rework_count_chart }}]
+    }]
+  }
+});
+
+</script>
+
+{% endblock %}

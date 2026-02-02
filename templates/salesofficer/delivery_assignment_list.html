@@ -1,0 +1,75 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Delivery Assignments" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/salesofficer/delivery_assignment_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="delivery-assign-container">
+    <!-- Header Section -->
+    <div class="header-section">
+        <h1><span>{% trans "Delivery" %}</span> {% trans "Assignments" %}</h1>
+        <a href="{% url 'salesofficer_dashboard' %}" class="btn-back">
+            <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+        </a>
+    </div>
+
+    <!-- Table Section -->
+    <div class="table-container">
+        {% if assignments %}
+            <table class="assign-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Assignment ID" %}</th>
+                        <th>{% trans "Picklist ID" %}</th>
+                        <th>{% trans "Order No" %}</th>
+                        <th>{% trans "Delivery Boy" %}</th>
+                        <th>{% trans "Assigned Date" %}</th>
+                        <th>{% trans "Status" %}</th>
+                        <th>{% trans "Remarks" %}</th>
+                        <th>{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for assign in assignments %}
+                    <tr>
+                        <td>{{ assign.id }}</td>
+                        <td>{{ assign.picklist.id }}</td>
+                        <td>{{ assign.picklist.order.order_no }}</td>
+                        <td>
+                            {% if assign.delivery_boy %}
+                                {{ assign.delivery_boy.user.username }}
+                            {% else %}
+                                <em>{% trans "Not assigned" %}</em>
+                            {% endif %}
+                        </td>
+                        <td>{{ assign.assigned_date|date:"Y-m-d H:i" }}</td>
+                        <td>
+                            <span class="status-badge {{ assign.status|lower }}">
+                                {{ assign.status|title }}
+                            </span>
+                        </td>
+                        <td>{{ assign.remarks|default:"-" }}</td>
+                        <td>
+                            <a href="{% url 'salesofficer:delivery_assignment_detail' assign.id %}" 
+                               class="action-btn info">
+                                <i class="bi bi-eye"></i> {% trans "View" %}
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="no-data"><em>{% trans "No delivery assignments found." %}</em></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-data"><em>{% trans "No delivery assignments found." %}</em></p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

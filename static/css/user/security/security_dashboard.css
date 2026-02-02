@@ -1,0 +1,120 @@
+.security-header {
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(25px) scale(0.98);
+        filter: blur(6px);
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+  }
+
+.security-header h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2c8cfb;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.security-header h2 span{
+    color: #2c4c71;
+}
+
+.security-header p {
+    color: #6b7b8c;
+    font-size: 0.85rem;
+}
+
+.table-heading {
+    margin-top: 2rem;
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+}
+
+.table-heading h3 {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* table buttons  */
+
+.action-container {
+    display: flex;
+    gap: 10px;
+}
+
+.btn{
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border-radius: 30px;
+    color: #fff;
+    padding: .3rem .6rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden; /* ✅ Keeps shine animation inside button */
+    position: relative;
+}
+
+.btn.dispatch-btn {
+    background: linear-gradient(90deg, #2fcd8b, #3c8768);
+}
+
+.btn.product-btn {
+    background: linear-gradient(90deg, #c5cd2f, #c0d827);
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    color: #fff;
+}
+
+.btn::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 100%;
+    background-image: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.btn:hover::before {
+    animation: shine 1.5s ease-out infinite;
+}
+
+@keyframes shine {
+    0% {
+      left: -80px;
+    }
+    60% {
+      left: 100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }

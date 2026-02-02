@@ -1,0 +1,93 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Purchase Order Details" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/procurement_officer/po_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="po-detail-page">
+
+<!-- Header -->
+<div class="wh-header-section">
+    <div class="wh-header-left">
+        <h1>
+            <span>{% trans "Purchase Order - " %}</span>
+            {{ po.po_number }}
+        </h1>
+    </div>
+    <div class="wh-header-right">
+        <a href="javascript:history.back()" class="btn-back">
+            <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+        </a>
+    </div>
+</div>
+
+  <!-- STATUS CARD -->
+  <div class="po-status-card">
+    <span class="label">{% trans "Status" %}</span>
+    <span class="status-badge {{ po.status|lower }}">
+      {{ po.status }}
+    </span>
+  </div>
+
+  <!-- ITEMS SECTION -->
+  <div class="card-section">
+    <h3 class="section-title">Items in this Purchase Order</h3>
+
+    <div class="table-responsive">
+      <table class="po-table">
+        <thead>
+          <tr>
+            <th>Item Name</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Total Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in po.items.all %}
+          <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity_ordered }}</td>
+            <td>₹ {{ item.unit_price }}</td>
+            <td class="total">₹ {{ item.line_total }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="empty-row">No items added</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SUPPLIER INFO -->
+  <div class="card-section supplier-card">
+    <h3 class="section-title">Supplier Information</h3>
+
+    <div class="supplier-grid">
+      <div>
+        <span class="info-label">Name</span>
+        <span class="info-value">{{ po.supplier.user }}</span>
+      </div>
+
+      <div>
+        <span class="info-label">Contact</span>
+        <span class="info-value">{{ po.supplier.phone_number }}</span>
+      </div>
+
+      <div>
+        <span class="info-label">Address</span>
+        <span class="info-value">{{ po.supplier.address }}</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

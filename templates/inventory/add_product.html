@@ -1,0 +1,57 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Add Product Category" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/inventory_manager/add_product.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="gate-entry-page">
+
+    <!-- HEADER -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Add" %}</span>
+                {% trans " Product Category" %}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="form-card grid-layout">
+
+        <!-- LEFT ILLUSTRATION -->
+        <div class="form-illustration">
+            <img src="{% static 'images/total-sku.png' %}" alt="Add Product">
+            <h3>{% trans "Product" %} <span>{% trans "Category" %}</span></h3>
+            <p>{% trans "Create and manage product categories used across inventory, purchase and sales modules." %}</p>
+        </div>
+
+        <!-- FORM -->
+        <form method="POST" class="grid-form">
+            {% csrf_token %}
+            <div class="form-grid">
+                {{ form.as_p }}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-back btn-submit">
+                    {% trans "Save Category" %}
+                </button>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

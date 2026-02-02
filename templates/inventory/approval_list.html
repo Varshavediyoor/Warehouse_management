@@ -1,0 +1,8 @@
+<h2>Pending Approvals</h2>
+
+{% for a in adjustments %}
+<p>
+  {{ a.product.sku }} | {{ a.qty }} |
+  <a href="{% url 'inventory_managerapprove_adjustment' a.id %}">Approve</a>
+</p>
+{% endfor %}

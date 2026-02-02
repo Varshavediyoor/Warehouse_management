@@ -1,0 +1,83 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Digital Gate Pass" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/security/gate_pass_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="gatepass-wrapper">
+
+  <div class="gatepass-card">
+
+    <!-- HEADER -->
+    <div class="gatepass-header">
+      <div class="company">
+        <h2>{% trans "DIGITAL GATE PASS" %}</h2>
+        <span class="subtitle">{% trans "Official Exit Authorization" %}</span>
+      </div>
+
+      <div class="gatepass-no">
+        <span>{% trans "Gate Pass No" %}</span>
+        <strong>{{ entry.gate_pass_number }}</strong>
+      </div>
+    </div>
+
+    <!-- STATUS -->
+    <div class="gatepass-status">
+      <span class="status dispatched">{% trans "DISPATCHED" %}</span>
+    </div>
+
+    <!-- DETAILS GRID -->
+    <div class="gatepass-grid">
+
+      <div class="gp-item">
+        <span>{% trans "Vehicle Number" %}</span>
+        <strong>{{ entry.vehicle_number }}</strong>
+      </div>
+
+      <div class="gp-item">
+        <span>{% trans "Driver Name" %}</span>
+        <strong>{{ entry.driver_name }}</strong>
+      </div>
+
+      <div class="gp-item">
+        <span>{% trans "Exit Time" %}</span>
+        <strong>{{ entry.exit_time }}</strong>
+      </div>
+
+      <div class="gp-item">
+        <span>{% trans "Authorized Status" %}</span>
+        <strong>{% trans "Approved for Exit" %}</strong>
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="gatepass-footer">
+      <div class="signature">
+        <span>{% trans "Security Officer" %}</span>
+        <div class="sign-line"></div>
+      </div>
+
+      <div class="signature">
+        <span>{% trans "Warehouse In-Charge" %}</span>
+        <div class="sign-line"></div>
+      </div>
+    </div>
+
+    <!-- ACTION -->
+    <div class="action-buttons">
+      <button onclick="window.print()" class="action-btn">
+        <i class="bi bi-printer"></i> {% trans "Print Gate Pass" %}
+      </button>
+    </div>
+
+  </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,11 @@
+<h2>Gate Pass Approval</h2>
+
+<p><b>Vehicle:</b> {{ entry.vehicle_number }}</p>
+<p><b>Driver:</b> {{ entry.driver_name }}</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">
+    Generate Gate Pass & Allow Exit
+  </button>
+</form>

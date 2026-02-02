@@ -1,0 +1,56 @@
+{% extends 'base_user.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Dispatch Order Products" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/security/dispatch_order_products.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="grn-header">
+    <div class="grn-header-left">
+        <h1><span>{% trans "Dispatch ID" %}:</span> {{ dispatch.id }}</h1>
+        <p>{% trans "Products in orders associated with this dispatch." %}</p>
+    </div>
+    <div class="grn-list-header-right">
+        <a href="{% url 'security_dashboard' %}" class="security-back-btn">
+        <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+        </a>
+    </div>
+</div>
+
+<div class="table-scroll-wrapper">
+    <div class="table-container">
+        <table class="table-content" id="tableContent">
+            <thead>
+                <tr>
+                    <th>{% trans "Order No" %}</th>
+                    <th>{% trans "Product" %}</th>
+                    <th>{% trans "Quantity" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.order.order_no }}</td>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">{% trans "No Products Found" %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+     <!-- Pagination Controls -->
+     <div class="pagination-container" id="tablePagination"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

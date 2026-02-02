@@ -1,0 +1,76 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Orders Ready for Delivery" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/salesofficer/ready_for_delivery.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="ready-delivery-container">
+  <!-- Header -->
+  <div class="order-header">
+    <div class="order-header-left">
+      <h1>{% trans "Orders" %} <span>{% trans "Ready for Delivery" %}</span></h1>
+      <p class="subtext">{% trans "List of orders completed and awaiting delivery assignment" %}</p>
+    </div>
+    <a href="{% url 'salesofficer_dashboard' %}" class="btn-back">
+      <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+    </a>
+  </div>
+
+  <!-- Meta Info -->
+  <div class="order-meta">
+    <div class="order-meta-content-left">
+      <span class="records-count">{% trans "Total Ready Orders:" %} <strong>{{ picklists|length }}</strong></span>
+      <span class="generated-date"><i class="bi bi-clock"></i> {% trans "Updated on:" %} {{ now|date:"d M Y, H:i" }}</span>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-scroll-wrapper">
+    <div class="table-container">
+      <table class="table-content" id="tableContent">
+      <thead>
+        <tr>
+          <th>{% trans "Order No" %}</th>
+          <th>{% trans "Customer Name" %}</th>
+          <th>{% trans "Status" %}</th>
+          <th>{% trans "Assign Delivery Boy" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pick in picklists %}
+        <tr>
+          <td>{{ pick.order.order_no }}</td>
+          <td>{{ pick.order.customer_name }}</td>
+          <td>
+            {% if pick.status %}
+              <span class="status-badge status-{{ pick.status|lower }}">{{ pick.status }}</span>
+            {% else %}
+              <span class="status-badge status-pending">{% trans "Pending" %}</span>
+            {% endif %}
+          </td>
+          <td>
+            <a href="{% url 'salesofficer:assign_delivery_boy' pick.id %}" class="btn-assign">{% trans "Assign" %}</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" class="no-data">{% trans "No completed picklists found" %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+   <!-- Pagination Controls -->
+   <div class="pagination-container" id="tablePagination"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

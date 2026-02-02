@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Admin OTP Verification" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/verify_login.css' %}">
+<link rel="stylesheet" href="{% static 'css/toast_message.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="otp-section">
+    <div class="otp-card">
+        <h2 class="otp-title">{% trans "Verify Your Identity" %}</h2>
+        <p class="otp-subtitle">{% trans "Enter the 6-digit OTP sent to your email" %}</p>
+
+        <form method="POST" class="otp-form">
+            {% csrf_token %}
+            <div class="input-group">
+                <input type="text" name="otp" class="otp-input" maxlength="6" required autocomplete="off">
+            </div>
+            <button type="submit" class="btn-verify">{% trans "Verify OTP" %}</button>
+        </form>
+
+        <form action="{% url 'resend_admin_otp' %}" method="POST" class="resend-form">
+            {% csrf_token %}
+            <button type="submit" class="btn-resend">{% trans "Resend OTP" %}</button>
+        </form>
+
+        <p class="hint-text">{% trans "Didn’t receive the OTP? Check your" %} <strong>{% trans "spam" %}</strong> {% trans "folder." %}</p>
+    </div>
+</section>
+
+{% if messages %}
+<div class="toast-overlay" id="toast-overlay">
+    <div class="toast-container" id="toast-container">
+        {% for message in messages %}
+        <div class="toast-message toast-{{ message.tags }}">
+            {% if "error" in message.tags %}
+                <i class="bi bi-x-circle-fill"></i>
+            {% elif "success" in message.tags %}
+                <i class="bi bi-check-circle-fill"></i>
+            {% elif "info" in message.tags %}
+                <i class="bi bi-info-circle-fill"></i>
+            {% else %}
+                <i class="bi bi-exclamation-circle-fill"></i>
+            {% endif %}
+            <div class="text">{{ message }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<script src="{% static 'js/admin/verify_login.js' %}"></script>
+<script src="{% static 'js/toast_message.js' %}"></script>
+{% endblock %}

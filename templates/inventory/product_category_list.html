@@ -1,0 +1,68 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Product Category List" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/inventory_manager/product_category_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class="product-container">
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Product " %}</span>
+                {% trans " Category List" %}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="table-buttons">
+        <a href="{% url 'inventory_manager:add_product_category' %}" class="btn-back add">{% trans "Add Category" %}</a>
+    </div>
+
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content product" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>{% trans "Name" %}</th>
+                        <th>{% trans "Description" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in categories %}
+                    <tr>
+                        <td>{{ category.name }}</td>
+                        <td>{{ category.description|default:"-" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">
+                            {% trans "No categories found." %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

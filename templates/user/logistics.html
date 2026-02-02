@@ -1,0 +1,447 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Logistics Dashboard" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/logistics/logistics.css' %}">
+<link rel="stylesheet" href="{% static 'css/user_dashboard_table.css' %}">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+
+{% block content %}
+
+<div class="db-header">
+  <h1><span>{% trans "Logistics" %}</span> {% trans "Dashboard" %}</h1>
+  <p>{% trans "Monitor movements, inventory status, and logistics performance." %}</p>
+</div>
+
+<div class="dashboard-layout">
+<!----------------------- Left Section ---------------------------->
+  <div class="left-section">
+  
+    <div class="im-cards">
+
+      <!-- TOTAL ORDERS TODAY -->
+      <div class="im-card fade-up">
+        <div class="maint-card-bubble"></div>
+          <div class="im-card-image">
+            <img src="{% static 'images/total-orders.png' %}" alt="card-image">
+          </div>
+          <div class="im-info">
+              <h4>{% trans "Total Orders (Today)" %}</h4>
+              <p class="im-number">{{ total_orders_today|default:"0" }}</p>
+              <span class="im-sub">
+                {% trans "vs Yesterday:" %}
+                {{ orders_vs_yesterday|default:"0" }}
+              </span>
+          </div>
+      </div>
+    
+      <!-- READY FOR DISPATCH -->
+      <div class="im-card fade-up delay-1">
+        <div class="maint-card-bubble"></div>
+          <div class="im-card-image">
+            <img src="{% static 'images/dispatch.png' %}" alt="card-image">
+          </div>
+          <div class="im-info">
+              <h4>{% trans "Ready for Dispatch" %}</h4>
+              <p class="im-number">{{ ready_for_dispatch|default:"0" }}</p>
+              <span class="im-sub">
+                  {% trans "Awaiting pickup:" %} {{ awaiting_pickup|default:"0" }}
+              </span>
+          </div>
+      </div>
+    
+      <!-- IN TRANSIT -->
+      <div class="im-card fade-up delay-2">
+        <div class="maint-card-bubble"></div>
+          <div class="im-card-image">
+            <img src="{% static 'images/in-transit.png' %}" alt="card-image">
+          </div>
+          <div class="im-info">
+              <h4>{% trans "In Transit" %}</h4>
+              <p class="im-number">{{ in_transit_orders|default:"0" }}</p>
+              <span class="im-sub">
+                  {% trans "Expected today:" %} {{ expected_today|default:"0" }}
+              </span>
+          </div>
+      </div>
+    
+    </div>
+    
+
+  <!---------------- responsive quick actions  --------------------->
+
+  <aside class="quick-actions responsive">
+    <div class="quick-action-heading">
+      <h3>{% trans "Quick Actions" %}</h3>
+    </div>
+    <div class="actions-grid">
+      {% if "Add Stock" in allowed_functions %}
+        <a href="{% url 'warehouse_manager:add_stock' %}" class="action-button">{% trans "Add Stock" %}</a>
+      {% endif %}
+      {% if "View Stock" in allowed_functions %}
+        <a href="{% url 'warehouse_manager:view_stock' %}" class="action-button">{% trans "View Stock" %}</a>
+      {% endif %}
+      {% if "View Sales Orders" in allowed_functions %}
+        <a href="{% url 'warehouse_manager:sales_order_list' %}" class="action-button">{% trans "View Sales Orders" %}</a>
+      {% endif %}
+      {% if "View Picklist" in allowed_functions %}
+        <a href="{% url 'warehouse_manager:picklist_list' %}" class="action-button">{% trans "View Picklist" %}</a>
+      {% endif %}
+      {% if "Create Sales Order" in allowed_functions %}
+        <a href="{% url 'salesofficer:create_sales_order' %}" class="action-button">{% trans "Create Sales Order" %}</a>
+      {% endif %}
+      {% if "Sales Orders" in allowed_functions %}
+        <a href="{% url 'salesofficer:list_sales_orders' %}" class="action-button">{% trans "Sales Orders" %}</a>
+      {% endif %}
+
+      {% if "Ready For Delivery" in allowed_functions %}
+        <a href="{% url 'salesofficer:ready_for_delivery' %}" class="action-button">{% trans "Assign Delivery Boy" %}</a>
+      {% endif %}
+
+      {% if "Create Purchase Order" in allowed_functions %}
+        <a href="{% url 'procurement_officer:purchaseorder_create' %}" class="action-button">{% trans "New Purchase Order" %}</a>
+      {% endif %}
+    
+      {% if "View Purchase Order List" in allowed_functions %}
+        <a href="{% url 'procurement_officer:purchaseorder_list' %}" class="action-button">{% trans "Purchase Order List" %}</a>
+      {% endif %}
+    
+      {% if "Create GRN" in allowed_functions %}
+        <a href="{% url 'procurement_officer:create_grn' %}" class="action-button">{% trans "Create GRN" %}</a>
+      {% endif %}
+    
+      {% if "View GRN" in allowed_functions %}
+        <a href="{% url 'procurement_officer:grn_list' %}" class="action-button">{% trans "View GRN" %}</a>
+      {% endif %}
+    
+      {% if "Review GRN" in allowed_functions %}
+        <a href="{% url 'grn_review_list' %}" class="action-button">{% trans "Review GRN" %}</a>
+      {% endif %}
+    
+      {% if "View Delivery List" in allowed_functions %}
+        <a href="{% url 'delivery_staff:all_deliveries' %}" class="action-button">{% trans "Delivery Orders" %}</a>
+      {% endif %}
+      <a href="#" class="action-button">{% trans "Create Shipment" %}</a>
+      <a href="#" class="action-button">{% trans "Assign Carrier" %}</a>
+      <a href="#" class="action-button">{% trans "Print Labels/Manifest" %}</a>
+      <a href="#" class="action-button">{% trans "Schedule Pickup" %}</a>
+      <a href="#" class="action-button">{% trans "Track Shipment" %}</a>
+      <a href="#" class="action-button">{% trans "Log Delivery Issue" %}</a>
+      <a href="#" class="action-button">{% trans "Reschedule Delivery" %}</a>
+    </div>
+    <div class="quick-actions-img">
+      <img src="{% static 'images/quick-actions.png' %}" alt="quick-actions-img">
+    </div>
+  </aside>
+
+<!------------------------- bar graph  ---------------------------->
+    
+  <section class="live-operations">  
+    <div class="operations-layout">
+      <div class="graph-card">
+        <div class="graph-header">
+            <h3>Shipment Status Overview</h3>
+            <span class="graph-subtitle">Live logistics movement summary</span>
+        </div>
+        <canvas id="inboundChart"></canvas>
+    </div>
+    </div>
+  </section>
+
+
+
+<!-------------------- map view  -------------------------------->
+
+  <div class="map-card">
+    <div class="map-header">
+        <h3>Live Delivery Tracking</h3>
+        <span>Real-time delivery movement & route status</span>
+    </div>
+
+    <div id="deliveryMap"></div>
+
+    <div class="map-legend">
+        <div><span class="legend ontime"></span> On Time</div>
+        <div><span class="legend risk"></span> At Risk</div>
+        <div><span class="legend delayed"></span> Delayed</div>
+    </div>
+</div>
+  
+<!-------------------- recent activities table ------------------>
+<div class="recent-activities">
+  <h2>{% trans "Recent Activities" %}</h2>
+ <!-- TABLE PREVIEW SECTION -->
+  <div class="dashboard-table-wrap">
+
+    <div class="table-scroll">
+      <table class="dashboard-table">
+        <thead>
+          <tr>
+            <th>Activity</th>
+            <th>Reference</th>
+            <th>Load</th>
+            <th>Status</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>Order Picked</td>
+            <td>SO-2045</td>
+            <td>12 Items</td>
+            <td><span class="badge info">Picked</span></td>
+            <td>Today, 09:10 AM</td>
+          </tr>
+
+          <tr>
+            <td>Packed for Dispatch</td>
+            <td>PK-1187</td>
+            <td>8 Boxes</td>
+            <td><span class="badge success">Packed</span></td>
+            <td>Today, 09:45 AM</td>
+          </tr>
+
+          <tr>
+            <td>Vehicle Assigned</td>
+            <td>TRK-09 · DL-01-AX-2398</td>
+            <td>Route A</td>
+            <td><span class="badge pending">Scheduled</span></td>
+            <td>Today, 10:20 AM</td>
+          </tr>
+
+          <tr>
+            <td>Out for Delivery</td>
+            <td>ORD-5563</td>
+            <td>15 Kg</td>
+            <td><span class="badge warning">In Transit</span></td>
+            <td>Today, 11:05 AM</td>
+          </tr>
+
+          <tr>
+            <td>Delivery Completed</td>
+            <td>ORD-5521</td>
+            <td>COD ₹3,200</td>
+            <td><span class="badge success">Delivered</span></td>
+            <td>Yesterday, 05:40 PM</td>
+          </tr>
+
+          <!-- Empty state -->
+          <!--
+          <tr>
+            <td colspan="5" class="no-box">No Recent activities yet.</td>
+          </tr>
+          -->
+        </tbody>
+      </table>
+    </div>
+  </div>  
+</div>
+
+
+
+<!-- ---------------------------------------------------------- -->
+  
+
+</div>
+
+<!---------------------- Right Section ---------------------------->
+
+  <div class="right-section">
+    <aside class="quick-actions">
+      <div class="quick-action-heading">
+        <h3>{% trans "Quick Actions" %}</h3>
+      </div>
+      <div class="actions-grid">
+        <!-- Django links as you already have -->
+        {% if "Add Stock" in allowed_functions %}
+          <a href="{% url 'warehouse_manager:add_stock' %}" class="action-button">{% trans "Add Stock" %}</a>
+        {% endif %}
+        {% if "View Stock" in allowed_functions %}
+          <a href="{% url 'warehouse_manager:view_stock' %}" class="action-button">{% trans "View Stock" %}</a>
+        {% endif %}
+        {% if "View Sales Orders" in allowed_functions %}
+          <a href="{% url 'warehouse_manager:sales_order_list' %}" class="action-button">{% trans "View Sales Orders" %}</a>
+        {% endif %}
+        {% if "View Picklist" in allowed_functions %}
+          <a href="{% url 'warehouse_manager:picklist_list' %}" class="action-button">{% trans "View Picklist" %}</a>
+        {% endif %}
+        {% if "Create Sales Order" in allowed_functions %}
+          <a href="{% url 'salesofficer:create_sales_order' %}" class="action-button">{% trans "Create Sales Order" %}</a>
+        {% endif %}
+        {% if "Sales Orders" in allowed_functions %}
+          <a href="{% url 'salesofficer:list_sales_orders' %}" class="action-button">{% trans "Sales Orders" %}</a>
+        {% endif %}
+
+        {% if "Ready For Delivery" in allowed_functions %}
+          <a href="{% url 'salesofficer:ready_for_delivery' %}" class="action-button">{% trans "Assign Delivery Boy" %}</a>
+        {% endif %}
+
+        {% if "Create Purchase Order" in allowed_functions %}
+          <a href="{% url 'procurement_officer:purchaseorder_create' %}" class="action-button">{% trans "New Purchase Order" %}</a>
+        {% endif %}
+      
+        {% if "View Purchase Order List" in allowed_functions %}
+          <a href="{% url 'procurement_officer:purchaseorder_list' %}" class="action-button">{% trans "Purchase Order List" %}</a>
+        {% endif %}
+      
+        {% if "Create GRN" in allowed_functions %}
+          <a href="{% url 'procurement_officer:create_grn' %}" class="action-button">{% trans "Create GRN" %}</a>
+        {% endif %}
+      
+        {% if "View GRN" in allowed_functions %}
+          <a href="{% url 'procurement_officer:grn_list' %}" class="action-button">{% trans "View GRN" %}</a>
+        {% endif %}
+      
+        {% if "Review GRN" in allowed_functions %}
+          <a href="{% url 'grn_review_list' %}" class="action-button">{% trans "Review GRN" %}</a>
+        {% endif %}
+      
+        {% if "View Delivery List" in allowed_functions %}
+          <a href="{% url 'delivery_staff:all_deliveries' %}" class="action-button">{% trans "Delivery Orders" %}</a>
+        {% endif %}
+        <a href="#" class="action-button">{% trans "Create Shipment" %}</a>
+        <a href="#" class="action-button">{% trans "Assign Carrier" %}</a>
+        <a href="#" class="action-button">{% trans "Print Labels/Manifest" %}</a>
+        <a href="#" class="action-button">{% trans "Schedule Pickup" %}</a>
+        <a href="#" class="action-button">{% trans "Track Shipment" %}</a>
+        <a href="#" class="action-button">{% trans "Log Delivery Issue" %}</a>
+        <a href="#" class="action-button">{% trans "Reschedule Delivery" %}</a>
+      </div>
+      <div class="quick-actions-img">
+        <img src="{% static 'images/quick-actions.png' %}" alt="quick-actions-img">
+      </div>
+    </aside>
+  </div>
+
+</div>
+
+<!-- SESSION TIMER BOX -->
+<!-- SESSION EXPIRY POPUP -->
+<div id="sessionPopupOverlay"
+   style="
+      display:none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(2px);
+      z-index: 9998;
+   ">
+</div>
+
+<div id="sessionPopup"
+   style="
+      display:none;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 25px 35px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      text-align: center;
+      z-index: 9999;
+      width: 340px;
+   ">
+  <h3 style="margin-bottom: 10px; color:#b30000;">Session Expiring</h3>
+  <p style="margin-bottom: 10px;">
+      You have been inactive. You will be logged out in:
+  </p>
+
+  <div style="
+      font-size: 28px;
+      font-weight: bold;
+      color: #d00000;
+      margin-bottom: 15px;
+  ">
+      <span id="popupCountdown">05:00</span>
+  </div>
+
+  <button onclick="stayLoggedIn()" style="
+      padding: 8px 20px;
+      background: #007bff;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+  ">Stay Logged In</button>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  let idleTime = 0;
+  const idleLimit = 120; // 2 minutes inactivity
+  let logoutTimer = 300; // 5 minutes countdown
+  let countdownActive = false;
+
+  const popup = document.getElementById("sessionPopup");
+  const overlay = document.getElementById("sessionPopupOverlay");
+  const popupCountdown = document.getElementById("popupCountdown");
+
+  // Reset activity
+  function resetActivity() {
+      idleTime = 0;
+
+      if (countdownActive) {
+          countdownActive = false;
+          logoutTimer = 300; // Reset timer
+          popup.style.display = "none";
+          overlay.style.display = "none";
+      }
+  }
+
+  // Stay logged-in button
+  function stayLoggedIn() {
+      resetActivity();
+  }
+
+  // Listeners
+  window.onload = resetActivity;
+  document.onmousemove = resetActivity;
+  document.onkeypress = resetActivity;
+  document.onclick = resetActivity;
+  document.onscroll = resetActivity;
+
+  // Timer loop
+  setInterval(function () {
+      idleTime++;
+
+      // Start popup countdown
+      if (idleTime >= idleLimit && !countdownActive) {
+          countdownActive = true;
+          popup.style.display = "block";
+          overlay.style.display = "block";
+      }
+
+      if (countdownActive) {
+          let minutes = Math.floor(logoutTimer / 60);
+          let seconds = logoutTimer % 60;
+
+          popupCountdown.innerHTML =
+              String(minutes).padStart(2, "0") + ":" +
+              String(seconds).padStart(2, "0");
+
+          logoutTimer--;
+
+          if (logoutTimer <= 0) {
+              window.location.href = "{% url 'user_login' %}";
+          }
+      }
+  }, 1000);
+</script>
+<script src="{% static 'js/user/logistics.js' %}"></script>
+<script src="{% static 'js/user/map_view.js' %}"></script>
+
+{% endblock %}
+
+

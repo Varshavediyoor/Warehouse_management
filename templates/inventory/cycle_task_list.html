@@ -1,0 +1,11 @@
+<h2>Cycle Count Tasks</h2>
+<a href="{% url 'inventory_manager:cycle_task_create' %}">New Task</a>
+<ul>
+{% for t in tasks %}
+  <li>
+    <a href="{% url 'inventory_manager:cycle_task_detail' t.id %}">
+      CC-{{ t.id }} | {{ t.location }} | {{ t.status }}
+    </a>
+  </li>
+{% endfor %}
+</ul>

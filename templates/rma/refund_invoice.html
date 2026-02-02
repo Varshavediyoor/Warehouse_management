@@ -1,0 +1,292 @@
+{% load static i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Refund Invoice – RMA-{{ refund.return_request.id }}</title>
+
+<style>
+/* ===============================
+   GLOBAL / PRINT SAFE
+================================ */
+body {
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 13px;
+    color: #1f2937;
+    margin: 40px;
+    background: #ffffff;
+}
+
+h1, h2, h3 {
+    margin: 0;
+    font-weight: 600;
+}
+
+p {
+    margin: 3px 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    border: 1px solid #d1d5db;
+    padding: 9px 10px;
+    vertical-align: top;
+}
+
+th {
+    background: #f1f5f9;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+
+.amount {
+    font-weight: 600;
+}
+
+.total-row {
+    font-weight: 700;
+    background: #f8fafc;
+}
+
+/* ===============================
+   HEADER
+================================ */
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 4px solid #2c8cfb;
+    padding-bottom: 18px;
+    margin-bottom: 28px;
+}
+
+.company-details h1 {
+    font-size: 24px;
+    color: #2c8cfb;
+}
+
+.company-details p {
+    font-size: 12px;
+    color: #374151;
+}
+
+.invoice-badge {
+    background: linear-gradient(90deg, #2c4c71, #2c8cfb);
+    color: #fff;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.invoice-details {
+    text-align: right;
+    font-size: 12px;
+}
+
+/* ===============================
+   SECTION BOX
+================================ */
+.section {
+    margin-top: 26px;
+}
+
+.section-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #2c4c71;
+}
+
+/* ===============================
+   SUMMARY BOX
+================================ */
+.summary-box {
+    width: 42%;
+    float: right;
+    margin-top: 16px;
+    border: 1px solid #d1d5db;
+}
+
+.summary-box table td {
+    border: none;
+    padding: 8px 10px;
+}
+
+.summary-box tr:not(:last-child) td {
+    border-bottom: 1px dashed #d1d5db;
+}
+
+.grand-total {
+    font-size: 15px;
+    font-weight: 700;
+    background: #f1f5f9;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+.footer {
+    margin-top: 60px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: #374151;
+}
+
+.signature {
+    text-align: center;
+}
+
+.signature-line {
+    border-top: 1px solid #000;
+    width: 180px;
+    margin: 10px auto 6px;
+}
+
+/* ===============================
+   PRINT
+================================ */
+@media print {
+    body {
+        margin: 20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===============================
+     HEADER
+================================ -->
+<div class="invoice-header">
+    <div class="company-details">
+        <h1>Codedu Software Technologies</h1>
+        <p>Company Address Line 1</p>
+        <p>City, State – PIN</p>
+        <p>GSTIN: XXABCDE1234X1Z5</p>
+        <p>Phone: +91-XXXXXXXXXX</p>
+        <p>Email: support@company.com</p>
+    </div>
+
+    <div class="invoice-details">
+        <div class="invoice-badge">REFUND INVOICE</div>
+        <p><strong>Refund Invoice No:</strong> {{ refund.invoice.invoice_number }}</p>
+        <p><strong>Refund Date:</strong>
+            {% if refund.invoice and refund.invoice.invoice_date %}
+                {{ refund.invoice.invoice_date|date:"d M Y" }}
+            {% else %}
+                N/A
+            {% endif %}
+        </p>
+        <p><strong>RMA ID:</strong> RMA-{{ refund.return_request.id }}</p>
+        <p><strong>Original Sales Invoice:</strong> {{ sales_invoice_no }}</p>
+    </div>
+</div>
+
+<!-- ===============================
+     ORIGINAL ORDER
+================================ -->
+<div class="section">
+    <div class="section-title">Original Order Details</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Product Description</th>
+                <th class="text-center">Qty</th>
+                <th class="text-right">Unit Price (₹)</th>
+                <th class="text-right">Amount (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in refund.return_request.items.all %}
+            <tr>
+                <td>{{ item.order_item.product.name }}</td>
+                <td class="text-center">{{ item.quantity }}</td>
+                <td class="text-right amount">{{ item.order_item.unit_price|floatformat:2 }}</td>
+                <td class="text-right amount">{{ item.total|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- ===============================
+     REFUND DETAILS
+================================ -->
+<div class="section">
+    <div class="section-title">Refund Details</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Refund Mode</th>
+                <th>Reference / Transaction ID</th>
+                <th class="text-right">Refund Amount (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ refund.get_refund_mode_display }}</td>
+                <td>
+                    {% if refund.refund_mode == "razorpay" %}
+                        {{ refund.razorpay_ref_id }}
+                    {% else %}
+                        {{ refund.reference_id|default:"N/A" }}
+                    {% endif %}
+                </td>
+                <td class="text-right amount">{{ refund.refund_amount|floatformat:2 }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ===============================
+     SUMMARY
+================================ -->
+<div class="summary-box">
+    <table>
+        <tr>
+            <td>Total Refund Amount</td>
+            <td class="text-right amount">₹ {{ refund.refund_amount|floatformat:2 }}</td>
+        </tr>
+        <tr class="grand-total">
+            <td>Grand Total</td>
+            <td class="text-right">₹ {{ refund.refund_amount|floatformat:2 }}</td>
+        </tr>
+    </table>
+</div>
+
+<div style="clear: both;"></div>
+
+<!-- ===============================
+     FOOTER
+================================ -->
+<div class="footer">
+    <div>
+        <p><strong>Status:</strong> {{ refund.status|capfirst }}</p>
+        <p><strong>Note:</strong> This refund is issued against returned goods as per company return policy.</p>
+        <p>This is a system-generated document and is valid without a signature.</p>
+    </div>
+
+    <div class="signature">
+        <p>For Codedu Software Technologies</p>
+        <div class="signature-line"></div>
+        <p>Authorized Signatory</p>
+    </div>
+</div>
+
+</body>
+</html>

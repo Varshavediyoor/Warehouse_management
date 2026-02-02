@@ -1,0 +1,157 @@
+{% extends "base_user.html" %}
+{% load static i18n math_filters %}
+
+{% block title %}
+{% trans "Process Refund" %} – RMA-{{ rma.id }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/rma/refund.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="refund-page">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Process Refund" %}</span>
+                RMA-{{ rma.id }}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- RMA SUMMARY CARD -->
+    <div class="refund-card">
+        <h2>{% trans "Refund Summary" %}</h2>
+
+        <div class="table-wrap">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Product" %}</th>
+                        <th>{% trans "Qty" %}</th>
+                        <th>{% trans "Unit Price" %}</th>
+                        <th>{% trans "Total" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in rma_items %}
+                    <tr>
+                        <td>{{ item.product_name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>₹{{ item.unit_price|floatformat:2 }}</td>
+                        <td>₹{{ item.total_amount|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="total-row">
+                        <td colspan="3">{% trans "Total Refund Amount" %}</td>
+                        <td class="total-amount">
+                            ₹{{ total_refund_amount|floatformat:2 }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- REFUND FORM -->
+    <div class="refund-card">
+        <h2>{% trans "Refund Details" %}</h2>
+
+        <form method="post"
+              action="{% url 'finance:manual_or_wallet_refund' rma.id %}"
+              id="refund-form"
+              class="refund-form">
+            {% csrf_token %}
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>{% trans "Refund Mode" %}</label>
+                    <select name="refund_mode" id="mode">
+                        <option value="razorpay">Razorpay</option>
+                        <option value="wallet">Wallet</option>
+                        <option value="manual">Manual</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>{% trans "Refund Amount" %}</label>
+                    <input type="number"
+                           name="refund_amount"
+                           id="amount"
+                           step="0.01"
+                           value="{{ total_refund_amount }}">
+                </div>
+
+                <div class="form-group full-width" id="reference-field">
+                    <label>{% trans "Reference / Transaction ID" %}</label>
+                    <input type="text" name="reference_id" id="reference_id"
+                           placeholder="{% trans 'Enter transaction reference' %}">
+                </div>
+            </div>
+
+            <div class="refund-buttons">
+                <button type="submit" class="refund-btn">
+                    {% trans "Process Refund" %}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if rma.refund %}
+    <div class="refund-card invoice-card">
+        <h2>{% trans "Refund Invoice" %}</h2>
+        <button onclick="window.print();" class="btn-invoice">
+            🖨 {% trans "Print Invoice" %}
+        </button>
+    </div>
+    {% endif %}
+
+</div>
+
+{% if razorpay_key and razorpay_order_id %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+function toggleReferenceField() {
+    const mode = document.getElementById('mode').value;
+    document.getElementById('reference-field').style.display =
+        (mode === 'razorpay') ? 'none' : 'block';
+}
+
+document.addEventListener('DOMContentLoaded', toggleReferenceField);
+document.getElementById('mode').addEventListener('change', toggleReferenceField);
+
+document.getElementById('refund-form').addEventListener('submit', function(e){
+    const mode = document.getElementById('mode').value;
+    if(mode === 'razorpay'){
+        e.preventDefault();
+
+        const amount = parseFloat(document.getElementById('amount').value);
+        const options = {
+            "key": "{{ razorpay_key }}",
+            "amount": amount * 100,
+            "currency": "INR",
+            "name": "Your Company Name",
+            "description": "RMA Refund #{{ rma.id }}",
+            "order_id": "{{ razorpay_order_id }}",
+            "handler": function (response){
+                document.getElementById('reference_id').value =
+                    response.razorpay_payment_id;
+                document.getElementById('refund-form').submit();
+            },
+            "theme": { "color": "#2c8cfb" }
+        };
+        new Razorpay(options).open();
+    }
+});
+</script>
+{% endif %}
+{% endblock %}

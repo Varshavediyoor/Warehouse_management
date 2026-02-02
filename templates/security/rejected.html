@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Entry Rejected</title>
+</head>
+<body>
+
+<h2 style="color:red;">ENTRY REJECTED</h2>
+
+<p><b>PO Number:</b> {{ invoice.po_number }}</p>
+<p><b>Vendor:</b> {{ invoice.vendor_name }}</p>
+<p><b>Checked By:</b> {{ invoice.checked_by }}</p>
+
+<p style="color:red;"><b>Reason:</b> PO details did not match with system records.</p>
+
+{% if invoice.remarks %}
+<p><b>Security Remarks:</b> {{ invoice.remarks }}</p>
+{% endif %}
+
+<a href="{% url 'security:security_upload_po' %}">Try Another Invoice</a>
+
+</body>
+</html>

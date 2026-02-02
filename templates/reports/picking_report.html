@@ -1,0 +1,115 @@
+{% extends 'base_admin.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Picking Report" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/purchase_report.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin/admin_report_table.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="purchase-report-container">
+  <!-- header  -->
+  <div class="wh-header-section">
+    <div class="wh-header-left">
+        <h1><span>{% trans "Picking" %}</span> {% trans "Report" %}</h1>
+        <p class="subtext">{% trans "Detailed summary of all picking activities and verification status." %}</p>
+    </div>
+    <div class="wh-header-right">          
+        <a href="{% url 'admin_reports' %}" class="btn-back">
+            <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+        </a>
+    </div>
+  </div>
+
+  <!-- Filter/Search -->
+<form method="GET" class="filter-form">
+  <input type="text" name="search" placeholder="Search..." value="{{ search_query }}">
+  
+
+  <select name="verification_status">
+    <option value="">{% trans "All Status" %}</option>
+    {% for s in all_statuses %}
+      <option value="{{ s }}" {% if verification_filter == s %}selected{% endif %}>{{ s }}</option>
+    {% endfor %}
+  </select>
+
+  <button type="submit">{% trans "Filter" %}</button>
+</form>
+
+
+
+  <div class="report-meta">
+    <div class="report-meta-content-left">
+      <span class="records-count">{% trans "Total Records:" %} <strong>{{ data|length }}</strong></span>
+      <span class="generated-date"><i class="bi bi-clock"></i> {% trans "Generated on:" %} {{ generated_on|date:"d M Y, H:i" }}</span>
+    </div>
+
+    <div class="report-meta-content-right">
+      <a href="{% url 'picking_report_excel' %}" class="action-btn excel">
+        <i class="bi bi-file-earmark-excel"></i>{% trans "Download Excel" %}
+      </a>
+      <a href="{% url 'picking_report_pdf' %}" class="action-btn pdf">
+        <i class="bi bi-file-earmark-pdf"></i>{% trans "Download PDF" %}
+      </a>
+    </div>
+  </div>
+
+
+  <div class="table-scroll-wrapper">
+  <div class="table-container">
+    <table class="report-table" id="reportTable">
+      <thead>
+        <tr>
+          <th>{% trans "Pick List No" %}</th>
+          <th>{% trans "Sales Order ID" %}</th>
+          <th>{% trans "Product / Batch" %}</th>
+          <th>{% trans "Quantity To Pick" %}</th>
+          <th>{% trans "Quantity Picked" %}</th>
+          <th>{% trans "Picker Name" %}</th>
+          <th>{% trans "Picked Date" %}</th>
+          <th>{% trans "Verification Status" %}</th>
+          <th>{% trans "Verified By" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in data %}
+        <tr>
+          <td>{{ row.pick_list_no }}</td>
+          <td>{{ row.sales_order_id }}</td>
+          <td>{{ row.product_batch }}</td><!-- ✅ Added -->
+          <td>{{ row.qty_to_pick }}</td>
+          <td>{{ row.qty_picked }}</td>
+          <td>{{ row.picker_name }}</td>
+          <td>{{ row.picked_date|default:"-" }}</td>
+          <td>
+            {% if row.verification_status == "Pending" %}
+              <span class="status-badge pending">{{ row.verification_status }}</span>
+            {% elif row.verification_status == "Verified" %}
+              <span class="status-badge received">{{ row.verification_status }}</span>
+            {% elif row.verification_status == "Rejected" %}
+              <span class="status-badge partial">{{ row.verification_status }}</span>
+            {% else %}
+              <span class="status-badge pending">{{ row.verification_status|default:"-" }}</span>
+            {% endif %}
+          </td>
+          <td>{{ row.verified_by|default:"-" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="10" class="no-data">{% trans "No Picking Records Found" %}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <!-- Pagination Controls -->
+    <div class="pagination-container" id="tablePagination"></div>
+  </div>
+</div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'js/admin/admin_report_tables.js' %}"></script>
+{% endblock %}

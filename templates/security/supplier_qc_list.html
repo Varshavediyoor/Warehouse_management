@@ -1,0 +1,99 @@
+{% extends 'base_user.html' %}
+{% load i18n static dict_extras %}
+
+{% block title %}{% trans "Suplier QC Verified List" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/security/supplier_qc_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="supplier-container">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "QC Verified " %}</span>
+                {% trans " Purchase Orders" %}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>{% trans "PO Number" %}</th>
+                        <th>{% trans "Supplier" %}</th>
+                        <th>{% trans "Dispatch Date" %}</th>
+                        <th>{% trans "Vehicle No" %}</th>
+                        <th>{% trans "LR / DC No" %}</th>
+                        <th>{% trans "QC Status" %}</th>
+                        <th>{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dispatch in dispatches %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+
+                        <td><strong>{{ dispatch.purchase_order.po_number }}</strong></td>
+
+                        <td>{{ dispatch.purchase_order.supplier|default:"-" }}</td>
+
+                        <td>{{ dispatch.dispatch_date|date:"d M Y" }}</td>
+
+                        <td>{{ dispatch.vehicle_number|default:"-" }}</td>
+
+                        <td>{{ dispatch.lr_number|default:"-" }}</td>
+
+                        <td>
+                            <span class="status-badge received">PASSED</span>
+                        </td>
+
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{% url 'security:supplier_gate_entry_create' dispatch.id %}"
+                                class="action-btn normal">
+                                    <i class="bi bi-eye"></i>
+                                    {% trans "View" %}
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">
+                            {% trans "No supplier dispatches found." %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}
+

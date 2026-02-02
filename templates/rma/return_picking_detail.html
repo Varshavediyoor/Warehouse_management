@@ -1,0 +1,106 @@
+{% extends "base_user.html" %}
+{% load static i18n math_filters %}
+
+{% block title %}
+{% trans "Return Picking" %} – RMA-{{ picking.return_request.id }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/rma/return_picking_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="return-picking-page">
+
+    <!-- HEADER -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Return Picking" %}</span> RMA-{{ picking.return_request.id }}</h1>
+            <p class="subtext">{% trans "Manage returned items and update picking status" %}</p>
+        </div>
+        <div class="wh-header-right">
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- RETURN DETAILS -->
+    <div class="return-container">
+
+        <!-- PICKED ITEMS HEADER -->
+        <div class="return-header">
+            <h2>{% trans "Picked Items" %}</h2>
+            <span class="status-badge {{ picking.status }}">
+                {{ picking.status|capfirst }}
+            </span>
+        </div>
+
+        <!-- PICKED ITEMS TABLE -->
+        <div class="table-wrap">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Product" %}</th>
+                        <th>{% trans "Quantity" %}</th>
+                        <th>{% trans "Unit Price" %}</th>
+                        <th>{% trans "Total" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in picked_items %}
+                    <tr>
+                        <td>{{ item.order_item.stock.product.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.order_item.unit_price }}</td>
+                        <td>{{ item.quantity|mul:item.order_item.unit_price }}</td>
+
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="empty-row">
+                            {% trans "No items picked yet" %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ADD REMAINING ITEMS -->
+        {% if remaining_items %}
+        <div class="add-items-section">
+            <h3>{% trans "Add Items to Picking" %}</h3>
+            <form method="post" class="status-form">
+                {% csrf_token %}
+                <select name="order_item" class="status-select">
+                    {% for item in remaining_items %}
+                    <option value="{{ item.order_item.id }}">
+                        {{ item.order_item.stock.product.name }} ({{ item.quantity }} to pick)
+                    </option>
+                    {% endfor %}
+                </select>
+                <input type="number" name="quantity" min="1" value="1" class="quantity-input">
+                <button type="submit" class="btn-back btn-submit">
+                    {% trans "Add Item" %}
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- STATUS UPDATE -->
+        {% if picking.status != "received" %}
+        <div class="status-update">
+            <form method="post" class="status-form">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="received">
+                <button type="submit" class="btn-back btn-submit">
+                    {% trans "Mark Picking as Received" %}
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,350 @@
+/* WRAPPER */
+.gpv-wrapper {
+    max-width: 900px;
+    margin: auto;
+
+      /* Animation */
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+  }
+  
+  @keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(25px) scale(0.98);
+        filter: blur(6px);
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+  }
+  
+  /* ---------------------------- Header ---------------------------- */
+  
+  .wh-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  
+  @keyframes slideFromRight {
+    0% {
+    transform: translateX(80px); /* Start slightly off-screen to the right */
+    opacity: 0;
+    }
+    100% {
+    transform: translateX(0); /* End in place */
+    opacity: 1;
+    }
+    }
+  
+  .wh-header-section h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c4c71;
+  
+    animation: slideFromRight 0.9s ease-out forwards;
+    opacity: 0; /* Start invisible */
+  }
+  
+  .wh-header-section h1 span {
+    color: #2c8cfb;
+  }
+
+  .gpv-card-header{
+    text-align: right;
+  }
+  
+  .sub-text {
+    font-size: 14px;
+    color: #2c4c71;
+    margin-top: 4px;
+  }
+  
+  .wh-header-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+  }
+  
+  .btn-back {
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border-radius: 30px;
+    color: #fff;
+    padding: .4rem 2rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden; /* ✅ Keeps shine animation inside button */
+    position: relative;
+  
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+  }
+  
+  .btn-back:hover {
+    transform: scale(1.05);
+  }
+  
+  .btn-back::before {
+    content: "";
+    position: absolute;
+    width: 80px; /* ✅ Slightly smaller for smooth edge transition */
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+    
+  .btn-back:hover::before {
+    animation: shine 1.5s ease-out infinite;
+  }
+    
+  @keyframes shine {
+    0% {
+        left: -80px;
+    }
+    60% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+  }
+  
+  
+  @media (max-width: 845px) {
+    .wh-header-section {
+        margin-top: 0rem;
+    }
+  
+  .wh-header-section h1{
+    font-size: 28px;
+  }
+  
+  .wh-header-right{
+    gap: 0.5rem;
+  }
+  
+  .wh-header-right a{
+    font-size: 11px;
+    width: 100px;
+    padding: .3rem .6rem;
+  }
+  }
+  
+  @media (max-width: 670px) {
+    .wh-header-section h1{
+      font-size: 26px;
+      max-width: 400px;
+    }
+  
+    .wh-header-section p{
+      font-size: 12px;
+    }
+  
+    .wh-header-right a{
+      width: 80px;
+    }
+  
+    .wh-header-right a{
+      width: 80px;
+    }
+  }
+  
+  @media (max-width: 550px) {
+    .wh-header-section h1{
+      font-size: 20px;
+      max-width: 350px;
+    }
+    .wh-header-left p{
+      display: none;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .wh-header-section h1{
+      font-size: 20px;
+      max-width: 250px;
+    }
+  }
+  
+  @media (max-width: 420px) {
+    .wh-header-section h1{
+      font-size: 20px;
+    }
+  }
+  
+  @media (max-width: 380px) {
+    .wh-header-section h1{
+      font-size: 16px;
+      max-width: 200px;
+    }
+  }
+  
+  /* -------------------------------------------------------- */
+
+  
+  /* CARD */
+  .gpv-card {
+    margin-top: 24px;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 26px;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.1);
+  }
+  
+  /* VERIFY ITEM */
+  .verify-item {
+    padding: 18px;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    background: #f8f9fa;
+  }
+  
+  .verify-item.highlight {
+    border-left: 6px solid #2c8cfb;
+    background: #eef5ff;
+  }
+  
+  /* CHECKBOX STYLE */
+  .verify-check {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+  }
+  
+  .verify-check input {
+    display: none;
+  }
+  
+  .checkmark {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 2px solid #2c8cfb;
+    background: #fff;
+    position: relative;
+  }
+  
+  .verify-check input:checked + .checkmark {
+    background: #2c8cfb;
+    border-color: #2c8cfb;
+  }
+  
+  .verify-check input:checked + .checkmark::after {
+    content: "✔";
+    position: absolute;
+    top: -2px;
+    left: 4px;
+    color: #fff;
+    font-size: 14px;
+  }
+  
+  /* TEXT */
+  .verify-check strong {
+    font-size: 15px;
+  }
+  
+  .verify-check small {
+    display: block;
+    font-size: 12px;
+    color: #6c757d;
+  }
+  
+  /* QUANTITY */
+  .quantity-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  
+  /* ACTION BUTTONS */
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  
+  .action-btn {
+    border: none;
+    border-radius: 30px;
+    font-size: 14px;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    font-weight: 500;
+    padding: .7rem 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;  /* Ensures text stays centered */
+    gap: 6px;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    min-width: 100px;  /* 🎯 Same button width */
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    }
+    
+    .action-btn::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 100%;
+    background-image: linear-gradient(120deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 70%);
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    }
+    .action-btn:hover::before {
+    animation: shine 1.5s ease-out infinite;
+    }
+    
+    .action-btn:hover { 
+    transform: scale(1.05); 
+    }
+  
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .verify-item {
+      padding: 14px;
+    }
+
+    .action-btn {
+        font-size: 12px;
+        padding: .5rem 1.2rem;
+  }
+}

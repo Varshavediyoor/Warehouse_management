@@ -1,0 +1,80 @@
+{% extends 'base_user.html' %}
+{% load i18n static dict_extras %}
+
+{% block title %}{% trans "Maintenance Form" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/maintenance/add_notification.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="maint-container">
+
+  <!-- RIGHT SECTION -->
+  <div class="maint-right">
+    <div class="maint-card">
+
+      <div class="maint-header">
+        <h1>{% trans "Maintenance" %} <span>{% trans "Notification" %}</span></h1>
+      </div>
+
+      <form method="post" class="maint-form">
+        {% csrf_token %}
+
+        <div class="maint-grid">
+          {% for field in form %}
+
+            {% if field.field.widget.input_type == "checkbox" %}
+              <div class="maint-group full-width">
+                <div class="checkbox-wrapper">
+                  {{ field }}
+                  <label for="{{ field.id_for_label }}" class="checkbox-text">
+                    {{ field.label }}
+                  </label>
+                </div>
+                <div class="error">{{ field.errors }}</div>
+              </div>
+
+            {% else %}
+              <div class="maint-group {% if field.name in 'title message' %}full-width{% endif %}">
+                <label for="{{ field.id_for_label }}">
+                  {{ field.label }}
+                  {% if field.field.required %}
+                    <span class="required-star">*</span>
+                  {% endif %}
+                </label>
+                {{ field }}
+                <div class="error">{{ field.errors }}</div>
+              </div>
+            {% endif %}
+
+          {% endfor %}
+        </div>
+
+        <button type="submit" class="maint-submit">
+          {% trans "Add Notification" %}
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- LEFT SECTION -->
+  <div class="maint-left">
+    <div class="maint-left-box">
+      <img src="{% static 'images/maintenance.png' %}" alt="Maintenance">
+      <h2><span>{% trans "Schedule" %}</span> {% trans "Maintenance" %}</h2>
+      <p>{% trans "Keep your system running smoothly and efficiently." %}</p>
+
+      <div class="back-btn-container">
+        <a href="{% url 'maintenance_staff_dashboard' %}" class="btn-back">
+          <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Add Tax Category" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/finance/tax/tax_category_form.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="tax-form-page">
+
+      <!-- Header -->
+      <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Add " %}</span>
+                {% trans " Tax Category" %}
+            </h1>
+            <p>{% trans "Create and manage tax classifications for financial records" %}</p>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+  <!-- Form Card -->
+  <div class="tax-form-card">
+    <form method="post" class="tax-form">
+      {% csrf_token %}
+
+      <div class="form-group">
+        {{ form.name.label_tag }}
+        {{ form.name }}
+      </div>
+
+      <div class="form-group checkbox-group">
+        {{ form.is_exempt }}
+        <label for="{{ form.is_exempt.id_for_label }}">
+          {% trans "Tax Exempt Category" %}
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-save">
+          <i class="bi bi-check-circle"></i> {% trans "Save Category" %}
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+{% endblock %}

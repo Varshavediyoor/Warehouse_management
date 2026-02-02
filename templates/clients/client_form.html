@@ -1,0 +1,87 @@
+{% extends 'base_admin.html' %}
+{% load static i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/client/client_form.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="client-form-wrapper">
+
+    <div class="form-card">
+
+        <!-- Illustration Section -->
+        <div class="illustration-box">
+            <img src="{% static 'images/client-page.png' %}" alt="Client Illustration">
+            <div class="illustration-content">
+                <ul class="instruction-list">
+                    <li>{% trans "Easily add complete client information" %}</li>
+                    <li>{% trans "Update company details anytime" %}</li>
+                    <li>{% trans "Attach logos & documents effortlessly" %}</li>
+                    <li>{% trans "Manage all client profiles in one place" %}</li>
+                  </ul>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="form-box">
+            <div class="register-header">
+                <form-header-left>
+                  <h1 class="form-title">
+                    {{ title }}
+                  </h1>
+                  {% if form.non_field_errors %}
+                  <div class="error-message">
+                      {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </form-header-left>
+                <a href="{% url 'client_list' %}">
+                  <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+                </a>
+              </div>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-grid">
+
+                    <div class="form-field">
+                        <label>Company Name</label>
+                        {{ form.company_name }}
+                    </div>
+
+                    <div class="form-field">
+                        <label>Email</label>
+                        {{ form.email }}
+                    </div>
+
+                    <div class="form-field">
+                        <label>Phone Number</label>
+                        {{ form.phone }}
+                    </div>
+
+                    <div class="form-field">
+                        <label>Company Logo</label>
+                        {{ form.company_logo }}
+                    </div>
+
+                    <div class="form-field full-width">
+                        <label>Address</label>
+                        {{ form.address }}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-register">Save Client</button>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

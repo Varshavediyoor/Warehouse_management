@@ -1,0 +1,44 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Add GRN Item" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/procurement_officer/add_grn_item.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <!-- header  -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Add " %}</span> {% trans " GRN Item" %}</h1>
+        </div>
+        <div class="wh-header-right"> 
+            <a href="{% url 'procurement_officer:grn_list' %}" class="btn-back view">
+                <i class="fas fa-eye"></i> {% trans "View Items" %}</a>
+            </a>         
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="form-card">
+        <form method="POST" enctype="multipart/form-data" class="styled-form">
+            {% csrf_token %}
+            
+            <div class="input-grid">
+                {{ form.as_p }}
+            </div>
+
+            <p id="sku-warning">⚠ {% trans "A GRN item with this SKU already exists. Quantity will be merged." %}</p>
+
+            <div class="btn-container">
+                <button type="submit" class="btn-submit">{% trans "Add GRN Item" %}</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

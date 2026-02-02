@@ -1,0 +1,94 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Received Return Items" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/rma/received_items_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="received-items-container">
+    <!-- header  -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Received" %}</span> {% trans "Return Items" %}</h1>
+        </div>
+        <div class="wh-header-right">          
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead class="table-light">
+                    <tr>
+                        <th>{% trans "RMA ID" %}</th>
+                        <th>{% trans "Delivery No" %}</th>
+                        <th>{% trans "Customer" %}</th>
+                        <th>{% trans "Product" %}</th>
+                        <th>{% trans "Quantity" %}</th>
+                        <th>{% trans "Return Status" %}</th>
+                        <th>{% trans "Actions / QC Result" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>RMA-{{ item.rma_id }}</td>
+                        <td>{{ item.delivery_no }}</td>
+                        <td>{{ item.customer }}</td>
+                        <td>{{ item.product }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.status|capfirst }}</td>
+                        <td>
+                            {% if item.status == "received" and not item.qc_result %}
+                                <!-- Show Start QC button only if received and QC not done -->
+                                <div class="action-buttons">
+                                    <a href="{% url 'quality_controller:qc_return' rma_id=item.rma_id %}" class="action-btn normal">
+                                        {% trans "Start QC" %}
+                                    </a>
+                                </div>
+
+                            {% elif item.qc_result %}
+                                <!-- QC already done: show result badges, no button -->
+                                {% if item.qc_result == "scrap" %}
+                                    <span class="badge bg-danger">{% trans "Scrap" %}</span>
+                                {% elif item.qc_result == "repair" %}
+                                    <span class="badge bg-warning text-dark">{% trans "Repair" %}</span>
+                                {% elif item.qc_result == "restock" %}
+                                    <span class="badge bg-success">{% trans "Restock" %}</span>
+                                {% else %}
+                                    <span class="text-muted">{{ item.qc_result|capfirst }}</span>
+                                {% endif %}
+
+                            {% else %}
+                                <span class="text-muted">{% trans "No action" %}</span>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">
+                            {% trans "No received items found." %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

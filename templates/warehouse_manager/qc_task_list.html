@@ -1,0 +1,79 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Approved QC Tasks" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/task_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="qc-task-container">
+  <div class="header-section">
+    <h1>
+      <span>{% trans "QC" %}</span> {% trans "Approved Tasks" %}
+    </h1>
+
+    <div class="view-stock-header-right">
+        <a href="{% url 'admin_app:warehouse_dashboard' %}" class="btn-back">
+            <i class="bi bi-arrow-left"></i> {% trans "Warehouse Dashboard" %}
+        </a>
+    </div>
+  </div>
+
+  <div class="table-scroll-wrapper">
+    <div class="table-container">
+      <table class="table-content" id="tableContent">
+        <thead class="table-dark">
+          <tr>
+            <th>{% trans "ID" %}</th>
+            <th>{% trans "Reference" %}</th>
+            <th>{% trans "Location" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Action" %}</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for task in tasks %}
+          <tr>
+            <td>{{ task.id }}</td>
+            <td>{{ task.reference_type }} - {{ task.reference_id }}</td>
+            <td>{{ task.location.code }}</td>
+            <td>
+              <span class="status-badge approved">
+                {% trans "Approved" %}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <a class="action-btn approved"
+                   href="{% url 'admin_app:warehouse_dashboard' %}">
+                    {% trans "View in Warehouse" %}
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="no-data">
+              {% trans "No approved QC tasks available" %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container" id="tablePagination"></div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

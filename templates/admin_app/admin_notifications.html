@@ -1,0 +1,178 @@
+{% extends 'base_admin.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Admin Notifications" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/admin_notification.css' %}">
+<link rel="stylesheet" href="{% static 'css/logout_popup.css' %}">
+<link rel="stylesheet" href="{% static 'css/delete_all_popup.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="notifications-container">
+  <div class="notification-header">
+    <h1 class="page-title"><i class="fa-solid fa-bell"></i> {% trans "Notifications" %}</h1>
+    <div class="notification-header-right">
+      <button class="delete-all"><i class="bi bi-trash3"></i> {% trans "Delete All" %}</button>
+      <a href="{% url 'custom_admin_dashboard' %}" class="btn-back">
+        <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+      </a>
+    </div>
+  </div>
+  <hr style="border: none; height: 1px; background-color: #5cacfa; width: 100%; margin-bottom: 2rem;">
+
+  <div class="notifications-list">
+      {% if notifications %}
+        {% for n in notifications %}
+        <div class="notification-card {% if not n.is_read %}unread{% endif %}">
+          <div class="icon">
+            <i class="fa-solid fa-circle-info"></i>
+          </div>
+          <div class="content">
+            <h3>{{ n.message }}</h3>
+            <p></p>
+            <span class="time">{{ n.created_at|date:"d M Y, h:i A" }}</span>
+          </div>
+          <a class="delete-btn" href="#" data-id="{{ n.id }}"><i class="bi bi-trash3"></i></a>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="no-notifications">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <p>{% trans "No notifications yet." %}</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+<!-- Delete All Confirmation Modal -->
+<div id="deleteAllModal" class="deleteall-modal">
+  <div class="deleteall-modal-box">
+    <h3 class="deleteall-title">
+      <span>{% trans "Delete" %}</span> {% trans "Confirmation" %}
+    </h3>
+
+    <p class="deleteall-message">
+      {% trans "Are you sure you want to delete all notifications?" %}
+    </p>
+
+    <div class="deleteall-actions">
+      <!-- Cancel Button -->
+      <button
+        type="button"
+        id="cancelDeleteAll"
+        class="deleteall-btn deleteall-btn-cancel"
+      >
+        {% trans "Cancel" %}
+      </button>
+
+      <!-- Confirm Button -->
+      <form
+        method="post"
+        action="{% url 'delete_all_notifications' %}"
+        class="deleteall-form"
+      >
+        {% csrf_token %}
+        <button
+          type="submit"
+          class="deleteall-btn deleteall-btn-confirm"
+        >
+          {% trans "Yes" %}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- Single Notification Delete Modal -->
+<div id="deleteSingleModal" class="logout-modal">
+  <div class="logout-modal-content">
+    <h3><span>{% trans "Delete" %}</span> {% trans "Confirmation" %}</h3>
+    <p>{% trans "Are you sure you want to delete this notification?" %}</p>
+    <div class="logout-modal-buttons">
+      <a id="cancelDeleteSingle" class="logout-btn-cancel">{% trans "Cancel" %}</a>
+      <a href="#" id="confirmDeleteSingle" class="logout-btn-confirm">{% trans "Yes" %}</a>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const deleteAllBtn = document.querySelector(".delete-all");
+    const deleteAllModal = document.getElementById("deleteAllModal");
+    const cancelBtn = document.getElementById("cancelDeleteAll");
+  
+    // Show modal
+    deleteAllBtn.addEventListener("click", function(e) {
+      e.preventDefault();
+      deleteAllModal.classList.add("show");
+    });
+  
+    // Hide modal
+    cancelBtn.addEventListener("click", function() {
+      deleteAllModal.classList.remove("show");
+    });
+  
+    // Optional: hide modal if clicked outside the modal content
+    deleteAllModal.addEventListener("click", function(e) {
+      if (e.target === deleteAllModal) {
+        deleteAllModal.classList.remove("show");
+      }
+    });
+  });
+
+
+
+  document.addEventListener("DOMContentLoaded", function() {
+  const deleteBtns = document.querySelectorAll(".delete-btn");
+  const deleteSingleModal = document.getElementById("deleteSingleModal");
+  const cancelSingleBtn = document.getElementById("cancelDeleteSingle");
+  const confirmSingleBtn = document.getElementById("confirmDeleteSingle");
+
+  let notificationIdToDelete = null;
+
+  // Show modal when clicking on a single delete button
+  deleteBtns.forEach(btn => {
+    btn.addEventListener("click", function(e) {
+      e.preventDefault();
+      notificationIdToDelete = btn.getAttribute("data-id"); // store ID
+      deleteSingleModal.classList.add("show");
+    });
+  });
+
+  // Cancel single delete
+  cancelSingleBtn.addEventListener("click", function() {
+    notificationIdToDelete = null;
+    deleteSingleModal.classList.remove("show");
+  });
+
+  // Optional: hide modal if clicked outside content
+  deleteSingleModal.addEventListener("click", function(e) {
+    if (e.target === deleteSingleModal) {
+      notificationIdToDelete = null;
+      deleteSingleModal.classList.remove("show");
+    }
+  });
+
+  // Confirm single delete
+  confirmSingleBtn.addEventListener("click", function() {
+    if (notificationIdToDelete) {
+      // Redirect to your delete URL with the notification ID
+      window.location.href = `/admin/notifications/delete/${notificationIdToDelete}/`;
+    }
+  });
+});
+  </script>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/admin/admin_notifications.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "PO Items" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/procurement_officer/po_items.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="form-page">
+  <div class="form-card">
+
+    <div class="form-header">
+      {% if po.status == "Created" %}
+      <h1>{% trans "Add Items to" %} <span>{{ po.po_number }}</span></h1>
+      {% else %}
+      <h1>{% trans "PO Items of" %} <span>{{ po.po_number }}</span></h1>
+      {% endif %}
+    </div>
+{% if po.status == "Created" %}
+    <!-- ADD ITEM FORM -->
+    <form method="post" class="po-form">
+      {% csrf_token %}
+      <div class="input-grid">
+        {% for field in form %}
+          <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="btn-container">
+        <a href="{% url 'procurement_officer:purchaseorder_list' %}" class="btn-cancel">
+          {% trans "Cancel" %}
+        </a>
+        <button type="submit" class="btn-submit">
+          {% trans "Add Item" %}
+        </button>
+      </div>
+    </form>
+{% endif %}
+    <!-- TABLE HEADER -->
+    <div class="table-heading">
+      <h3>{% trans "Existing Items" %}</h3>
+      <p><strong>{% trans "PO Total:" %}</strong> {{ total_amount }}</p>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-scroll-wrapper">
+      <div class="table-container">
+        <table class="table-content" id="tableContent">
+          <thead>
+            <tr>
+              <th>{% trans "Product" %}</th>
+              <th>{% trans "Category" %}</th>
+              <th>{% trans "Quantity" %}</th>
+              <th>{% trans "Unit Price" %}</th>
+              <th>{% trans "Line Total" %}</th>
+              {% if po.status == "Created" %}
+                <th>{% trans "Actions" %}</th>
+              {% endif %}
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for it in items %}
+              <tr>
+                <td>{{ it.product }}</td>
+                <td>{{ it.product.category }}</td>
+                <td>{{ it.quantity_ordered }}</td>
+                <td>{{ it.unit_price }}</td>
+                <td>{{ it.line_total }}</td>
+
+                {% if po.status == "Created" %}
+                  <td>
+                    <div class="action-buttons">
+                      <a class="action-btn normal"
+                         href="{% url 'procurement_officer:edit_po_item' it.id %}">
+                        {% trans "Edit" %}
+                      </a>
+                    </div>
+                  </td>
+                {% endif %}
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="{% if po.status == 'Created' %}6{% else %}5{% endif %}"
+                    class="no-data">
+                  {% trans "No items yet." %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ACTION BAR -->
+      <div class="po-action-bar">
+
+        {% if user.userprofile.role == 'WAREHOUSE_MANAGER' and po.status == 'Created' %}
+          <a href="{% url 'procurement_officer:approve_po' po.id %}"
+            class="btn btn-success po-action-btn">
+            <i class="bi bi-check-circle"></i>
+            {% trans "Approve Purchase Order" %}
+          </a>
+        {% endif %}
+
+        {% if request.user.userprofile.role == "PROCUREMENT_OFFICER" %}
+          {% if po.status == "Approved" and not po.supplier_dispatch %}
+            <a href="{% url 'procurement_officer:create_supplier_dispatch' po.id %}"
+              class="btn btn-primary po-action-btn">
+              <i class="bi bi-truck"></i>
+              {% trans "Supplier Dispatch" %}
+            </a>
+          {% endif %}
+        {% endif %}
+
+      </div>
+
+
+      <!-- Pagination -->
+      <div class="pagination-container" id="tablePagination"></div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

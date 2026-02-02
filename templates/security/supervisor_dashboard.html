@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Security Supervisor Dashboard</title>
+</head>
+<body>
+
+<h2>Security Supervisor Dashboard</h2>
+
+<table border="1" cellpadding="6">
+<tr>
+    <th>PO No</th>
+    <th>Vendor</th>
+    <th>Vehicle No</th>
+    <th>Gate</th>
+    <th>Entry Time</th>
+    <th>Exit Status</th>
+    <th>Actions</th>
+</tr>
+
+{% for e in entries %}
+<tr>
+    <td>{{ e.po_invoice.po_number }}</td>
+    <td>{{ e.po_invoice.vendor_name }}</td>
+    <td>{{ e.vehicle_number }}</td>
+    <td>{{ e.gate_no }}</td>
+    <td>{{ e.entry_time }}</td>
+
+    <td>
+        {% if e.vehicleexit %}
+            Exited at {{ e.vehicleexit.exit_time }}
+        {% else %}
+            Inside Warehouse
+        {% endif %}
+    </td>
+
+    <td>
+        {% if not e.vehicleexit %}
+            <a href="{% url 'vehicle_exit' e.id %}">Generate Exit</a>
+        {% else %}
+            Completed
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+</table>
+
+</body>
+</html>

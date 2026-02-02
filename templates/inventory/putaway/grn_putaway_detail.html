@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Putaway – GRN {{ grn.grn_number }}</h2>
+<p>Supplier: {{ grn.supplier.supplier_name }}</p>
+
+<form method="post">
+    {% csrf_token %}
+<table>
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity Received</th>
+            <th>Location</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.product_name }}</td>
+            <td>{{ item.quantity_received }}</td>
+            <td>
+                <select name="location_{{ item.id }}" required>
+                    <option value="">Select</option>
+                    {% for loc in locations %}
+                        <option value="{{ loc.id }}"
+                            {% if item.suggested_location_id == loc.id %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ loc.full_path }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+    <br>
+    <button type="submit">Complete Putaway</button>
+</form>
+{% endblock %}

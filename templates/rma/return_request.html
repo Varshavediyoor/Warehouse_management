@@ -1,0 +1,56 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}
+{% trans "Create Return Request" %} – {{ delivery_order.delivery_no }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/rma/return_request.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="return-request-container">
+    <!-- header  -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Create" %}</span> {% trans "Return Request" %}</h1>
+        </div>
+        <div class="wh-header-right">          
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="return-page">
+        <!-- FORM CARD -->
+        <div class="form-card">
+          <h2>
+              {% trans "Delivery Order" %} : 
+              <span> {{ delivery_order.delivery_no }}</span>
+          </h2>
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+      
+            <div class="form-grid">
+              {{ form.as_p }}
+            </div>
+      
+            <div class="form-actions">
+              <button type="submit" class="btn-back submit-btn">
+                {% trans "Submit Return Request" %}
+              </button>
+            </div>
+          </form>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+{% endblock %}

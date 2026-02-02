@@ -1,0 +1,105 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Quality Control - Create QC Task" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/qc_create.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="qc-container">
+  <div class="header-section">
+    <div class="header-right-section">
+      <h1><span>{% trans "Create" %}</span> {% trans "QC Task" %}</h1>
+      <p class="qc-subtitle">{% trans "Add reference details and line items to generate a new QC task." %}</p>
+    </div>
+    <div class="view-stock-header-right">        
+        <a href="" class="btn-back">
+            <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+        </a>
+    </div>
+  </div>
+
+
+    <form method="post" class="qc-form">
+        {% csrf_token %}
+
+        <!-- Reference Section -->
+        <div class="qc-card">
+            <h4 class="qc-card-title">{% trans "Reference Details" %}</h4>
+
+            <div class="qc-grid">
+                <div class="qc-field">
+                    <label>{% trans "Reference Type:" %}</label>
+                    <select name="reference_type" required>
+                        <option value="">{% trans "Select" %}</option>
+                        <option value="GRN">{% trans "GRN" %}</option>
+                        <option value="RETURN">{% trans "Return" %}</option>
+                        <option value="TRANSFER">{% trans "Transfer" %}</option>
+                    </select>
+                </div>
+
+                <div class="qc-field">
+                  <label>{% trans "QC Location:" %}</label>
+                  <select name="location_id" required>
+                      {% for loc in qc_locations %}
+                        <option value="{{ loc.id }}">{{ loc.code }} — {{ loc.name }}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+
+                <div class="qc-field">
+                    <label>{% trans "Reference ID:" %}</label>
+                    <input type="number" name="reference_id" required>
+                </div>
+
+                
+            </div>
+        </div>
+
+        <!-- Line Items Section -->
+        <div class="qc-card">
+            <div class="qc-flex">
+                <h4 class="qc-card-title">{% trans "Line Items" %}</h4>
+                <div class="qc-flex-right">
+                    <a type="button" class="btn-back add-btn" onclick="addItem()">{% trans "+ Add Item" %}</a>
+                </div>
+            </div>
+
+            <div class="qc-table-wrapper">
+                <table class="qc-table">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Product" %}</th>
+                            <th>{% trans "Ordered Qty" %}</th>
+                            <th>{% trans "Batch" %}</th>
+                            <th>{% trans "Action" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody id="items-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="qc-submit-row">
+            <button class="btn-back create">{% trans "Create Task" %}</button>
+        </div>
+    </form>
+
+</div>
+
+<script>
+    const productOptions = `
+        {% for p in products %}
+            <option value="{{ p.id }}">{{ p.name }}</option>
+        {% endfor %}
+    `;
+</script>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/quality/qc_create.js' %}"></script>
+{% endblock %}

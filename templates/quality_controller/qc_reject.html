@@ -1,0 +1,63 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Confirm QC Rejection" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/qc_reject.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="qc-reject-wrapper">
+
+  <div class="qc-reject-card fade-up">
+
+    <!-- ICON -->
+    <div class="qc-icon danger">
+      <i class="bi bi-x-octagon-fill"></i>
+    </div>
+
+    <!-- TITLE -->
+    <h2><span>{% trans "Confirm " %}</span>{% trans "QC Rejection" %}</h2>
+    <p class="qc-task">
+      {% trans "Task ID" %}: <strong>#{{ task.id }}</strong>
+    </p>
+
+    <!-- INFO BOX -->
+    <div class="qc-info-box danger">
+      <p>
+        <i class="bi bi-info-circle"></i>
+        {% trans "Rejected quantities will be moved to:" %}
+        <strong>
+          {% if dest %}
+            {{ dest.name }}
+          {% else %}
+            {% trans "Selected Destination" %}
+          {% endif %}
+        </strong>
+      </p>
+
+      <p class="warning">
+        <i class="bi bi-exclamation-triangle"></i>
+        {% trans "This action cannot be undone." %}
+      </p>
+    </div>
+
+    <!-- ACTIONS -->
+    <form method="post" class="action-buttons">
+      {% csrf_token %}
+      <a href="{% url 'quality_controller:qc_task_detail' task.id %}"
+      class="action-btn back">
+      <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+      </a>
+      <button type="submit" class="action-btn reject">
+        <i class="bi bi-x-circle"></i> {% trans "Reject" %}
+      </button>
+    </form>
+
+  </div>
+
+</section>
+
+{% endblock %}

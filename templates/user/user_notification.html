@@ -1,0 +1,106 @@
+{% extends "base_user.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Notifications" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/user_notification.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="notifications-container">
+
+    <!-- Header -->
+    <div class="notification-header">
+        <h1 class="page-title">
+            <i class="fa-solid fa-bell"></i>
+            {% trans "Notifications" %}
+        </h1>
+
+        <button type="button" class="delete-all" id="openDeleteAllPopup">
+            <i class="bi bi-trash3"></i>
+            {% trans "Delete All" %}
+        </button>
+    </div>
+
+    <!-- Notification List -->
+    <div class="notifications-list">
+        {% if notifications %}
+            {% for notification in notifications %}
+                <div class="notification-card">
+                    <div class="icon">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </div>
+                    <div class="content">
+                        <h3>{{ notification.title }}</h3>
+                        <p>{{ notification.message }}</p>
+                        <span class="time">{{ notification.created_at|date:"d M Y, h:i A" }}</span>
+                    </div>
+
+                    <!-- Single delete -->
+                    <form method="post" action="{% url 'user_delete_notification' notification.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-btn" title="{% trans 'Delete' %}">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </form>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-notifications">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <p>{% trans "No notifications yet." %}</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if session_warning %}
+<div style="background:#fff3cd;padding:10px;text-align:center;">
+⚠️ Your session will expire in {{ session_warning }} minutes.
+</div>
+{% endif %}
+
+<!-- Delete All Confirmation Popup -->
+<div class="popup-overlay" id="deleteAllPopup" style="display:none;">
+    <div class="popup">
+        <h3>{% trans "Confirm Delete" %}</h3>
+        <p>{% trans "Are you sure you want to delete all notifications?" %}</p>
+
+        <form method="post" action="{% url 'user_delete_all_notifications' %}">
+            {% csrf_token %}
+            <div class="popup-buttons">
+                <button type="submit" class="btn btn-yes">{% trans "Yes" %}</button>
+                <button type="button" class="btn btn-no" id="cancelDeleteAll">{% trans "No" %}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const openPopupBtn = document.getElementById('openDeleteAllPopup');
+    const popupOverlay = document.getElementById('deleteAllPopup');
+    const cancelBtn = document.getElementById('cancelDeleteAll');
+
+    openPopupBtn.addEventListener('click', function() {
+        popupOverlay.style.display = 'block';
+    });
+
+    cancelBtn.addEventListener('click', function() {
+        popupOverlay.style.display = 'none';
+    });
+
+    // Optional: close popup if clicked outside
+    popupOverlay.addEventListener('click', function(e) {
+        if (e.target === popupOverlay) {
+            popupOverlay.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

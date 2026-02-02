@@ -1,0 +1,53 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Putaway Rule" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/inventory_manager/putaway/putaway_form.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="putaway-wrapper">
+    <div class="putaway-card">
+
+        <!-- Header -->
+        <div class="putaway-header">
+            <div>
+                <h2>
+                    {% if form.instance.pk %}
+                        <span>{% trans "Edit " %}</span>{% trans "Putaway Rule" %}
+                    {% else %}
+                        <span>{% trans "Create " %}</span>{% trans "Putaway Rule" %}
+                    {% endif %}
+                </h2>
+                <p class="subtitle">
+                    {% trans "Define storage rules to optimize warehouse operations." %}
+                </p>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <form method="post" class="putaway-form">
+            {% csrf_token %}
+
+            <div class="form-grid">
+                {{ form.as_p }}
+            </div>
+
+            <!-- Actions -->
+            <div class="action-buttons">
+                <a href="{% url 'putaway_rule_list' %}" class="action-btn cancel">
+                    {% trans "Cancel" %}
+                </a>
+                <button type="submit" class="action-btn normal">
+                    {% trans "Save Rule" %}
+                </button>
+            </div>
+        </form>
+
+    </div>
+</section>
+
+{% endblock %}

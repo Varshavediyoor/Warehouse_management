@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load i18n static dict_extras %}
+
+{% block title %}{% trans "User Login" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/user_login.css' %}">
+<link rel="stylesheet" href="{% static 'css/error_message.css' %}">
+<link rel="stylesheet" href="{% static 'css/password_hide.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <!-- Left Section -->
+    <div class="left-section">
+        <div class="welcome-box">
+            <div class="form-image">
+                <img src="{% static 'images/login.png' %}" alt="{% trans 'Welcome Image' %}">
+            </div>
+            <h2>{% trans "Welcome " %}<span>{% trans " Back" %}</span></h2>
+            <p>{% trans "Login to manage your warehouse operations efficiently!" %}</p>
+        </div>
+    </div>
+
+    <!-- Right Section (Login Form) -->
+    <div class="right-section">
+        <div class="form-card">
+            <div class="form-header">
+                <h1>{% trans "User" %} <span>{% trans "Login" %}</span></h1>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="input-grid">
+                    <!-- Dropdown -->
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label for="role">{% trans "Select Role" %}<span class="required-star">*</span></label>
+                        <select name="role" id="role" class="form-select" required>
+                            <option value="" disabled selected>{% trans "Select your role" %}</option>
+                            <option value="WAREHOUSE_MANAGER">{% trans "Warehouse Manager" %}</option>
+                            <option value="INVENTORY_MANAGER">{% trans "Inventory Manager" %}</option>
+                            <option value="STOREKEEPER">{% trans "Storekeeper" %}</option>
+                            <option value="LOGISTICS">{% trans "Logistics/Delivery Staff" %}</option>
+                            <option value="FINANCE">{% trans "Finance/Accounts" %}</option>
+                            <option value="SUPPLIER">{% trans "Supplier" %}</option>
+                            <option value="PROCUREMENT_OFFICER">{% trans "Procurement Officer" %}</option>
+                            <option value="EXTERNAL">{% trans "External Users" %}</option>
+                            <option value="SALES_OFFICER">{% trans "Sales Officer" %}</option>
+                            <option value="DELIVERY_BOY">{% trans "Delivery Boy" %}</option>
+                            <option value="MAINTENANCE_STAFF">{% trans "Maintenance Staff" %}</option>
+                            <option value="SECURITY">{% trans "Security" %}</option>
+                            <option value="QC_INSPECTOR">{% trans "Quality Control" %}</option>
+                        </select>
+                    </div>
+
+                    <!-- Username -->
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label for="{{ form.username.id_for_label }}">{% trans "Username" %}<span class="required-star">*</span></label>
+                        {{ form.username }}
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label for="{{ form.password.id_for_label }}">{% trans "Password" %}<span class="required-star">*</span></label>
+
+                        <div class="password-wrapper">
+                            {{ form.password }}
+                            <i class="bi bi-eye-slash-fill toggle-password"></i>
+                        </div>
+                        
+
+                    </div>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" class="btn-register">{% trans "Login" %}</button>
+
+                <!-- Forgot Password Link -->
+                <div class="forgot-password">
+                    <a href="{% url 'forgot_password' %}">{% trans "Forgot Password?" %}</a>
+                </div>
+            </form>
+            <div class="error-container second">
+                {% if messages %}
+                    {% for message in messages %}
+                        <p class="form-error-message {{ message.tags }}">{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'js/error_message.js' %}"></script>
+<script src="{% static 'js/password_hide.js' %}"></script>
+{% endblock %}
+

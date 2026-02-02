@@ -1,0 +1,132 @@
+{% load static i18n %}
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <ul class="sidebar-menu">
+    {# 🧭 Admin Dashboard — Only for Admins #}
+    {% if request.user.is_staff %}
+      <li class="{% if request.resolver_match.url_name == 'custom_admin_dashboard' %}active{% endif %}">
+        <a href="{% url 'custom_admin_dashboard' %}">
+          <i class="bi bi-speedometer2"></i> <span>{% trans "Dashboard" %}</span>
+        </a>
+      </li>
+    {% endif %}
+
+      <li class="{% if request.resolver_match.url_name == 'admin_reports' %}active{% endif %}">
+            <a href="{% url 'admin_reports' %}">
+                <i class="bi bi-bar-chart"></i> <span>{% trans "Reports" %}</span>
+            </a>
+        </li>
+
+        <li class="{% if request.resolver_match.url_name == 'register_user' %}active{% endif %}">
+            <a href="{% url 'register_user' %}">
+                <i class="bi bi-person-plus"></i> <span>{% trans "Register user" %}</span>
+            </a>
+        </li>
+
+        <li class="{% if request.resolver_match.url_name == 'role_list' %}active{% endif %}">
+          <a href="{% url 'role_list' %}">
+            <i class="bi bi-shield-lock"></i> <span>{% trans "User Permissions" %}</span>
+          </a>
+        </li>
+
+        <li class="{% if request.resolver_match.url_name == 'admin_logs' %}active{% endif %}">
+            <a href="{% url 'admin_logs' %}">
+              <i class="bi bi-clock-history"></i> <span>{% trans "User Logs" %}</span>
+            </a>
+          </li>
+          
+          <li class="{% if request.resolver_match.url_name == 'admin_user_list' %}active{% endif %}">
+            <a href="{% url 'admin_user_list' %}">
+              <i class="bi bi-people"></i> <span>{% trans "User List" %}</span>
+            </a>
+          </li>
+
+
+
+          <li class="{% if request.resolver_match.url_name == 'admin_reset_requests' %}active{% endif %}">
+            <a href="{% url 'admin_reset_requests' %}">
+              <i class="bi bi-key"></i> <span>{% trans "Password Requests" %}</span>
+            </a>
+          </li>
+
+          <li class="{% if request.resolver_match.url_name == 'admin_notifications' %}active{% endif %}">
+            <a href="{% url 'admin_notifications' %}" class="sidebar-notification-link">
+              <i class="bi bi-bell"></i>
+              <span>{% trans "Notifications" %}</span>
+          
+              {% if unread_count > 0 %}
+                <span class="sidebar-notif-count
+                  {% if unread_count > 99 %}
+                    triple
+                  {% elif unread_count > 9 %}
+                    double
+                  {% endif %}
+                ">
+                  {{ unread_count }}
+                </span>
+              {% endif %}
+            </a>
+          </li>
+          
+
+
+     <li class="{% if request.resolver_match.url_name ==  'admin_profile_view' %}active{% endif %}">
+        <a href="{% url 'admin_profile_view' %}">
+            <i class="bi bi-person"></i> <span>{% trans "Profile" %}</span>
+         </a>    
+      </li>
+
+      <li class="{% if request.resolver_match.url_name == 'settings_page' %}active{% endif %}">
+          <a href="#">
+              <i class="bi bi-gear"></i> <span>{% trans "Settings" %}</span>
+          </a>
+      </li>
+
+      <li id="languageLi">
+        <a href="#" id="languageToggle">
+            <i class="bi bi-translate"></i>
+            <span>{% trans "Language" %}</span>
+            <i class="bi bi-chevron-down dropdown-arrow" id="languageArrow"></i>
+        </a>
+    
+        <ul class="language-dropdown" id="languageDropdown">
+            {% for lang in company_languages %}
+                <li>
+                    <a href="{% url 'switch_language' lang %}" class="{% if LANGUAGE_CODE == lang %}active{% endif %}">
+                        {% if lang == "en" %}
+                            English
+                        {% elif lang == "ar" %}
+                            العربية
+                        {% else %}
+                            {{ lang|upper }}
+                        {% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </li>
+  </ul>
+
+</aside>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+      const langLi = document.getElementById("languageLi");
+      const langToggle = document.getElementById("languageToggle");
+  
+      langToggle.addEventListener("click", (e) => {
+          e.preventDefault();
+  
+          // Close other dropdowns if you have multiple
+          document.querySelectorAll('.sidebar-menu li').forEach(li => {
+              if(li !== langLi && li.classList.contains('active')) {
+                  li.classList.remove('active');
+              }
+          });
+  
+          // Toggle this dropdown
+          langLi.classList.toggle("active");
+      });
+  });
+  </script>

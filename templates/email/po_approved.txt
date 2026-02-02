@@ -1,0 +1,11 @@
+Purchase Order Request
+
+PO Number: {{ po.po_number }}
+Order Date: {{ po.order_date }}
+
+Items:
+{% for item in items %}
+- {{ item.product }} ({{ item.quantity }})
+{% endfor %}
+
+Thank you.

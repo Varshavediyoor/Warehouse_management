@@ -1,0 +1,80 @@
+{% extends 'base_admin.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "User Logs" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/admin_logs.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin/admin_report_table.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="logs-container">
+    <!-- header  -->
+    <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1><span>{% trans "User " %}</span> {% trans " Activity Logs" %}</h1>
+          <p class="subtext">{% trans "Detailed record of all user login and logout actions" %}</p>
+      </div>
+      <div class="wh-header-right">          
+          <a href="{% url 'custom_admin_dashboard' %}" class="btn-back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+  </div>
+
+  <!-- <hr style="border: none; height: 1px; background-color: #56677b; width: 100%; margin-bottom: 2rem;"> -->
+
+  <!-- Meta Info -->
+  <div class="report-meta">
+    <div class="report-meta-content-left">
+      <span class="records-count">{% trans "Total Logs:" %} <strong>{{ logs|length }}</strong></span>
+      <!-- <span class="generated-date"><i class="bi bi-clock"></i> {% trans "Generated on:" %} {{ now|date:"d M Y, H:i" }}</span> -->
+    </div>
+  </div>
+
+  <!-- Logs Table -->
+  <div class="table-scroll-wrapper">
+    <div class="table-container">
+      <table class="report-table" id="reportTable">
+        <thead>
+          <tr>
+            <th><i class="bi bi-person"></i> {% trans "Username" %}</th>
+            <th><i class="bi bi-activity"></i> {% trans "Action" %}</th>
+            <th><i class="bi bi-wifi"></i> {% trans "IP Address" %}</th>
+            <th><i class="bi bi-calendar-event"></i> {% trans "Timestamp" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+          <tr>
+            <td>{{ log.username }}</td>
+            <td>
+              {% if log.action == 'login' %}
+                <span class="status-badge login">{% trans "Login" %}</span>
+              {% elif log.action == 'logout' %}
+                <span class="status-badge logout">{% trans "Logout" %}</span>
+              {% else %}
+                <span class="status-badge failed">{% trans "Failed Login" %}</span>
+              {% endif %}
+            </td>
+            <td>{{ log.ip_address }}</td>
+            <td>{{ log.timestamp }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="no-data">{% trans "No logs available" %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="tablePagination"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/admin/admin_report_tables.js' %}"></script>
+{% endblock %}

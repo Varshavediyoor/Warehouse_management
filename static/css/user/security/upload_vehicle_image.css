@@ -1,0 +1,241 @@
+/* Header */
+.grn-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(25px) scale(0.98);
+        filter: blur(6px);
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+  }
+
+.grn-header-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.grn-header h1 {
+    font-size: 30px;
+    font-weight: 700;
+    color: #2c8cfb;
+}
+
+.grn-header h1 span{
+    color: #2c4c71;
+}
+.grn-header-left p{
+    font-size: 13px;
+    color: #555;
+}
+
+.grn-list-header-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.security-back-btn {
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border-radius: 30px;
+    color: #fff;
+    padding: .4rem 2rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden; 
+    position: relative;
+}
+
+.security-back-btn:hover {
+    transform: scale(1.05);
+    text-decoration: none;
+}
+    
+.security-back-btn::before {
+    content: "";
+    position: absolute;
+    width: 80px; /* ✅ Slightly smaller for smooth edge transition */
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+    
+.security-back-btn:hover::before {
+    animation: shine 1.5s ease-out infinite;
+}
+    
+@keyframes shine {
+    0% {
+        left: -80px;
+    }
+    60% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+.upload-image-wrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.upload-card {
+    background: #ffffff;
+    padding: 30px;
+    min-width: 500px;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    animation: fadeIn 0.6s ease;
+}
+
+.upload-section h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a355b;
+    margin-bottom: 5px;
+}
+
+.small-text {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+/* Upload box */
+.upload-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #9ab6d6;
+    background: #f5f9ff;
+    padding: 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    text-align: center;
+}
+
+.upload-box:hover {
+    background: #e9f1ff;
+    border-color: #618dc2;
+}
+
+.upload-icon {
+    font-size: 35px;
+    color: #3d6ba9;
+    margin-bottom: 10px;
+}
+
+.file-input {
+    display: none;
+}
+
+/* Image preview */
+.preview-img {
+    margin-top: 15px;
+    width: 180px;
+    border-radius: 10px;
+    border: 2px solid #e2e2e2;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.submit-button {
+    display: flex;
+    justify-content: center;
+}
+
+.upload-btn-submit{
+    margin-top: 1rem;
+    padding: .5em 1em;
+    border: none;
+    border-radius: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    min-width: 300px;
+    transition: all 1000ms;
+    font-size: 16px;
+    position: relative;
+    overflow: hidden;
+    background-color: #2c8cfb;
+    outline: 3px solid #2c8cfb;
+    color: #fff;
+}
+
+.upload-btn-submit:hover {
+    color: #2c8cfb;
+    transform: scale(1.0);
+    box-shadow: 4px 5px 17px -4px #2c4c71;
+}
+
+.upload-btn-submit::before {
+    content: "";
+    position: absolute;
+    left: -50px;
+    top: 0;
+    width: 0;
+    height: 100%;
+    background-color: #fff;
+    transform: skewX(45deg);
+    z-index: -1;
+    transition: width 1000ms;
+}
+
+.upload-btn-submit:hover::before{
+    width: 250%;
+}
+
+.btn-back {
+    display: inline-block;
+    margin-top: 20px;
+    color: #1a355b;
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.btn-back:hover {
+    text-decoration: underline;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}

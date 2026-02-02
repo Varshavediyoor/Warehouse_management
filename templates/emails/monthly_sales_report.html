@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Monthly Sales Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background: #f4f4f4; }
+    </style>
+</head>
+<body>
+
+<h2>📊 Monthly Sales Report</h2>
+
+<p>
+    <strong>Month:</strong> {{ month_name }} {{ year }}
+</p>
+
+<table>
+    <tr>
+        <th>Total Orders</th>
+        <th>Total Revenue</th>
+        <th>Total Cost</th>
+        <th>Total Profit</th>
+    </tr>
+    <tr>
+        <td>{{ total_orders }}</td>
+        <td>₹{{ total_revenue }}</td>
+        <td>₹{{ total_cost }}</td>
+        <td>₹{{ total_profit }}</td>
+    </tr>
+</table>
+
+<p>
+    Generated automatically by Warehouse Management System.
+</p>
+
+</body>
+</html>

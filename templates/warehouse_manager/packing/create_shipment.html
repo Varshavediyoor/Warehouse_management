@@ -1,0 +1,19 @@
+<!-- warehouse_manager/packing/create_shipment.html -->
+<form method="POST">
+    {% csrf_token %}
+    <label>Carrier:</label>
+    <select name="carrier" required>
+        <option value="">Select Carrier</option>
+        {% for c in carriers %}
+            <option value="{{ c.id }}">{{ c.name }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Delivery Rate:</label>
+    <input type="number" name="delivery_rate" step="0.01" required>
+
+    <label>Expected Delivery Date:</label>
+    <input type="date" name="expected_delivery_date" required>
+
+    <button type="submit">Generate Shipment</button>
+</form>

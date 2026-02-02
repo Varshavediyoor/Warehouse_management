@@ -1,0 +1,65 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Pick List - Order {{ order.order_no }}" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/salesofficer/order_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="sales-order-container">
+  <!-- Header -->
+  <div class="order-header">
+    <div class="order-header-left">
+      <h1>{% trans "Pick" %} <span>{% trans "List" %}</span></h1>
+      <p class="subtext">
+        {% trans "Detailed pick list for Order" %} <strong>#{{ order.order_no }}</strong>
+      </p>
+    </div>
+    <a href="{% url 'salesofficer:order_list' %}" class="btn-back">
+      <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+    </a>
+  </div>
+
+  <!-- Meta Info -->
+  <div class="order-meta">
+    <div class="order-meta-content-left">
+      <span class="records-count">{% trans "Customer:" %} <strong>{{ order.customer_name }}</strong></span>
+      <span class="generated-date">
+        <i class="bi bi-clock"></i> {% trans "Generated on:" %} {{ now|date:"d M Y, H:i" }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <table class="order-table">
+      <thead>
+        <tr>
+          <th>{% trans "Product" %}</th>
+          <th>{% trans "Batch No" %}</th>
+          <th>{% trans "Reserved Qty" %}</th>
+          <th>{% trans "Location" %}</th>
+          <th>{% trans "Expiry Date" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for batch in reserved_batches %}
+        <tr>
+          <td>{{ batch.stock.product.name }}</td>
+          <td>{{ batch.stock.batch_no }}</td>
+          <td>{{ batch.reserved_qty }}</td>
+          <td>{{ batch.stock.location }}</td>
+          <td>{{ batch.stock.expiry_date|date:"Y-m-d" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="no-data">{% trans "No reserved batches found" %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Quality Control Dashboard" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/qc_dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/user_dashboard_table.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="db-header">
+  <h1><span>{% trans "Quality" %}</span> {% trans "Officer" %}</h1>
+  <p>{% trans "Track inbound inspections, QC status, and alerts." %}</p>
+</div>
+
+<div class="dashboard-layout">
+
+  <!-- LEFT SECTION -->
+  <div class="left-section">
+
+    <!-- KPI CARDS -->
+    <div class="im-cards">
+
+      <div class="im-card fade-up">
+        <div class="im-card-image">
+          <img src="{% static 'images/quality-pending.png' %}">
+        </div>
+        <div class="im-info">
+          <h4>{% trans "Pending QC Inspections" %}</h4>
+          <p class="im-number">{{ qc_pending|default:"0" }}</p>
+        </div>
+      </div>
+
+      <div class="im-card fade-up delay-1">
+        <div class="im-card-image">
+          <img src="{% static 'images/quality-approved.png' %}">
+        </div>
+        <div class="im-info">
+          <h4>{% trans "Approved Today" %}</h4>
+          <p class="im-number">{{ qc_approved_today|default:"0" }}</p>
+        </div>
+      </div>
+
+      <div class="im-card fade-up delay-2">
+        <div class="im-card-image">
+          <img src="{% static 'images/low-stock.png' %}">
+        </div>
+        <div class="im-info">
+          <h4>{% trans "Rejected Items" %}</h4>
+          <p class="im-number">{{ qc_rejected|default:"0" }}</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- QC ANALYTICS -->
+    <section class="quality-section">
+      <h2>{% trans "QC Analytics" %}</h2>
+
+      <div class="quality-grid">
+        <div class="quality-card">
+          <h3>{% trans "QC Pass vs Fail" %}</h3>
+          <canvas id="qcPieChart"></canvas>
+        </div>
+
+        <div class="quality-card">
+          <h3>{% trans "QC Trend" %}</h3>
+          <canvas id="qcLineChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECENT ACTIVITIES -->
+    <div class="recent-activities">
+      <h2>{% trans "Recent Activities" %}</h2>
+
+      <table class="dashboard-table">
+        <thead>
+          <tr>
+            <th>{% trans "Activity" %}</th>
+            <th>{% trans "Reference" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Time" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>QC Approved</td>
+            <td>GRN-1023</td>
+            <td><span class="badge success">Approved</span></td>
+            <td>Today</td>
+          </tr>
+          <tr>
+            <td>QC Rejected</td>
+            <td>GRN-1019</td>
+            <td><span class="badge danger">Rejected</span></td>
+            <td>Yesterday</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- RIGHT SECTION -->
+  <div class="right-section">
+
+    <aside class="quick-actions">
+      <h3>{% trans "Quick Actions" %}</h3>
+
+      <div class="actions-grid">
+
+        <a href="#" class="action-button">
+          {% trans "View GRNs" %}
+        </a>
+
+        <a href="#" class="action-button">
+          {% trans "Stock Movements" %}
+        </a>
+
+        <a href="#" class="action-button">{% trans "QC Approve" %}</a>
+        <a href="#" class="action-button">{% trans "QC Reject" %}</a>
+        <a href="#" class="action-button">{% trans "QC Hold" %}</a>
+
+      </div>
+    </aside>
+
+  </div>
+
+</div>
+
+<!-- SESSION EXPIRY POPUP -->
+<div id="sessionPopupOverlay" style="display:none;"></div>
+
+<div id="sessionPopup" style="display:none;">
+  <h3>{% trans "Session Expiring" %}</h3>
+  <p>{% trans "You will be logged out in" %}</p>
+  <strong id="popupCountdown">05:00</strong>
+  <button onclick="stayLoggedIn()">{% trans "Stay Logged In" %}</button>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/user/qc_dashboard.js' %}"></script>
+
+<script>
+let idle = 0, limit = 120, timer = 300, active = false;
+
+function resetActivity() {
+  idle = 0;
+  active = false;
+  timer = 300;
+  sessionPopup.style.display = "none";
+}
+
+document.onmousemove = resetActivity;
+document.onclick = resetActivity;
+
+setInterval(() => {
+  idle++;
+  if (idle >= limit && !active) {
+    active = true;
+    sessionPopup.style.display = "block";
+  }
+  if (active) {
+    popupCountdown.innerText = Math.floor(timer/60)+":"+String(timer%60).padStart(2,"0");
+    timer--;
+    if (timer <= 0) window.location.href = "{% url 'user_login' %}";
+  }
+}, 1000);
+</script>
+{% endblock %}

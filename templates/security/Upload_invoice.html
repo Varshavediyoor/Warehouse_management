@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload PO Invoice</title>
+</head>
+<body>
+
+<h2>Upload PO Invoice (Auto Detect)</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <label>Upload PO Invoice (PDF or Image)</label><br>
+    <input type="file" name="uploaded_invoice" accept=".pdf,image/*" required><br><br>
+
+    <button type="submit">Verify PO</button>
+
+</form>
+
+<p>System will auto detect PO Number, Vendor and Created By</p>
+
+</body>
+</html>

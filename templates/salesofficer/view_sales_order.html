@@ -1,0 +1,85 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Sales Order" %} {{ order.order_no }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/salesofficer/view_sales_order.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="view-sales-order-container">
+
+    <!-- header  -->
+    <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1><span>{% trans "Sales " %}</span> {% trans "Order Details" %}</h1>
+      </div>
+      <div class="wh-header-right">          
+          <a href="#" class="btn-back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+  </div>
+
+  <div class="order-info-card">
+    <div class="order-info-item">
+      <p><strong>Order No:</strong> {{ order.order_no }}</p>
+    </div>
+    <div class="order-info-item">
+      <p><strong>Customer:</strong> {{ order.customer_name }}</p>
+    </div>
+    <div class="order-info-item">
+      <p><strong>Status:</strong> <span class="status">{{ order.status }}</span></p>
+    </div>
+    <div class="order-info-item">
+      <p><strong>Order Date:</strong> {{ order.order_date }}</p>
+    </div>
+    <div class="order-info-item">
+      <p><strong>Total Amount:</strong> ₹ {{ order.total_amount }}</p>
+    </div>
+  </div>
+  
+
+    <!-- table  -->
+    <div class="table-scroll-wrapper">
+      <div class="table-container">
+          <table class="table-content" id="tableContent">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>SKU</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+
+          <tbody>
+            {% for item in items %}
+            <tr>
+              <td>{{ item.product.name }}</td>
+              <td>{{ item.stock.sku }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>₹ {{ item.unit_price }}</td>
+              <td>₹ {{ item.amount }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5">No items found</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+
+          </table>
+        </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="tablePagination"></div>
+      </div>
+  
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

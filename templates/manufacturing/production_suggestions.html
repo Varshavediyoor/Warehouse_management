@@ -1,0 +1,76 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Production suggestions" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/manufacturing/mo_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="mo-container">
+    <!-- Header -->
+    <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1>
+              <span>{% trans "Production " %}</span>
+              {% trans " suggestions" %}
+          </h1>
+      </div>
+      <div class="wh-header-right">
+          <a href="javascript:history.back()" class="btn-back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+  </div>
+
+    <!-- Table -->
+    <div class="table-scroll-wrapper">
+      <div class="table-container">
+        <table class="table-content" id="tableContent">
+          <thead>
+            <tr class="table-dark">
+              <th>{% trans "Product" %}</th>
+              <th>{% trans "Current Stock" %}</th>
+              <th>{% trans "Suggested Qty" %}</th>
+              <th>{% trans "Action" %}</th>
+            </tr>
+          </thead>
+        
+        
+        {% for s in suggestions %}
+        <tr>
+          <td>{{ s.product }}</td>
+          <td>{{ s.current_stock }}</td>
+          <td>{{ s.suggested_qty }}</td>
+          <td>
+            <div class="action-buttons">
+              <a href="{% url 'manufacturing:approve_suggestion' s.id %}" 
+              class="action-btn approve">
+              ✔ {% trans "" %}Approve & Create MO
+           </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">
+                {% trans "No Production suggestions." %}
+            </td>
+        </tr>
+        {% endfor %}
+        </table>
+      </div>
+            <!-- Pagination Controls -->
+  <div class="pagination-container" id="tablePagination"></div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}
+

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Record Payment - {{ purchase_invoice.invoice_no }}{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    background: #f8f9fa;
+  }
+  .payment-form-container {
+    max-width: 600px;
+    margin: 50px auto;
+    background: #fff;
+    border-radius: 10px;
+    padding: 30px 40px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 25px;
+  }
+  label {
+    font-weight: 600;
+  }
+  .form-control, .form-select {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  .btn-submit {
+    display: block;
+    width: 100%;
+    background: #198754;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  .btn-submit:hover {
+    background: #146c43;
+  }
+  .invoice-summary {
+    margin-bottom: 25px;
+    background: #f1f3f4;
+    border-radius: 8px;
+    padding: 15px;
+  }
+  .invoice-summary p {
+    margin: 5px 0;
+    font-size: 14px;
+  }
+  .invoice-summary strong {
+    color: #000;
+  }
+</style>
+
+<div class="payment-form-container">
+  <h2>Record Payment for {{ purchase_invoice.invoice_no }}</h2>
+
+  <div class="invoice-summary">
+    <p><strong>Supplier:</strong> {{ purchase_invoice.supplier.name }}</p>
+    <p><strong>Invoice Date:</strong> {{ purchase_invoice.invoice_date|date:"d M Y" }}</p>
+    <p><strong>Total Amount:</strong> ₹{{ purchase_invoice.total_amount|floatformat:2 }}</p>
+    <p><strong>Status:</strong> 
+      <span style="color: {% if purchase_invoice.status == 'Paid' %}green{% elif purchase_invoice.status == 'Pending' %}orange{% else %}red{% endif %}; font-weight:600;">
+        {{ purchase_invoice.status }}
+      </span>
+    </p>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn-submit">💰 Save Payment</button>
+  </form>
+</div>
+{% endblock %}

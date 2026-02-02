@@ -1,0 +1,292 @@
+/* --- Page Layout --- */
+.po-form-section {
+  padding-top: .5rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* --- Card --- */
+.po-form-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 50px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0, 30, 120, 0.15);
+  position: relative;
+  animation: fadeUp 0.8s ease-in-out;
+}
+
+/* --- Header --- */
+.po-form-header {
+  text-align: left;
+  margin-bottom: 10px;
+  animation: slideDown 0.8s ease-out;
+}
+
+.po-form-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1c2d6b;
+}
+
+.po-form-header h2 span {
+  color: #2c8cfb;
+}
+
+.po-form-header p {
+  font-size: 0.95rem;
+  color: #5a5a5a;
+  margin-top: 5px;
+}
+
+/* --- Form Fields --- */
+/* --- Form Layout --- */
+.po-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  animation: fadeIn 1.2s ease-in-out;
+}
+
+/* Create a neat 2-column grid for form fields */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px 25px;
+  margin-top: 10px;
+}
+
+/* --- Label Styling --- */
+.po-form label {
+  font-weight: 600;
+  color: #1c2d6b;
+  font-size: 0.95rem;
+  margin-bottom: 5px;
+  color: #2c4c71;
+  letter-spacing: 0.3px;
+}
+
+/* --- Input, Select, and Textarea --- */
+.po-form input,
+.po-form select,
+.po-form textarea {
+  width: 100%;
+  max-width: 100%; /* prevent overflow */
+  box-sizing: border-box;
+  padding: 12px 15px;
+  border: 1px solid #2c8cfc;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  font-size: 15px;
+  background: #f8fbff;
+  box-shadow: 0 3px 8px rgba(44, 140, 251, 0.05);
+}
+
+/* --- Focus Animation --- */
+.po-form input:focus,
+.po-form select:focus,
+.po-form textarea:focus {
+  background: #fff;
+  box-shadow: 0 0 10px rgba(10, 124, 255, 0.75);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+/* --- Input Placeholder Styling --- */
+.po-form input::placeholder,
+.po-form textarea::placeholder {
+  color: #9aa3b5;
+  font-size: 0.9rem;
+}
+
+/* --- Textarea --- */
+.po-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* --- Field Animation (appears one by one) --- */
+.form-grid > * {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fieldFadeIn 0.6s forwards;
+}
+
+.form-grid > *:nth-child(1) { animation-delay: 0.1s; }
+.form-grid > *:nth-child(2) { animation-delay: 0.2s; }
+.form-grid > *:nth-child(3) { animation-delay: 0.3s; }
+.form-grid > *:nth-child(4) { animation-delay: 0.4s; }
+.form-grid > *:nth-child(5) { animation-delay: 0.5s; }
+.form-grid > *:nth-child(6) { animation-delay: 0.6s; }
+
+/* --- Animations --- */
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fieldFadeIn {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+
+/* --- Button Group --- */
+.po-btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+/* --- Buttons --- */
+.btn-submit {
+  position: relative;
+  display: inline-block;
+  transition: all 0.3s ease-in-out;
+  text-decoration: none;
+  font-size: 16px;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+  padding: 0.5rem 2rem;
+  background: linear-gradient(90deg, #2c8cfb, #3c6696);
+  border-radius: 9999px;
+  color: #fff;
+  gap: 10px;
+  outline: none;
+  overflow: hidden;
+  isolation: isolate;
+  border: none;
+}
+
+.btn-submit:hover {
+  transform: scale(1.02);
+}
+
+.btn-submit::before {
+  content: "";
+  position: absolute;
+  width: 80px;
+  height: 100%;
+  background-image: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0) 70%
+  );
+  top: 0;
+  left: -80px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.btn-submit:hover::before {
+  animation: shine 1.5s ease-out infinite;
+}
+
+@keyframes shine {
+  0% {
+    left: -80px;
+  }
+  60% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.btn-cancel {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+  text-decoration: none;
+  font-size: 16px;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+  padding: 0.5rem 2.5rem;
+  background: linear-gradient(90deg, #909ead, #7b8a99);
+  border-radius: 9999px;
+  color: #fff;
+  gap: 10px;
+  outline: none;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.btn-cancel:hover {
+  transform: scale(1.02);
+  background-color: #207de8;
+}
+
+.btn-cancel::before {
+  content: "";
+  position: absolute;
+  width: 80px;
+  height: 100%;
+  background-image: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0) 70%
+  );
+  top: 0;
+  left: -80px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.btn-cancel:hover::before {
+  animation: shine 1.5s ease-out infinite;
+}
+
+/* --- Animations --- */
+@keyframes fadeUp {
+  0% { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  0% { opacity: 0; transform: translateY(-20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .po-form-card {
+    padding: 30px 25px;
+  }
+
+  .po-form-header h2 {
+    font-size: 1.6rem;
+  }
+
+  .po-btn-group {
+    flex-direction: column;
+    align-items: stretch;
+    margin-top: 1rem;
+  }
+
+  .btn-submit{
+    order: 1;
+  }
+
+  .btn-cancel{
+    order: 2;
+  }
+
+  .btn-submit, .btn-cancel {
+    width: 100%;
+  }
+
+  .form-grid {
+    gap: 5px 15px;
+  }
+}

@@ -1,0 +1,107 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Pending Sales Orders" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/salesofficer/order_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="sales-order-container">
+
+      <!-- Header -->
+      <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Pending" %}</span>
+                {% trans "Sales Orders" %}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+
+  <!-- Meta Info -->
+  <div class="order-meta">
+    <div class="order-meta-content-left">
+      <span class="records-count">{% trans "Total Pending:" %} <strong>{{ pending_orders|length }}</strong></span>
+      <span class="generated-date">
+        <i class="bi bi-clock"></i> {% trans "Updated on:" %} {{ now|date:"d M Y, H:i" }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-scroll-wrapper">
+    <div class="table-container">
+
+      <table class="table-content" id="tableContent">
+        <thead>
+          <tr>
+            <th>{% trans "Order No" %}</th>
+            <th>{% trans "Customer Name" %}</th>
+            <th>{% trans "Customer Phone" %}</th>
+            <th>{% trans "Order Date" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Actions" %}</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for order in pending_orders %}
+          <tr>
+            <td>{{ order.order_no }}</td>
+            <td>{{ order.customer_name }}</td>
+            <td>{{ order.customer_phone }}</td>
+            <td>{{ order.order_date|date:"Y-m-d H:i" }}</td>
+            <td>
+                <span class="status-badge status-{{ order.status|lower }}">{{ order.status|default:"Pending" }}</span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                {% if order.status|lower == "submitted" %}
+                <a href="{% url 'salesofficer:approve_sales_order' order.id %}" class="action-btn approve">
+                    Approve
+                </a>
+            {% else %}
+                <span class="text-muted">{% trans "Waiting" %}</span>
+            {% endif %}
+              </div>
+            </td>
+          </tr>
+
+          {% empty %}
+          <tr>
+            <td colspan="6" class="no-data">{% trans "No pending approvals" %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </div>
+
+    <div class="pagination-container" id="tablePagination"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+
+<script>
+    // Optional: Add confirmation before approving
+    document.querySelectorAll('.btn-success').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            if (!confirm('Are you sure you want to approve this order?')) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,45 @@
+<h2>QC Verification – DO {{ delivery_order.order_number }}</h2>
+
+<p><b>Packing ID:</b> {{ packing.id }}</p>
+
+{% for box in boxes %}
+    <div class="card mb-3">
+        <div class="card-header">
+            Box Barcode: <b>{{ box.barcode }}</b>
+        </div>
+        <div class="card-body">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Qty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in box.items.all %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endfor %}
+
+<form method="post">
+    {% csrf_token %}
+    <textarea name="remarks" class="form-control mb-3"
+              placeholder="Remarks (required if rejecting)"></textarea>
+
+    <button type="submit" name="action" value="approve"
+            class="btn btn-success">
+        Approve QC
+    </button>
+
+    <button type="submit" name="action" value="reject"
+            class="btn btn-danger">
+        Reject QC
+    </button>
+</form>

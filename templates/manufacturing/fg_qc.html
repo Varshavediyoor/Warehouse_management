@@ -1,0 +1,35 @@
+{% extends "base_user.html" %}
+{% block content %}
+
+<div class="container mt-4">
+  <h4>Finished Goods QC</h4>
+
+  <div class="card p-3 mb-3">
+    <p><b>MO:</b> {{ fg.mo.mo_no }}</p>
+    <p><b>Product:</b> {{ fg.mo.finished_product }}</p>
+    <p><b>Produced Qty:</b> {{ fg.qty_produced }}</p>
+    <p><b>Batch:</b> {{ fg.batch_no }}</p>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label>QC Decision</label>
+      <select name="decision" class="form-control" required>
+        <option value="PASS">PASS → Add to Stock</option>
+        <option value="FAIL">FAIL → Scrap</option>
+        <option value="REWORK">REWORK → Back to WIP</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label>QC Notes</label>
+      <textarea name="notes" class="form-control"></textarea>
+    </div>
+
+    <button class="btn btn-primary">Submit QC</button>
+  </form>
+</div>
+
+{% endblock %}

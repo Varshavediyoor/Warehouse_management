@@ -1,0 +1,128 @@
+{% extends 'base_user.html' %}
+{% load i18n static dict_extras %}
+
+{% block title %}{% trans "Maintenance Notifications List" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/maintenance/notification_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="notif-container">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Maintenance " %}</span>
+                {% trans "Notifications" %}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="{% url 'maintenance_staff_dashboard' %}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>{% trans "Title" %}</th>
+                        <th>{% trans "Message" %}</th>
+                        <th>{% trans "Start Time" %}</th>
+                        <th>{% trans "End Time" %}</th>
+                        <th>{% trans "Status" %}</th>
+                        <th>{% trans "Action" %}</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for n in notifications %}
+                    <tr>
+                        <td>{{ n.title }}</td>
+                        <td>{{ n.message }}</td>
+                        <td>{{ n.start_time }}</td>
+                        <td>{{ n.end_time|default:"---" }}</td>
+
+                        <td>
+                            {% if n.active %}
+                                <span class="badge badge-active">{% trans "Active" %}</span>
+                            {% else %}
+                                <span class="badge badge-inactive">{% trans "Inactive" %}</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="action-container">
+                        
+                                <!-- Activate / Deactivate -->
+                                <form action="{% url 'toggle_notification_status' n.pk %}" 
+                                      method="post" 
+                                      class="action-form">
+                                    {% csrf_token %}
+                                    {% if n.active %}
+                                        <button type="submit" class="action-btn deactivate">
+                                            {% trans "Deactivate" %}
+                                        </button>
+                                    {% else %}
+                                        <button type="submit" class="action-btn activate">
+                                            {% trans "Activate" %}
+                                        </button>
+                                    {% endif %}
+                                </form>
+                        
+                                <!-- Delete -->
+                                <button 
+                                    class="action-btn delete-btn"
+                                    onclick="openDeletePopup({{ n.pk }})">
+                                    {% trans "Delete" %}
+                                </button>
+                        
+                            </div>
+                        </td>
+                        
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6" class="no-data">{% trans "No notifications found" %}.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+         <!-- Pagination Controls -->
+      <div class="pagination-container" id="tablePagination"></div>
+    </div>
+</div>
+
+<!-- Hidden base URL used for dynamic delete path -->
+<input type="hidden" id="deleteBaseUrl" value="{% url 'delete_notification' 0 %}">
+
+
+
+<!-- 🌟 DELETE CONFIRMATION POPUP -->
+<div id="deletePopup" class="delete-modal">
+    <div class="delete-modal-content">
+        <h3><span>{% trans "Delete" %}</span> {% trans "Notification" %}</h3>
+        <p>{% trans "Are you sure you want to delete this notification?" %}</p>
+  
+        <form id="deleteForm" method="post">
+            {% csrf_token %}
+            <div class="delete-modal-buttons">
+                <button type="button" onclick="closeDeletePopup()" class="delete-btn-cancel">{% trans "Cancel" %}</button>
+                <button type="submit" class="delete-btn-confirm">{% trans "Delete" %}</button>
+            </div>
+        </form>
+    </div>
+  </div>
+  
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/maintenance/notification_list.js' %}"></script>
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

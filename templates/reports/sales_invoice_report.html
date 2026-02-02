@@ -1,0 +1,128 @@
+{% extends 'base_admin.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Sales Invoice Report" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/purchase_report.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin/admin_report_table.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="purchase-report-container">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Sales" %}</span> {% trans "Invoice Report" %}</h1>
+            <p class="subtext">
+                {% trans "Complete list of sales invoices with financial and payment details." %}
+            </p>
+        </div>
+        <div class="wh-header-right">
+            <a href="{% url 'admin_reports' %}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter/Search -->
+    <form method="GET" class="filter-form">
+        <input
+            type="text"
+            name="search"
+            placeholder="{% trans 'Search by Invoice No, Order No, Customer Name...' %}"
+            value="{{ search_query }}"
+        >
+
+        <select name="status">
+            <option value="">{% trans "All Statuses" %}</option>
+            {% for s in statuses %}
+                <option value="{{ s }}" {% if s == status_filter %}selected{% endif %}>
+                    {{ s }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">{% trans "Filter" %}</button>
+    </form>
+
+    <!-- Meta Info & Actions -->
+    <div class="report-meta">
+        <div class="report-meta-content-left">
+            <span class="records-count">
+                {% trans "Total Records:" %}
+                <strong>{{ invoices|length }}</strong>
+            </span>
+            <span class="generated-date">
+                <i class="bi bi-clock"></i>
+                {% trans "Generated on:" %}
+                {{ generated_on|date:"d M Y, H:i" }}
+            </span>
+        </div>
+
+        <div class="report-meta-content-right">
+            <a href="{% url 'sales_invoice_report_excel' %}" class="action-btn excel">
+                <i class="bi bi-file-earmark-excel"></i>
+                {% trans "Download Excel" %}
+            </a>
+            <a href="{% url 'sales_invoice_report_pdf' %}" class="action-btn pdf">
+                <i class="bi bi-file-earmark-pdf"></i>
+                {% trans "Download PDF" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="report-table" id="reportTable">
+                <thead>
+                    <tr>
+                        <th>{% trans "Invoice No" %}</th>
+                        <th>{% trans "Order No" %}</th>
+                        <th>{% trans "Customer Name" %}</th>
+                        <th>{% trans "Invoice Date" %}</th>
+                        <th>{% trans "Subtotal" %}</th>
+                        <th>{% trans "VAT" %}</th>
+                        <th>{% trans "Total Amount" %}</th>
+                        <th>{% trans "Status" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in invoices %}
+                    <tr>
+                        <td>{{ i.invoice_no }}</td>
+                        <td>{{ i.order.order_no }}</td>
+                        <td>{{ i.order.customer_name }}</td>
+                        <td>{{ i.invoice_date|date:"d M Y" }}</td>
+                        <td>{{ i.subtotal }}</td>
+                        <td>{{ i.vat_amount }}</td>
+                        <td>{{ i.total_amount }}</td>
+                        <td>
+                            <span class="status-badge {{ i.status|lower }}">
+                                {{ i.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="no-data">
+                            {% trans "No Sales Invoices Found" %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination (same JS can be reused) -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/admin/admin_report_tables.js' %}"></script>
+{% endblock %}

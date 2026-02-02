@@ -1,0 +1,73 @@
+{% extends 'base_user.html' %}
+{% load i18n static %}
+
+{% block title %}{% trans "Approve Vehicle Exit" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/security/supplier_gate_exit.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="exit-page">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Vehicle " %}</span>
+                {% trans " Exit Approval" %}
+            </h1>
+            <p class="sub-text">Verify details before approving vehicle exit</p>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+  <!-- Header -->
+  <div class="exit-header">
+    <h1> </h1>
+    
+  </div>
+
+  <!-- Card -->
+  <div class="exit-card">
+
+    <div class="details-grid">
+      <div class="detail-item">
+        <label>Vehicle Number</label>
+        <p>{{ entry.vehicle_number }}</p>
+      </div>
+
+      <div class="detail-item">
+        <label>Driver Name</label>
+        <p>{{ entry.driver_name }}</p>
+      </div>
+
+      <div class="detail-item">
+        <label>Gate Pass Number</label>
+        <p>{{ entry.gate_pass_number }}</p>
+      </div>
+
+      <div class="detail-item">
+        <label>Exit Time</label>
+        <p>{{ entry.exit_time }}</p>
+      </div>
+    </div>
+
+    <!-- Action -->
+    <form method="post" class="action-area">
+      {% csrf_token %}
+      <button type="submit" class="approve-btn">
+        Approve Exit
+      </button>
+    </form>
+
+  </div>
+
+</div>
+
+{% endblock %}

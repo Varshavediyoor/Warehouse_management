@@ -1,0 +1,21 @@
+<h2>Box QC Dashboard</h2>
+
+<table>
+    <tr>
+        <th>Box ID</th>
+        <th>Packing</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+
+    {% for qc in qcs %}
+    <tr>
+        <td>{{ qc.packing_box.id }}</td>
+        <td>{{ qc.packing_box.packing.id }}</td>
+        <td>{{ qc.status }}</td>
+        <td>
+            <a href="{% url 'qc_review' qc.id %}">Review</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>

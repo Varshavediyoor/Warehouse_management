@@ -1,0 +1,426 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Procurement Officer" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/procurement_officer/procurement_officer.css' %}">
+<link rel="stylesheet" href="{% static 'css/user_dashboard_table.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+<div class="db-header">
+  <h1><span>{% trans "Procurement" %}</span> {% trans "Officer" %}</h1>
+  <p>{% trans "Create Purchase Orders, Receive Stock (GRN), Manage Suppliers, and Auto-Create Batches" %}</p>
+</div>
+
+<div class="dashboard-layout">
+  <!-- Left Section -->
+  <div class="left-section">
+  
+    <div class="im-cards">
+
+      <!-- INBOUND ITEMS -->
+      <div class="im-card fade-up">
+        <div class="maint-card-bubble"></div>
+          <div class="im-card-image">
+            <img src="{% static 'images/storekeeper.png' %}" alt="card-image">
+          </div>
+          <div class="im-info">
+            <h4>{% trans "Active Purchase Orders" %}</h4>
+            <p class="im-number">{{ active_pos|default:"0" }}</p>
+            <span class="im-sub">
+              {% trans "Open this week:" %} {{ pos_this_week|default:"0" }}
+            </span>
+          </div>
+      </div>
+  
+      <!-- PUTAWAY TASKS -->
+      <div class="im-card fade-up delay-1">
+        <div class="maint-card-bubble"></div>
+          <div class="im-card-image">
+            <img src="{% static 'images/quality-pending.png' %}" alt="card-image">
+          </div>
+          <div class="im-info">
+            <h4>{% trans "GRNs Pending QC" %}</h4>
+            <p class="im-number">{{ grn_pending_qc|default:"0" }}</p>
+            <span class="im-sub">
+              {% trans "Received today:" %} {{ grn_today|default:"0" }}
+            </span>
+          </div>
+      </div>
+  
+      <!-- LOW STOCK ALERTS -->
+      <div class="im-card fade-up delay-2">
+        <div class="maint-card-bubble"></div>
+          <div class="im-card-image">
+            <img src="{% static 'images/quality1.png' %}" alt="card-image">
+          </div>
+          <div class="im-info">
+            <h4>{% trans "Pending PO Approvals" %}</h4>
+            <p class="im-number">{{ pending_po_approvals|default:"0" }}</p>
+            <span class="im-sub">
+              {% trans "Awaiting action:" %} {{ approval_wait_time|default:"0" }}
+            </span>
+          </div>
+      </div>
+    </div>
+
+    {% if password_minutes_left %}
+<div class="password-timer">
+    🔐 Password session expires in
+    <strong>{{ password_minutes_left }} minutes</strong>
+</div>
+{% endif %}
+
+<style>
+  .password-timer {
+    background: #fff3cd;
+    border: 1px solid #ffeeba;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+</style>
+
+
+  <aside class="quick-actions responsive">
+    <div class="quick-action-heading">
+      <h3>{% trans "Quick Actions" %}</h3>
+    </div>
+    <div class="actions-grid">
+      <!-- Django links as you already have -->
+      {% if "Add Stock" in allowed_functions %}
+        <a href="{% url 'warehouse_manager:add_stock' %}" class="action-button">{% trans "Add Stock" %}</a>
+      {% endif %}
+      {% if "View Stock" in allowed_functions %}
+        <a href="{% url 'warehouse_manager:view_stock' %}" class="action-button">{% trans "View Stock" %}</a>
+      {% endif %}
+      {% if "View Sales Orders" in allowed_functions %}
+        <a href="{% url 'warehouse_manager:sales_order_list' %}" class="action-button">{% trans "View Sales Orders" %}</a>
+      {% endif %}
+      {% if "View Supplier List" in allowed_functions %}
+        <a href="{% url 'procurement_officer:supplier_list' %}" class="action-button">{% trans "Supplier List" %}</a>
+      {% endif %}
+      {% if "View Picklist" in allowed_functions %}
+        <a href="{% url 'warehouse_manager:picklist_list' %}" class="action-button">{% trans "View Picklist" %}</a>
+      {% endif %}
+      {% if "Create Sales Order" in allowed_functions %}
+        <a href="{% url 'salesofficer:create_sales_order' %}" class="action-button">{% trans "Create Sales Order" %}</a>
+      {% endif %}
+      {% if "Sales Orders" in allowed_functions %}
+        <a href="{% url 'salesofficer:list_sales_orders' %}" class="action-button">{% trans "Sales Orders" %}</a>
+      {% endif %}
+
+      {% if "Ready For Delivery" in allowed_functions %}
+        <a href="{% url 'salesofficer:ready_for_delivery' %}" class="action-button">{% trans "Assign Delivery Boy" %}</a>
+      {% endif %}
+
+      {% if "Create Purchase Order" in allowed_functions %}
+        <a href="{% url 'procurement_officer:purchaseorder_create' %}" class="action-button">{% trans "New Purchase Order" %}</a>
+      {% endif %}
+    
+      {% if "View Purchase Order List" in allowed_functions %}
+        <a href="{% url 'procurement_officer:purchaseorder_list' %}" class="action-button">{% trans "Purchase Order List" %}</a>
+      {% endif %}
+    
+      {% if "Create GRN" in allowed_functions %}
+        <a href="{% url 'procurement_officer:create_grn' %}" class="action-button">{% trans "Create GRN" %}</a>
+      {% endif %}
+    
+      {% if "View GRN" in allowed_functions %}
+        <a href="{% url 'procurement_officer:grn_list' %}" class="action-button">{% trans "View GRN" %}</a>
+      {% endif %}
+    
+      {% if "Review GRN" in allowed_functions %}
+        <a href="{% url 'grn_review_list' %}" class="action-button">{% trans "Review GRN" %}</a>
+      {% endif %}
+    
+      {% if "View Delivery List" in allowed_functions %}
+        <a href="{% url 'delivery_staff:all_deliveries' %}" class="action-button">{% trans "Delivery Orders" %}</a>
+      {% endif %}
+      
+    </div>
+    <div class="quick-actions-img">
+      <img src="{% static 'images/quick-actions.png' %}" alt="quick-actions-img">
+    </div>
+  </aside>
+
+  <!--------------------------- procurement pipeline  ------------------>
+
+  <section class="procurement-pipeline">
+    <h2 class="po-section-title">Procurement Pipeline</h2>
+    <p class="po-section-subtitle">
+      Track purchase requests from initiation to closure
+    </p>
+  
+    <div class="pipeline-wrapper">
+  
+      <div class="pipeline-step completed">
+        <span class="step-circle">1</span>
+        <span class="step-label">PR Created</span>
+      </div>
+  
+      <div class="pipeline-line completed"></div>
+  
+      <div class="pipeline-step completed">
+        <span class="step-circle">2</span>
+        <span class="step-label">Approved</span>
+      </div>
+  
+      <div class="pipeline-line completed"></div>
+  
+      <div class="pipeline-step active">
+        <span class="step-circle">3</span>
+        <span class="step-label">PO Issued</span>
+      </div>
+  
+      <div class="pipeline-line"></div>
+  
+      <div class="pipeline-step">
+        <span class="step-circle">4</span>
+        <span class="step-label">Dispatched</span>
+      </div>
+  
+      <div class="pipeline-line"></div>
+  
+      <div class="pipeline-step">
+        <span class="step-circle">5</span>
+        <span class="step-label">GRN</span>
+      </div>
+  
+      <div class="pipeline-line"></div>
+  
+      <div class="pipeline-step">
+        <span class="step-circle">6</span>
+        <span class="step-label">QC</span>
+      </div>
+  
+      <div class="pipeline-line"></div>
+  
+      <div class="pipeline-step">
+        <span class="step-circle">7</span>
+        <span class="step-label">Closed</span>
+      </div>
+  
+    </div>
+  </section>
+  
+<!-------------------- recent activities table ------------------>
+<div class="recent-activities">
+  <h2>{% trans "Recent Activities" %}</h2>
+ <!-- TABLE PREVIEW SECTION -->
+ <div class="dashboard-table-wrap">
+
+  <div class="table-scroll">
+    <table class="dashboard-table">
+      <thead>
+        <th>Activity</th>
+        <th>Reference</th>
+        <th>Quantity / Value</th>
+        <th>Status</th>
+        <th>Time</th>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>New Purchase Order Created</td>
+          <td>PO-1024 · Supplier: ABC Pvt Ltd</td>
+          <td>50 Units</td>
+          <td><span class="badge success">Created</span></td>
+          <td>Today, 08:45 AM</td>
+        </tr>
+
+        <tr>
+          <td>GRN Received</td>
+          <td>GRN-305 · Supplier: XYZ Traders</td>
+          <td>120 Units</td>
+          <td><span class="badge success">Received</span></td>
+          <td>Today, 09:30 AM</td>
+        </tr>
+
+        <tr>
+          <td>PO Approved</td>
+          <td>PO-1019 · Supplier: LMN Supplies</td>
+          <td>₹75,000</td>
+          <td><span class="badge info">Approved</span></td>
+          <td>Yesterday, 05:15 PM</td>
+        </tr>
+
+        <tr>
+          <td>Pending Supplier Confirmation</td>
+          <td>PO-1025 · Supplier: PQR Industries</td>
+          <td>200 Units</td>
+          <td><span class="badge pending">Pending</span></td>
+          <td>Yesterday, 03:50 PM</td>
+        </tr>
+
+        <tr>
+          <td>Delayed Delivery Alert</td>
+          <td>GRN-299 · Supplier: XYZ Traders</td>
+          <td>60 Units</td>
+          <td><span class="badge warning">Delayed</span></td>
+          <td>2 Days Ago</td>
+        </tr>
+
+        <tr>
+          <td>Rejected GRN</td>
+          <td>GRN-301 · Supplier: ABC Pvt Ltd</td>
+          <td>10 Units</td>
+          <td><span class="badge danger">Rejected</span></td>
+          <td>2 Days Ago</td>
+        </tr>
+
+        <!-- Empty state -->
+        <!--
+        <tr>
+          <td colspan="5" class="no-box">No Recent activities yet.</td>
+        </tr>
+        -->
+      </tbody>
+    </table>
+  </div>
+</div>  
+</div>
+
+<!-- ------------------------------------------------------ -->
+
+  </div>
+
+  <!-- Right Section -->
+  <div class="right-section">
+    <aside class="quick-actions">
+      <div class="quick-action-heading">
+        <h3>{% trans "Quick Actions" %}</h3>
+      </div>
+      
+    </div>
+      
+    </aside>
+  </div>
+
+</div>
+
+<!-- SESSION TIMER BOX -->
+<!-- SESSION EXPIRY POPUP -->
+<div id="sessionPopupOverlay"
+   style="
+      display:none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(2px);
+      z-index: 9998;
+   ">
+</div>
+
+<div id="sessionPopup"
+   style="
+      display:none;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 25px 35px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      text-align: center;
+      z-index: 9999;
+      width: 340px;
+   ">
+  <h3 style="margin-bottom: 10px; color:#b30000;">Session Expiring</h3>
+  <p style="margin-bottom: 10px;">
+      You have been inactive. You will be logged out in:
+  </p>
+
+  <div style="
+      font-size: 28px;
+      font-weight: bold;
+      color: #d00000;
+      margin-bottom: 15px;
+  ">
+      <span id="popupCountdown">05:00</span>
+  </div>
+
+  <button onclick="stayLoggedIn()" style="
+      padding: 8px 20px;
+      background: #007bff;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+  ">Stay Logged In</button>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  let idleTime = 0;
+  const idleLimit = 120; // 2 minutes inactivity
+  let logoutTimer = 300; // 5 minutes countdown
+  let countdownActive = false;
+
+  const popup = document.getElementById("sessionPopup");
+  const overlay = document.getElementById("sessionPopupOverlay");
+  const popupCountdown = document.getElementById("popupCountdown");
+
+  // Reset activity
+  function resetActivity() {
+      idleTime = 0;
+
+      if (countdownActive) {
+          countdownActive = false;
+          logoutTimer = 300; // Reset timer
+          popup.style.display = "none";
+          overlay.style.display = "none";
+      }
+  }
+
+  // Stay logged-in button
+  function stayLoggedIn() {
+      resetActivity();
+  }
+
+  // Listeners
+  window.onload = resetActivity;
+  document.onmousemove = resetActivity;
+  document.onkeypress = resetActivity;
+  document.onclick = resetActivity;
+  document.onscroll = resetActivity;
+
+  // Timer loop
+  setInterval(function () {
+      idleTime++;
+
+      // Start popup countdown
+      if (idleTime >= idleLimit && !countdownActive) {
+          countdownActive = true;
+          popup.style.display = "block";
+          overlay.style.display = "block";
+      }
+
+      if (countdownActive) {
+          let minutes = Math.floor(logoutTimer / 60);
+          let seconds = logoutTimer % 60;
+
+          popupCountdown.innerHTML =
+              String(minutes).padStart(2, "0") + ":" +
+              String(seconds).padStart(2, "0");
+
+          logoutTimer--;
+
+          if (logoutTimer <= 0) {
+              window.location.href = "{% url 'user_login' %}";
+          }
+      }
+  }, 1000);
+</script>
+{% endblock %}
+
+

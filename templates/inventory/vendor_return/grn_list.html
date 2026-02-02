@@ -1,0 +1,77 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Vendor Return GRN" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/inventory_manager/vendor_return/grn_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="grn-list-container">
+    <!-- header  -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "GRN" %}</span> {% trans "Vendor Return List" %}</h1>
+        </div>
+        <div class="wh-header-right">          
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <form method="get" class="simple-search-form">
+        <div class="simple-search">
+          <input
+            type="text"
+            name="search"
+            placeholder="Search GRN"
+            value="{{ search_query }}"
+          >
+          <button type="submit" class="btn-back">Search</button>
+        </div>
+      </form>      
+    
+    <!-- table  -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>GRN Number</th>
+                        <th>Supplier</th>
+                        <th>Received Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for grn in grns %}
+                    <tr>
+                        <td>{{ grn.grn_number }}</td>
+                        <td>{{ grn.supplier.supplier_name }}</td>
+                        <td>{{ grn.received_date }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{% url 'create_vendor_return' grn.id %}" class="action-btn normal">Create Vendor Return</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No approved GRNs found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

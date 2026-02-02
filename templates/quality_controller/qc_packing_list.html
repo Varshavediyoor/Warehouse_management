@@ -1,0 +1,52 @@
+<h2>QC Packing List</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Packing ID</th>
+            <th>Delivery Order</th>
+            <th>Status</th>
+            <th>Verified By</th>
+            <th>Verified On</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for qc in qcs %}
+        <tr>
+            <td>{{ qc.packing.id }}</td>
+            <td>{{ qc.packing.delivery_order.order_number }}</td>
+            <td>
+                {% if qc.status == 'APPROVED' %}
+                    <span class="badge bg-success">Approved</span>
+                {% elif qc.status == 'REJECTED' %}
+                    <span class="badge bg-danger">Rejected</span>
+                {% else %}
+                    <span class="badge bg-warning">Pending</span>
+                {% endif %}
+            </td>
+            <td>{{ qc.verified_by|default:"-" }}</td>
+            <td>{{ qc.verified_on|date:"d-m-Y H:i"|default:"-" }}</td>
+            <td>
+                {% if qc.status == 'PENDING' %}
+                    <a href="{% url 'quality_controller:qc_verify_packing' qc.packing.id %}"
+                       class="btn btn-sm btn-primary">
+                        Verify
+                    </a>
+                {% else %}
+                    <a href="{% url 'quality_controller:qc_verify_packing' qc.packing.id %}"
+                       class="btn btn-sm btn-secondary">
+                        View
+                    </a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center">
+                No QC records found
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

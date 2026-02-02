@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vehicle Entry</title>
+    <style>
+        video, canvas { width: 300px; border: 1px solid #ccc; }
+        .section { margin-bottom: 20px; }
+        button { margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<h3>Vehicle Entry</h3>
+
+<form method="POST" enctype="multipart/form-data" id="entryForm">
+{% csrf_token %}
+
+<label>Vehicle Name</label><br>
+<input type="text" name="vehicle_name" required><br><br>
+
+<label>Vehicle Number</label><br>
+<input type="text" name="vehicle_number_manual"><br><br>
+
+<label>Driver Name</label><br>
+<input type="text" name="driver_name"><br><br>
+
+<label>Gate No</label><br>
+<input type="text" name="gate_no" required><br><br>
+
+<hr>
+
+<!-- FRONT -->
+<div class="section">
+    <h4>Front Images</h4>
+    <video id="frontVideo" autoplay></video><br>
+    <button type="button" onclick="capture('front')">Capture Front</button>
+</div>
+
+<!-- REAR -->
+<div class="section">
+    <h4>Rear Images</h4>
+    <video id="rearVideo" autoplay></video><br>
+    <button type="button" onclick="capture('rear')">Capture Rear</button>
+</div>
+
+<!-- SIDE -->
+<div class="section">
+    <h4>Side Images</h4>
+    <video id="sideVideo" autoplay></video><br>
+    <button type="button" onclick="capture('side')">Capture Side</button>
+</div>
+
+<!-- DRIVER -->
+<div class="section">
+    <h4>Driver Image (Optional)</h4>
+    <video id="driverVideo" autoplay></video><br>
+    <button type="button" onclick="capture('driver')">Capture Driver</button>
+</div>
+
+<!-- Hidden container -->
+<div id="hiddenFiles"></div>
+
+<button type="submit">Generate Entry Pass</button>
+
+</form>
+
+<script>
+const streams = {};
+
+async function startCamera(type) {
+    const video = document.getElementById(type + "Video");
+    streams[type] = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = streams[type];
+}
+
+["front", "rear", "side", "driver"].forEach(startCamera);
+
+function capture(type) {
+    const video = document.getElementById(type + "Video");
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0);
+
+    canvas.toBlob(blob => {
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.name = type + "_images";
+        if (type === "driver") {
+            fileInput.name = "driver_image";
+        }
+        const file = new File([blob], `${type}_${Date.now()}.jpg`, { type: "image/jpeg" });
+
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+
+        document.getElementById("hiddenFiles").appendChild(fileInput);
+        alert(type.toUpperCase() + " image captured");
+    }, "image/jpeg");
+}
+</script>
+
+</body>
+</html>

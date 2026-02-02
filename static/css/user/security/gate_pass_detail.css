@@ -1,0 +1,286 @@
+/* ROOT VARIABLES */
+:root {
+    --primary: #1b6edc;
+    --success: #bbf9ca;
+    --border: #dee2e6;
+    --muted: #6c757d;
+    --bg-soft: #f8f9fa;
+  }
+  
+  /* WRAPPER */
+  .gatepass-wrapper {
+    max-width: 920px;
+    margin: auto;
+    padding: 30px 20px;
+  }
+  
+  /* CARD */
+  .gatepass-card {
+    position: relative;
+    background: #fff;
+    border-radius: 20px;
+    padding: 34px;
+    border: 1.5px solid #5cacfa;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.12);
+    overflow: hidden;
+  }
+  
+  /* SECURITY STRIP */
+  .gatepass-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(90deg, var(--primary), #4facfe);
+  }
+  
+  /* WATERMARK */
+  .gatepass-watermark {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 90px;
+    font-weight: 900;
+    color: rgba(0,0,0,0.035);
+    letter-spacing: 6px;
+    transform: rotate(-18deg);
+    pointer-events: none;
+  }
+  
+  /* HEADER */
+  .gatepass-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px dashed var(--border);
+    padding-bottom: 18px;
+    margin-bottom: 22px;
+  }
+  
+  .company h2 {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 1.2px;
+    margin-bottom: 4px;
+  }
+  
+  .subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  
+  .gatepass-no {
+    text-align: right;
+  }
+  
+  .gatepass-no span {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  
+  .gatepass-no strong {
+    font-size: 20px;
+    font-weight: 800;
+    color: #2c4c71;
+  }
+  
+  /* STATUS */
+  .gatepass-status {
+    text-align: center;
+    margin: 22px 0;
+  }
+  
+  .status {
+    padding: 10px 26px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+  }
+  
+  .status.dispatched {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    color: #fff;
+  }
+  
+  /* GRID */
+  .gatepass-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+    margin-bottom: 36px;
+  }
+  
+  .gp-item {
+    padding: 18px 20px;
+    border-radius: 14px;
+    border-left: 4px solid #5cacfa;
+    background: #eef5ff;
+  }
+  
+  .gp-item span {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .gp-item strong {
+    display: block;
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 6px;
+    color: #2c4c71;
+  }
+  
+  /* FOOTER */
+  .gatepass-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+  }
+  
+  .signature {
+    text-align: center;
+  }
+  
+  .signature span {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  
+  .sign-line {
+    width: 220px;
+    border-bottom: 1.8px solid #2c4c71;
+    margin: 30px auto 0;
+  }
+  
+  /* ACTION BUTTONS */
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  
+  .action-btn {
+    border: none;
+    border-radius: 30px;
+    font-size: 14px;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    font-weight: 500;
+    padding: .7rem 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;  /* Ensures text stays centered */
+    gap: 6px;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    min-width: 100px;  /* 🎯 Same button width */
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    }
+    
+    .action-btn::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 100%;
+    background-image: linear-gradient(120deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 70%);
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    }
+    .action-btn:hover::before {
+    animation: shine 1.5s ease-out infinite;
+    }
+    
+    .action-btn:hover { 
+    transform: scale(1.05); 
+    }
+  
+  /* PRINT */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+  
+    .gatepass-card,
+    .gatepass-card * {
+      visibility: visible;
+    }
+  
+    .gatepass-card {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      box-shadow: none;
+      border: none;
+      padding: 28px;
+    }
+  
+    .gatepass-actions {
+      display: none;
+    }
+  }
+ 
+  
+  @media (max-width: 730px) {
+    .action-buttons {
+        margin-top: 2rem;
+    }
+
+    .sign-line {
+        width: 180px;
+
+      }
+}
+
+      
+@media (max-width: 600px) {
+    .action-btn {
+        font-size: 12px;
+        padding: .5rem 1.2rem;
+    }
+    .company h2 {
+        font-size: 18px;
+        font-weight: 900;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+      }
+
+    .gatepass-wrapper {
+        padding: 0;
+      }
+
+    .sign-line {
+        width: 150px;
+      }
+
+        /* CARD */
+    .gatepass-card {
+        border-radius: 10px;
+    }
+
+    .gatepass-no strong {
+        font-size: 15px;
+        font-weight: 800;
+        color: #2c4c71;
+      }
+
+      .subtitle {
+        font-size: 11px;
+      }
+}

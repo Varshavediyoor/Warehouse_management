@@ -1,0 +1,42 @@
+{% extends "base_user.html" %}
+{% load static i18n %}
+
+{% block title %}Picking Detail{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="picking-detail-container">
+    <h1>Pick Task #{{ task.id }}</h1>
+
+    <p><strong>Delivery Order:</strong> {{ task.delivery_order.delivery_no }}</p>
+    <p><strong>Product:</strong> {{ task.product.name }}</p>
+    <p><strong>Quantity to pick:</strong> {{ task.quantity }}</p>
+    <p><strong>Status:</strong> {{ task.status }}</p>
+    
+    <p><strong>Batch:</strong> 
+        {% if task.batch %}
+            {{ task.batch.batch_number }}
+        {% else %}
+            -
+        {% endif %}
+    </p>
+    
+    <p><strong>Location:</strong> {{ task.from_location|default:"-" }}</p>
+
+    {% if task.status != "PICKED" %}
+    <form method="post">
+        {% csrf_token %}
+        <label for="picked_qty">Picked Quantity:</label>
+        <input type="number" name="picked_qty" id="picked_qty" value="{{ task.quantity }}" min="0" max="{{ task.quantity }}">
+        <button type="submit">Submit</button>
+    </form>
+    {% else %}
+    <p>Task completed ✅</p>
+    {% endif %}
+
+    <a href="{% url 'warehouse_manager:pick_task_list' %}">Back to Pick Tasks</a>
+</div>
+{% endblock %}

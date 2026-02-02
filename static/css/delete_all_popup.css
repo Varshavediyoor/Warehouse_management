@@ -1,0 +1,158 @@
+/* ===============================
+   DELETE ALL MODAL OVERLAY
+================================ */
+.deleteall-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 9999;
+}
+
+.deleteall-modal.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ===============================
+   MODAL BOX
+================================ */
+.deleteall-modal-box {
+  width: 400px;
+  padding: 3rem;
+  border-radius: 25px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  animation: deleteallPop 0.4s ease forwards;
+}
+
+/* ===============================
+   TEXT
+================================ */
+.deleteall-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #2c8cfb;
+}
+
+.deleteall-title span {
+  color: #2c4c71;
+}
+
+.deleteall-message {
+  font-size: 14px;
+  color: #2c4c71;
+  margin-top: 10px;
+}
+
+/* ===============================
+   ACTION BUTTONS
+================================ */
+.deleteall-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 2rem;
+}
+
+/* Make form behave like flex item */
+.deleteall-form {
+  flex: 1;
+  display: flex;
+}
+
+/* Base button */
+.deleteall-btn {
+  flex: 1;
+  width: 100%;
+  padding: 12px 0;
+  border-radius: 30px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Cancel */
+.deleteall-btn-cancel {
+  background: linear-gradient(90deg, #2c8cfb, #3c6696);
+  color: #fff;
+}
+
+/* Confirm */
+.deleteall-btn-confirm {
+  background: linear-gradient(90deg, #e03f3f, #cd0d0d);
+  color: #fff;
+}
+
+/* Hover */
+.deleteall-btn:hover {
+  transform: scale(1.05);
+}
+
+/* ===============================
+   SHINE EFFECT
+================================ */
+.deleteall-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -80px;
+  width: 80px;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0) 70%
+  );
+  opacity: 0.6;
+}
+
+.deleteall-btn:hover::before {
+  animation: deleteallShine 1.5s ease-out infinite;
+}
+
+/* ===============================
+   ANIMATIONS
+================================ */
+@keyframes deleteallPop {
+  0% {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes deleteallShine {
+  0% { left: -80px; }
+  60% { left: 100%; }
+  100% { left: 100%; }
+}
+
+/* ===============================
+   MOBILE RESPONSIVE
+================================ */
+@media (max-width: 480px) {
+  .deleteall-modal-box {
+    width: 90%;
+    padding: 2rem;
+  }
+
+  .deleteall-actions {
+    flex-direction: column;
+  }
+}

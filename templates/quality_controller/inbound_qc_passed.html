@@ -1,0 +1,108 @@
+{% extends "base_user.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Inbound QC-Passed" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/inbound_qc_passed.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="supplier-container">
+
+  <!-- HEADER -->
+  <div class="wh-header-section">
+    <div class="wh-header-left">
+      <h1>
+        <span>{% trans "Inbound " %}</span>
+        {% trans "QC – PASSED" %}
+      </h1>
+
+      <p>
+        <strong>{% trans "PO Number:" %}</strong> {{ po.po_number }} <br>
+
+        <span class="badge
+          {% if qc.qc_status == 'PASSED' %}bg-success
+          {% elif qc.qc_status == 'FAILED' %}bg-danger
+          {% else %}bg-warning{% endif %}">
+          {{ qc.get_qc_status_display }}
+        </span>
+      </p>
+    </div>
+
+    <div class="wh-header-right">
+      <a href="javascript:history.back()" class="btn-back">
+        <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+      </a>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  {% if qc.qc_status != "FAILED" %}
+  <div class="table-scroll-x po-table-wrapper">
+    <table class="po-item-table">
+      <thead class="po-table-head">
+        <tr>
+          <th>S.No</th>
+          <th>{% trans "Product" %}</th>
+          <th>{% trans "Category" %}</th>
+          <th>{% trans "Ordered Qty" %}</th>
+          <th class="text-success">{% trans "Accepted Qty" %}</th>
+          <th>{% trans "Unit Price" %}</th>
+          <th>{% trans "Total Price (Accepted)" %}</th>
+          <th>{% trans "QC Status" %}</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for row in items_with_total %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+
+          <td class="product-name">
+            {{ row.item.product.name }}
+          </td>
+
+          <td>
+            {{ row.item.category|default:"—" }}
+          </td>
+
+          <td>
+            {{ row.item.quantity_ordered }}
+          </td>
+
+          <td class="accepted-qty">
+            {{ qc.accepted_qty }}
+          </td>
+
+          <td>
+            ₹ {{ row.item.unit_price|default:"0.00" }}
+          </td>
+
+          <td class="total-price">
+            ₹ {{ row.accepted_total|default:"0.00" }}
+          </td>
+
+          <td>
+            <span class="badge
+              {% if qc.qc_status == 'PASSED' %}bg-success
+              {% else %}bg-warning{% endif %}">
+              {{ qc.get_qc_status_display }}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ACTION -->
+  <div class="action-footer">
+    <a href="{% url 'warehouse_manager:grn_approval_list' %}" class="action-btn success">
+      {% trans "Proceed to GRN" %}
+    </a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,218 @@
+/* Root Container */
+.assign-container {
+    margin-top: 1rem;
+    font-family: "Poppins", sans-serif;
+  }
+  
+  /*----------------------------------------------------------- Header Section -------------------------------------------*/
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: headerFadeUp 0.8s ease-out forwards;
+    animation-delay: 0.2s;
+  }
+  
+  @keyframes headerFadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .order-header-left {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .order-header h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c4c71;
+    opacity: 0;
+    transform: translateX(-30px);
+    animation: titleSlideIn 0.8s ease-out forwards;
+    animation-delay: 0.3s;
+    margin-bottom: 15px;
+  }
+  
+  @keyframes titleSlideIn {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  
+  .order-header h1 span {
+    color: #2c8cfb;
+  }
+  
+  .subtext {
+    font-size: 0.85rem;
+    color: #6c757d;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: subtextFadeIn 0.9s ease-out forwards;
+    animation-delay: 0.6s;
+  }
+  
+  @keyframes subtextFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /*----------------------------------------------------------- Back Button -------------------------------------------*/
+  .btn-back {
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border-radius: 30px;
+    color: #fff;
+    padding: .4rem 2rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .btn-back:hover {
+    transform: scale(1.05);
+  }
+  
+  .btn-back::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  
+  .btn-back:hover::before {
+    animation: shine 1.5s ease-out infinite;
+  }
+  
+  @keyframes shine {
+    0% { left: -80px; }
+    60% { left: 100%; }
+    100% { left: 100%; }
+  }
+  
+  /*----------------------------------------------------------- Assignment Card -------------------------------------------*/
+  .assign-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+    padding: 30px;
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(15px);
+    animation: cardFadeUp 0.9s ease-out forwards;
+    animation-delay: 0.4s;
+  }
+  
+  @keyframes cardFadeUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /*----------------------------------------------------------- Form Styling -------------------------------------------*/
+  .form-group {
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c4c71;
+  }
+  
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.8px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background-color: #fff;
+  }
+  
+  select:focus {
+    border-color: #2c8cfb;
+    box-shadow: 0 0 8px rgba(44, 140, 251, 0.3);
+    transform: scale(1.02);
+  }
+  
+  /*----------------------------------------------------------- Submit Button -------------------------------------------*/
+  .btn-container {
+    margin-top: 20px;
+  }
+  
+  .btn-assign {
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border-radius: 30px;
+    color: #fff;
+    padding: .4rem 2rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden;
+    position: relative;
+    border: none;
+  }
+  
+  .btn-assign:hover {
+    transform: scale(1.05);
+  }
+  
+  .btn-assign::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  
+  .btn-assign:hover::before {
+    animation: shine 1.5s ease-out infinite;
+  }
+  
+  @keyframes shine {
+    0% { left: -80px; }
+    60% { left: 100%; }
+    100% { left: 100%; }
+  }
+  
+  /*----------------------------------------------------------- Responsive -------------------------------------------*/
+  @media (max-width: 768px) {
+    .order-header { flex-direction: column; align-items: flex-start; }
+    .assign-card { padding: 20px; width: 90%; }
+    select { font-size: 0.9rem; }
+  }
+  

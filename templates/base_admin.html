@@ -1,0 +1,282 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}{% trans "Admin Dashboard" %}{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{% static 'images/warevos.png' %}">
+  <link rel="shortcut icon" type="image/png" href="{% static 'images/tab.png' %}">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'css/admin/admin_dashboard.css' %}">
+  <link rel="stylesheet" href="{% static 'css/admin/language.css' %}">
+  <link rel="stylesheet" href="{% static 'css/toast_message.css' %}">
+  <link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
+  <link rel="stylesheet" href="{% static 'css/logout_popup.css' %}">
+  <link rel="stylesheet" href="{% static 'css/slidebar.css' %}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body dir="{% if LANGUAGE_CODE == 'ar' %}rtl{% else %}ltr{% endif %}">
+
+  <div class="page-container">
+
+      <!-- ✅ FULL WIDTH HEADER (Fixed to top) -->
+      <div class="admin-header-wrapper">
+          {% include 'admin_app/includes/admin_header.html' %}
+      </div>
+
+      <!-- 
+          ⭐ SIDEBAR AND CONTENT STARTS BELOW HEADER
+      -->
+      <div class="dashboard-body-wrapper">
+          {% include 'admin_app/includes/admin_sidebar.html' %}
+
+          <main class="content-wrap main-content">
+              {% block content %}{% endblock %}
+          </main>
+      </div>
+      {% if session_warning %}
+<div style="background:#fff3cd;padding:10px;text-align:center;">
+⚠️ Session expires in {{ session_warning }} minutes.
+</div>
+{% endif %}
+
+      {% include 'admin_app/includes/admin_footer.html' %}
+  </div>
+
+
+  <!-- slidebar for mobile screens  -->
+
+  <!-- MOBILE SLIDING SIDEBAR -->
+<div id="mobileSidebar" class="mobile-sidebar">
+
+  <!-- Close Button -->
+  <div class="close-button-container">
+    <button id="closeSidebar" class="sidebar-close-btn"><i class="bi bi-arrow-left-circle"></i></button>
+  </div>
+
+  <ul class="sidebar-menu">
+    {# 🧭 Admin Dashboard — Only for Admins #}
+    {% if request.user.is_staff %}
+      <li class="{% if request.resolver_match.url_name == 'custom_admin_dashboard' %}active{% endif %}">
+        <a href="{% url 'custom_admin_dashboard' %}">
+          <i class="bi bi-speedometer2"></i> <span>{% trans "Dashboard" %}</span>
+        </a>
+      </li>
+    {% endif %}
+
+      <li class="{% if request.resolver_match.url_name == 'admin_reports' %}active{% endif %}">
+            <a href="{% url 'admin_reports' %}">
+                <i class="bi bi-bar-chart"></i> <span>{% trans "Reports" %}</span>
+            </a>
+        </li>
+
+        <li class="{% if request.resolver_match.url_name == 'register_user' %}active{% endif %}">
+            <a href="{% url 'register_user' %}">
+                <i class="bi bi-person-plus"></i> <span>{% trans "Register user" %}</span>
+            </a>
+        </li>
+
+        <li class="{% if request.resolver_match.url_name == 'role_list' %}active{% endif %}">
+          <a href="{% url 'role_list' %}">
+            <i class="bi bi-shield-lock"></i> <span>{% trans "User Permissions" %}</span>
+          </a>
+        </li>
+
+        <li class="{% if request.resolver_match.url_name == 'admin_logs' %}active{% endif %}">
+            <a href="{% url 'admin_logs' %}">
+              <i class="bi bi-clock-history"></i> <span>{% trans "User Logs" %}</span>
+            </a>
+          </li>
+          
+          <li class="{% if request.resolver_match.url_name == 'admin_user_list' %}active{% endif %}">
+            <a href="{% url 'admin_user_list' %}">
+              <i class="bi bi-people"></i> <span>{% trans "User List" %}</span>
+            </a>
+          </li>
+
+
+
+          <li class="{% if request.resolver_match.url_name == 'admin_reset_requests' %}active{% endif %}">
+            <a href="{% url 'admin_reset_requests' %}">
+              <i class="bi bi-key"></i> <span>{% trans "Password Requests" %}</span>
+            </a>
+          </li>
+
+          <li class="{% if request.resolver_match.url_name == 'admin_notifications' %}active{% endif %}">
+            <a href="{% url 'admin_notifications' %}" class="sidebar-notification-link">
+              <i class="bi bi-bell"></i>
+              <span>{% trans "Notifications" %}</span>
+          
+              {% if unread_count > 0 %}
+                <span class="sidebar-notif-count
+                  {% if unread_count > 99 %}
+                    triple
+                  {% elif unread_count > 9 %}
+                    double
+                  {% endif %}
+                ">
+                  {{ unread_count }}
+                </span>
+              {% endif %}
+            </a>
+          </li>
+          
+
+
+     <li class="{% if request.resolver_match.url_name ==  'admin_profile_view' %}active{% endif %}">
+        <a href="{% url 'admin_profile_view' %}">
+            <i class="bi bi-person"></i> <span>{% trans "Profile" %}</span>
+         </a>    
+      </li>
+
+      <li class="{% if request.resolver_match.url_name == 'settings_page' %}active{% endif %}">
+          <a href="#">
+              <i class="bi bi-gear"></i> <span>{% trans "Settings" %}</span>
+          </a>
+      </li>
+
+      <li id="languageLi">
+        <a href="#" id="languageToggle">
+            <i class="bi bi-translate"></i>
+            <span>{% trans "Language" %}</span>
+            <i class="bi bi-chevron-down dropdown-arrow" id="languageArrow"></i>
+        </a>
+    
+        <ul class="language-dropdown" id="languageDropdown">
+            {% for lang in company_languages %}
+                <li>
+                    <a href="{% url 'switch_language' lang %}" class="{% if LANGUAGE_CODE == lang %}active{% endif %}">
+                        {% if lang == "en" %}
+                            English
+                        {% elif lang == "ar" %}
+                            العربية
+                        {% else %}
+                            {{ lang|upper }}
+                        {% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </li>
+  </ul>
+</div>
+
+<!-- Overlay -->
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+
+  <!-- Toast messages -->
+  {% if messages %}
+  <div class="toast-overlay" id="toast-overlay">
+      <div class="toast-container" id="toast-container">
+          {% for message in messages %}
+          <div class="toast-message toast-{{ message.tags }}">
+              {% if "error" in message.tags %}
+                  <i class="bi bi-x-circle-fill"></i>
+              {% elif "success" in message.tags %}
+                  <i class="bi bi-check-circle-fill"></i>
+              {% elif "info" in message.tags %}
+                  <i class="bi bi-info-circle-fill"></i>
+              {% else %}
+                  <i class="bi bi-exclamation-circle-fill"></i>
+              {% endif %}
+              <div class="text">{{ message }}</div>
+          </div>
+          {% endfor %}
+      </div>
+  </div>
+  {% endif %}
+
+
+  <!-- Logout Modal -->
+  <div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+      <h3><span>{% trans "Logout" %}</span> {% trans "Confirmation" %}</h3>
+      <p>{% trans "Are you sure you want to do logout?" %}</p>
+      <div class="logout-modal-buttons">
+        <a id="cancelLogout" class="logout-btn-cancel">{% trans "Cancel" %}</a>
+        <a href="{% url 'admin_logout' %}" id="confirmLogout" class="logout-btn-confirm">{% trans "Yes" %}</a>
+      </div>
+    </div>
+  </div>
+
+
+
+<!------------------------------ chatbot  --------------------->
+
+<!-- CHATBOT LAUNCHER -->
+<button id="chatbot-launcher" class="chatbot-launcher">
+  <img src="{% static 'images/chatbot-warehouse.png' %}" alt="Chatbot">
+  <span>Need Help?</span>
+</button>
+
+<!-- CHATBOT CONTAINER -->
+<div id="chatbot-container" class="chatbot-container">
+
+  <!-- WELCOME SCREEN -->
+  <div id="welcome-screen" class="welcome-screen">
+    <div class="welcome-screen-header">
+      <button class="welcome-close-btn">×</button>
+    </div>
+    <div class="welcome-screen-body">
+      <img src="{% static 'images/warevos.png' %}" class="company-logo" alt="Company Logo">
+      <h3><span>Welcome</span> to Smart Assistant</h3>
+      <p>I’m here to help you with orders, inventory & support.</p>
+      <div class="chatbot-buttons">
+        <button id="start-chat-btn" class="chatbot-btn">Start Chat</button>
+      </div>
+    </div>    
+  </div>
+
+  <!-- CHAT SCREEN -->
+  <div id="chat-screen" class="chat-screen">
+    <div class="chat-header">
+      <div class="header-left">
+        <img src="{% static 'images/warevos-removebg.png' %}" alt="">
+      </div>
+      <button id="close-chat" class="chat-close-btn">×</button>
+    </div>
+
+    <div class="chat-body" id="chat-body">
+      <p class="bot-msg">Hello 👋 How can I assist you today?</p>
+    </div>
+
+    <div class="chat-footer">
+      <input type="text" id="chat-input" placeholder="Type your message...">
+      <button id="send-btn">➤</button>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+  <!-- -----------------------------------------------------  -->
+
+
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <script src="{% static 'js/admin/admin_dashboard.js' %}"></script>
+  <script src="{% static 'js/toast_message.js' %}"></script>
+  <script src="{% static 'js/logout_popup.js' %}"></script>
+  <script src="{% static 'js/chatbot.js' %}"></script>
+  <script src="{% static 'js/slidebar.js' %}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

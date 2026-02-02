@@ -1,0 +1,72 @@
+{% extends 'base_admin.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "User Permissions" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/role_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin/admin_report_table.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="role-container">
+
+      <!-- header  -->
+      <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "User " %}</span> {% trans " Permissions" %}</h1>
+            <p class="subtext">{% trans "Manage and assign user roles and permissions" %}</p>
+        </div>
+        <div class="wh-header-right">          
+            <a href="{% url 'custom_admin_dashboard' %}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+  <!-- Meta Info -->
+  <div class="report-meta">
+    <div class="report-meta-content-left">
+      <span class="records-count">{% trans "Total Roles:" %} <strong>{{ roles|length }}</strong></span>
+    </div>
+  </div>
+
+  <!-- Roles Table -->
+  <div class="table-scroll-wrapper">
+    <div class="table-container">
+      <table class="report-table" id="reportTable">
+        <thead>
+          <tr>
+            <th><i class="bi bi-person-badge"></i> {% trans "Role" %}</th>
+            <th><i class="bi bi-gear"></i> {% trans "Permissions" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key, label in roles %}
+          <tr>
+            <td>{{ label }}</td>
+            <td>
+              <div class="action-buttons">
+                <a href="{% url 'assign_role_functions' key %}" class="action-btn normal">
+                  {% trans "Permissions" %}
+               </a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="2" class="no-data">{% trans "No roles available" %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <!-- Pagination Controls -->
+    <div class="pagination-container" id="tablePagination"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/admin/admin_report_tables.js' %}"></script>
+{% endblock %}

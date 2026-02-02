@@ -1,0 +1,169 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "External user Dashboard" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/external_user/external_user.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!---------------------------------------------------- Top Header ------------------------------------------------------>
+
+<section class="wm-topbar">
+  <div class="wm-topbar-left">
+    <h1><span>{% trans "External" %}</span> {% trans "Users" %}</h1>
+    <p class="muted">
+      {% trans "Create Purchase Orders, Receive Stock (GRN), Manage Suppliers, and Auto-Create Batches" %}
+    </p>
+  </div>
+</section>
+
+<!--------------------------------------------------- Summary Cards --------------------------------------------------->
+
+<section class="stats-cards">
+  <div class="parent">
+    <div class="card">
+      <div class="glass"></div>
+      <div class="content">
+        <span class="title">{% trans "Total Purchase Orders" %}</span>
+        <span class="text">{% trans "All active & completed POs" %}</span>
+        <p class="stat-number">{{ total_pos|default:"0" }}</p>
+      </div>
+      <div class="bottom">
+        <div class="card-foot">
+          <span class="muted">{% trans "Last 7 days:" %} +{{ pos_this_week|default:"0" }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="parent">
+    <div class="card">
+      <div class="glass"></div>
+      <div class="content">
+        <span class="title">{% trans "Pending GRNs" %}</span>
+        <span class="text">{% trans "Awaiting goods receipt" %}</span>
+        <p class="stat-number">{{ pending_grns|default:"0" }}</p>
+      </div>
+      <div class="bottom">
+        <div class="card-foot">
+          <a class="link" href="#">{% trans "View GRNs" %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="parent">
+    <div class="card">
+      <div class="glass"></div>
+      <div class="content">
+        <span class="title">{% trans "Suppliers" %}</span>
+        <span class="text">{% trans "Active vendor partners" %}</span>
+        <p class="stat-number">{{ suppliers|default:"0" }}</p>
+      </div>
+      <div class="bottom">
+        <div class="card-foot">
+          <a class="link" href="#supplierSection">{% trans "Manage Suppliers" %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="parent">
+    <div class="card">
+      <div class="glass"></div>
+      <div class="content">
+        <span class="title">{% trans "Received Batches" %}</span>
+        <span class="text">{% trans "Auto-created after GRN" %}</span>
+        <p class="stat-number">{{ received_batches|default:"0" }}</p>
+      </div>
+      <div class="bottom">
+        <div class="card-foot">
+          <a class="link" href="#batchSection">{% trans "View Batches" %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-------------------------------------------------------- Quick Actions ------------------------------------------------------>
+
+<section class="kpi-actions">
+  <aside class="quick-actions">
+    <h3>{% trans "Quick Actions" %}</h3>
+    <div class="actions-grid">
+  
+      {% if "Add Stock" in allowed_functions %}
+        <a href="{% url 'warehouse_manager:add_stock' %}" class="action-btn">{% trans "Add Stock" %}</a>
+      {% endif %}
+  
+      {% if "View Stock" in allowed_functions %}
+        <a href="{% url 'warehouse_manager:view_stock' %}" class="action-btn">{% trans "View Stock" %}</a>
+      {% endif %}
+  
+      {% if "View Sales Orders" in allowed_functions %}
+        <a href="{% url 'warehouse_manager:sales_order_list' %}" class="action-btn">{% trans "View Sales Orders" %}</a>
+      {% endif %}
+  
+      {% if "View Picklist" in allowed_functions %}
+        <a href="{% url 'warehouse_manager:picklist_list' %}" class="action-btn">{% trans "View Picklist" %}</a>
+      {% endif %}
+  
+      {% if "Create Sales Order" in allowed_functions %}
+        <a href="{% url 'salesofficer:create_sales_order' %}" class="action-btn">{% trans "Create Sales Order" %}</a>
+      {% endif %}
+  
+      {% if "Sales Orders" in allowed_functions %}
+        <a href="{% url 'salesofficer:list_sales_orders' %}" class="action-btn">{% trans "Sales Orders" %}</a>
+      {% endif %}
+  
+      <!-- not done  -->
+      {% if "Ready For Delivery" in allowed_functions %}
+        <a href="{% url 'salesofficer:ready_for_delivery' %}" class="action-btn">{% trans "Assign Delivery Boy" %}</a>
+      {% endif %}
+      <!-- ..  -->
+  
+      {% if "Create Purchase Order" in allowed_functions %}
+        <a href="{% url 'procurement_officer:purchaseorder_create' %}" class="action-btn">{% trans "New Purchase Order" %}</a>
+      {% endif %}
+  
+      {% if "View Purchase Order List" in allowed_functions %}
+        <a href="{% url 'procurement_officer:purchaseorder_list' %}" class="action-btn">{% trans "Purchase Order List" %}</a>
+      {% endif %}
+  
+      {% if "Create GRN" in allowed_functions %}
+        <a href="{% url 'procurement_officer:create_grn' %}" class="action-btn">{% trans "Create GRN" %}</a>
+      {% endif %}
+  
+      {% if "View GRN" in allowed_functions %}
+        <a href="{% url 'procurement_officer:grn_list' %}" class="action-btn">{% trans "View GRN" %}</a>
+      {% endif %}
+  
+      {% if "Review GRN" in allowed_functions %}
+        <a href="{% url 'grn_review_list' %}" class="action-btn">{% trans "Review GRN" %}</a>
+      {% endif %}
+  
+      {% if "View Delivery List" in allowed_functions %}
+        <a href="{% url 'delivery_staff:all_deliveries' %}" class="action-btn">{% trans "Delivery Orders" %}</a>
+      {% endif %}
+  
+    </div>
+  </aside>
+
+  <!-------------------------------------------------- chart ------------------------------------------------------->
+  <div class="chart-card">
+    <h3>{% trans "Procurement Performance (Last 7 Days)" %}</h3>
+    <div class="chart-container">
+      <canvas id="chartPOvsGRN"></canvas>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/user/external_user.js' %}"></script>
+{% endblock %}

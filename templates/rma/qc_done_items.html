@@ -1,0 +1,89 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "QC Done Items" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/rma/qc_done_items.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="qc-done-items-container">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "QC Completed" %}</span> {% trans "Return Items" %}</h1>
+        </div>
+        <div class="wh-header-right">          
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>{% trans "RMA ID" %}</th>
+                        <th>{% trans "Delivery No" %}</th>
+                        <th>{% trans "Customer" %}</th>
+                        <th>{% trans "Product" %}</th>
+                        <th>{% trans "Quantity" %}</th>
+                        <th>{% trans "QC Result" %}</th>
+                        <th>{% trans "QC Date" %}</th>
+                        <th>{% trans "Action" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>#{{ item.rma_id }}</td>
+                        <td>{{ item.delivery_no }}</td>
+                        <td>{{ item.customer }}</td>
+                        <td>{{ item.product }}</td>
+                        <td>{{ item.quantity }}</td>
+<td>
+    {% if item.qc_result == "good" %}
+        <span class="status-badge approved">{% trans "Good" %}</span>
+    {% elif item.qc_result == "bad" %}
+        <span class="status-badge rejected">{% trans "Bad" %}</span>
+    {% elif item.qc_result == "repair" %}
+        <span class="status-badge pending">{% trans "Repair" %}</span>
+    {% else %}
+        <span class="status-badge pending">{% trans "Pending" %}</span>
+    {% endif %}
+</td>
+
+                        <td>{{ item.qc_date|default:"-"|date:"d M Y" }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                {% if item.rma_id %}
+                                    <a href="{% url 'finance:process_refund' item.rma_id %}" class="action-btn normal">
+                                        {% trans "Process Refund" %}
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted">{% trans "N/A" %}</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="no-data">{% trans "No QC completed items available." %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,311 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Return QC" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/inbound_qc.css' %}">
+<style>
+/* CAMERA UI */
+.camera-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.camera-box {
+    width: 100%;
+    max-width: 620px;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+#camera-video, #camera-canvas {
+    width: 100%;
+}
+
+.camera-actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    background: #111;
+}
+
+.camera-actions button {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.capture-btn { background: #2c8cfb; color: #fff; }
+.confirm-btn { background: #28a745; color: #fff; }
+.retake-btn { background: #ffc107; }
+.cancel-btn { background: #dc3545; color: #fff; }
+
+.camera-btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid #2c8cfb;
+    background: #eef4ff;
+    cursor: pointer;
+}
+
+.preview-img {
+    margin-top: 8px;
+    width: 100%;
+    border-radius: 8px;
+}
+
+/* QC TEXT INPUT SPECIAL */
+.qc-text-input-special {
+    width: 140px;
+    padding: 8px 12px;
+    border: 1px solid #5cacfa;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #f3f8ff;
+    color: #2c4c71;
+    box-shadow: 0 3px 8px rgba(44, 140, 251, 0.08);
+    transition: all 0.3s ease;
+}
+
+.qc-text-input-special:focus {
+    border-color: #2c8cfb;
+    background: #fff;
+    box-shadow: 0 0 8px rgba(44, 140, 251, 0.5);
+    outline: none;
+}
+
+@media (max-width: 640px) {
+    .qc-text-input-special { width: 100%; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="qc-page">
+
+    <!-- HEADER -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Return QC - " %}</span> GRN {{ grn.id }}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- QC CARD -->
+    <div class="qc-card">
+
+        <!-- LEFT INFO -->
+        <div class="qc-info">
+            <img src="{% static 'images/total-sku.png' %}" alt="{% trans 'Return QC' %}">
+            <h3>{% trans "Return Quality Check" %}</h3>
+            <p>{% trans "Verify physical condition, documentation, expiry and take a final action on returned goods." %}</p>
+        </div>
+
+        <!-- FORM -->
+        <form method="post" enctype="multipart/form-data" class="qc-form">
+            {% csrf_token %}
+            <div class="form-grid">
+
+                <!-- Physical Condition -->
+                <div class="qc-item">
+                    <div class="qc-check">
+                        <input type="checkbox" name="physical_condition_ok">
+                        <label>{% trans "Physical Condition OK" %}</label>
+                    </div>
+                    <div class="qc-image">
+                        <img id="physical-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('physical')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="physical_condition_image" id="physical-input" hidden>
+                    </div>
+                </div>
+
+                <!-- Repack -->
+                <div class="qc-item">
+                    <div class="qc-check">
+                        <input type="checkbox" name="repack_possible">
+                        <label>{% trans "Repack Possible" %}</label>
+                    </div>
+                    <div class="qc-image">
+                        <img id="repack-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('repack')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="repack_image" id="repack-input" hidden>
+                    </div>
+                </div>
+
+                <!-- Expiry -->
+                <div class="qc-item">
+                    <div class="qc-check">
+                        <input type="checkbox" name="expiry_valid">
+                        <label>{% trans "Expiry Valid" %}</label>
+                    </div>
+                    <div class="qc-image">
+                        <img id="expiry-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('expiry')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="expiry_image" id="expiry-input" hidden>
+                    </div>
+                </div>
+
+                <!-- Documents -->
+                <div class="qc-item">
+                    <div class="qc-check">
+                        <input type="checkbox" name="docs_matched">
+                        <label>{% trans "Documents Matched" %}</label>
+                    </div>
+                    <div class="qc-image">
+                        <img id="docs-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('docs')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="docs_image" id="docs-input" hidden>
+                    </div>
+                </div>
+
+                <!-- Return Reason -->
+                <div class="qc-item">
+                    <div class="qc-fields">
+                        <input type="text" name="reason" placeholder="{% trans 'Enter reason' %}" required class="qc-text-input-special">
+                    </div>
+                    <div class="qc-image">
+                        <img id="reason-preview" class="preview-img" hidden>
+                        <button type="button" class="camera-btn" onclick="openCamera('reason')">
+                            📷 {% trans "Take Photo" %}
+                        </button>
+                        <input type="file" name="reason_image" id="reason-input" hidden>
+                    </div>
+                </div>
+
+                <!-- Final Decision -->
+                <div class="field">
+                    <label>{% trans "Final Decision" %}</label>
+                    <select name="decision" required>
+                        <option value="">{% trans "Select decision" %}</option>
+                        <option value="RESTOCK">{% trans "Restock" %}</option>
+                        <option value="REPAIR">{% trans "Repair" %}</option>
+                        <option value="SCRAP">{% trans "Scrap" %}</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="action-btn submit">
+                    {% trans "Submit Return QC" %}
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- CAMERA MODAL -->
+<div class="camera-modal" id="camera-modal">
+    <div class="camera-box">
+        <video id="camera-video" autoplay playsinline></video>
+        <canvas id="camera-canvas" hidden></canvas>
+
+        <div class="camera-actions">
+            <button class="cancel-btn" onclick="closeCamera()">✖ Cancel</button>
+            <button class="retake-btn" id="retakeBtn" onclick="retakePhoto()" hidden>🔄 Retake</button>
+            <button class="confirm-btn" id="confirmBtn" onclick="confirmPhoto()" hidden> Confirm</button>
+            <button class="capture-btn" id="captureBtn" onclick="capturePhoto()">📸 Capture</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let stream;
+let activeInput, activePreview;
+
+const cameraModal = document.getElementById('camera-modal');
+const cameraVideo = document.getElementById('camera-video');
+const cameraCanvas = document.getElementById('camera-canvas');
+const captureBtn = document.getElementById('captureBtn');
+const confirmBtn = document.getElementById('confirmBtn');
+const retakeBtn = document.getElementById('retakeBtn');
+
+function openCamera(prefix) {
+    activeInput = document.getElementById(prefix + '-input');
+    activePreview = document.getElementById(prefix + '-preview');
+
+    cameraModal.style.display = 'flex';
+
+    navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+        audio: false
+    }).then(s => {
+        stream = s;
+        cameraVideo.srcObject = stream;
+        cameraVideo.play();
+    }).catch(err => {
+        alert("Camera blocked or insecure site");
+        closeCamera();
+    });
+}
+
+function capturePhoto() {
+    cameraCanvas.width = cameraVideo.videoWidth;
+    cameraCanvas.height = cameraVideo.videoHeight;
+    cameraCanvas.getContext('2d').drawImage(cameraVideo, 0, 0);
+
+    cameraVideo.hidden = true;
+    cameraCanvas.hidden = false;
+    captureBtn.hidden = true;
+    confirmBtn.hidden = false;
+    retakeBtn.hidden = false;
+}
+
+function confirmPhoto() {
+    cameraCanvas.toBlob(blob => {
+        const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        activeInput.files = dt.files;
+
+        activePreview.src = URL.createObjectURL(file);
+        activePreview.hidden = false;
+        closeCamera();
+    }, "image/jpeg", 0.9);
+}
+
+function retakePhoto() {
+    cameraCanvas.hidden = true;
+    cameraVideo.hidden = false;
+    captureBtn.hidden = false;
+    confirmBtn.hidden = true;
+    retakeBtn.hidden = true;
+}
+
+function closeCamera() {
+    cameraModal.style.display = 'none';
+    if (stream) stream.getTracks().forEach(t => t.stop());
+
+    cameraVideo.hidden = false;
+    cameraCanvas.hidden = true;
+    captureBtn.hidden = false;
+    confirmBtn.hidden = true;
+    retakeBtn.hidden = true;
+}
+</script>
+
+{% endblock %}

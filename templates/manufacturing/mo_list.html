@@ -1,0 +1,100 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Manufacturing Orders" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/manufacturing/mo_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="mo-container">
+    <!-- Header -->
+    <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1>
+              <span>{% trans "Manufacturing " %}</span>
+              {% trans " Orders" %}
+          </h1>
+      </div>
+      <div class="wh-header-right">
+          <a href="javascript:history.back()" class="btn-back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-scroll-wrapper">
+    <div class="table-container">
+      <table class="table-content" id="tableContent">
+        <thead>
+          <tr>
+            <th>MO No</th>
+            <th>{% trans "Product" %}</th>
+            <th>{% trans "Quantity" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Actions" %}</th>
+          </tr>
+        </thead>
+    
+        <tbody>
+          {% for mo in mos %}
+          <tr>
+            <td>{{ mo.mo_no }}</td>
+            <td>{{ mo.finished_product }}</td>
+            <td>{{ mo.quantity }}</td>
+            <td>{{ mo.status }}</td>
+    
+            <td>
+              <div class="action-buttons">
+                {% if user.userprofile.role == "WarehouseManager" and mo.status == "Pending" %}
+                <a href="{% url 'manufacturing:mo_approve' mo.id %}" class="action-btn approve">
+                  {% trans "✔ Approve" %}
+                </a>
+              {% endif %}
+    
+              {% if user.userprofile.role == "StoreKeeper" and mo.status == "Approved" %}
+                <a href="{% url 'manufacturing:rm_issue' mo.id %}" class="action-btn normal">
+                  {% trans "📦 Issue RM" %}
+                </a>
+              {% endif %}
+    
+              {% if user.userprofile.role == "StoreKeeper" and mo.status == "Approved" %}
+                <a href="{% url 'manufacturing:rm_requirements' mo.id %}" class="action-btn normal">
+                  {% trans "RM Requirements" %}
+                </a>
+                {% endif %}
+    
+              {% if user.userprofile.role == "QCInspector" and mo.status == "Completed" %}
+                <a href="{% url 'manufacturing:fg_qc' mo.id %}" class="action-btn normal">
+                  🧪 QC FG
+                </a>
+              {% endif %}
+              </div>
+              {% if mo.status == "InProgress" %}
+                <span class="status-badge rejected">REWORK</span>
+                {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="text-center">{% trans "No Manufacturing Orders" %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+      <!-- Pagination Controls -->
+  <div class="pagination-container" id="tablePagination"></div>
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}
+

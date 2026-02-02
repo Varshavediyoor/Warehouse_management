@@ -1,0 +1,138 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% trans "Shipping Label" %}</title>
+    <link rel="stylesheet" href="{% static 'css/user/warehouse_manager/shipping_label.css' %}">
+</head>
+<body>
+
+<div class="label-container">
+
+    <!-- HEADER -->
+    <div class="label-header">
+        <img src="{% static 'images/logo-png.png' %}" class="company-logo" alt="Company Logo">
+        <div class="company-title">
+            <div class="company-name">Codedu Software Technologies</div>
+            <div class="company-sub">{% trans "Shipping Label" %}</div>
+        </div>
+    </div>
+
+    <!-- FROM / TO -->
+    <div class="address-grid">
+
+        <div class="address-box from">
+            <div class="box-title">{% trans "FROM" %}</div>
+            <p>
+                <strong>Company Name</strong><br>
+                <br>
+                City,
+                State –
+                897765<br>
+                {% trans "Phone:" %} 7865678743<br>
+                {% if shipment.packing.delivery_order.warehouse_gst %}
+                    {% trans "GST:" %} 3Z654Z345213
+                {% endif %}
+            </p>
+            <p>
+                <strong>{{ shipment.packing.delivery_order.warehouse_name }}</strong><br>
+                {{ shipment.packing.delivery_order.warehouse_address }}<br>
+                {{ shipment.packing.delivery_order.warehouse_city }},
+                {{ shipment.packing.delivery_order.warehouse_state }} –
+                {{ shipment.packing.delivery_order.warehouse_pincode }}<br>
+                {% trans "Phone:" %} {{ shipment.packing.delivery_order.warehouse_phone }}<br>
+                {% if shipment.packing.delivery_order.warehouse_gst %}
+                    {% trans "GST:" %} {{ shipment.packing.delivery_order.warehouse_gst }}
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="address-box to">
+            <div class="box-title">{% trans "TO" %}</div>
+            <p>
+                <strong>{{ shipment.packing.delivery_order.customer_name }}</strong><br>
+                {{ shipment.packing.delivery_order.customer_address }}<br>
+                {{ shipment.packing.delivery_order.customer_city }},
+                {{ shipment.packing.delivery_order.customer_state }} –
+                {{ shipment.packing.delivery_order.customer_pincode }}<br>
+                {% trans "Phone:" %} {{ shipment.packing.delivery_order.customer_phone }}
+            </p>
+        </div>
+
+    </div>
+
+    <!-- SHIPMENT INFO -->
+    <div class="info-block">
+        <div class="info-row">
+            <span>{% trans "Order ID" %}</span>
+            <strong>{{ shipment.packing.delivery_order.order_id }}</strong>
+        </div>
+        <div class="info-row">
+            <span>{% trans "Shipment / AWB" %}</span>
+            <strong>{{ shipment.tracking_number }}</strong>
+        </div>
+        <div class="info-row">
+            <span>{% trans "Courier" %}</span>
+            <strong>{{ shipment.carrier.name }}</strong>
+        </div>
+        <div class="info-row">
+            <span>{% trans "Service Type" %}</span>
+            <strong>{{ shipment.service_type|default:"Surface" }}</strong>
+        </div>
+    </div>
+
+    <!-- PACKAGE DETAILS -->
+    <div class="package-block">
+        <div>
+            <span>{% trans "Boxes" %}</span>
+            <strong>{{ shipment.packing.boxes.count }}</strong>
+        </div>
+        <div>
+            <span>{% trans "Weight" %}</span>
+            <strong>{{ shipment.total_weight }} KG</strong>
+        </div>
+        <div>
+            <span>{% trans "Dimensions" %}</span>
+            <strong>{{ shipment.dimensions|default:"—" }}</strong>
+        </div>
+    </div>
+
+    <!-- INVOICE -->
+    <div class="invoice-block">
+        <div>
+            <span>{% trans "Items" %}</span>
+            <strong>{{ shipment.item_count }}</strong>
+        </div>
+        <div>
+            <span>{% trans "Invoice No" %}</span>
+            <strong>{{ shipment.invoice_number }}</strong>
+        </div>
+        {% if shipment.cod_amount %}
+        <div class="cod-amount">
+            {% trans "COD:" %} ₹{{ shipment.cod_amount }}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- BARCODE -->
+    <div class="barcode-block">
+        <div class="barcode">
+            {{ shipment.tracking_number }}
+        </div>
+        <span>{% trans "Scan for Tracking" %}</span>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="label-footer">
+        <p>{% trans "Handle With Care" %}</p>
+        <p>{% trans "Return Address Same As Shipper" %}</p>
+        <div class="signature">
+            {% trans "Customer Signature" %}: ____________________
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

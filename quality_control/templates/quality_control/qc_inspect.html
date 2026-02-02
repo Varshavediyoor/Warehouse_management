@@ -1,0 +1,87 @@
+<h2>Inbound QC Inspection</h2>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  {% for p in products %}
+    <hr>
+
+    <fieldset style="border:1px solid #ccc; padding:15px;">
+      <legend><strong>{{ p.name }} ({{ p.variant }})</strong></legend>
+
+      <p><strong>Ordered Qty:</strong> {{ p.ordered_qty }}</p>
+
+      <label>Received Qty</label><br>
+      <input type="number" name="received_{{ p.id }}" required><br><br>
+
+      <label>Approved Qty</label><br>
+      <input type="number" name="approved_{{ p.id }}" required><br><br>
+
+      <label>Rejected Qty</label><br>
+      <input type="number" name="rejected_{{ p.id }}" required><br><br>
+
+      {% if p.category == "FOOD" or p.category == "MEDICAL" %}
+        <label>Batch Number</label><br>
+        <input type="text" name="batch_{{ p.id }}" required><br><br>
+
+        <label>Manufacture Date</label><br>
+        <input type="date" name="mfg_{{ p.id }}"><br><br>
+
+        <label>Expiry Date</label><br>
+        <input type="date" name="expiry_{{ p.id }}" required><br><br>
+      {% endif %}
+
+      <h4>Checklist</h4>
+
+{% for chk in p.checklist %}
+  <p>
+    {{ chk.name }}
+    {% if chk.is_mandatory %}<strong>*</strong>{% endif %}<br>
+
+    <label>
+      <input type="radio"
+             name="check_{{ p.id }}_{{ chk.id }}"
+             value="yes"
+             required>
+      Yes
+    </label>
+
+    <label>
+      <input type="radio"
+             name="check_{{ p.id }}_{{ chk.id }}"
+             value="no"
+             required>
+      No
+    </label>
+  </p>
+{% empty %}
+  <p style="color:red;">No checklist configured for this category</p>
+{% endfor %}
+
+
+      <label><strong>QC Photos (1–3)</strong></label><br>
+      <input type="file"
+             name="photos_{{ p.id }}"
+             multiple
+             accept="image/*"><br><br>
+
+      <label>Remarks</label><br>
+      <textarea
+        name="remarks_{{ p.id }}"
+        rows="3"
+        cols="50"
+        placeholder="Enter QC remarks"></textarea>
+    </fieldset>
+
+  {% endfor %}
+
+  <br><br>
+  <button type="submit"
+          style="padding:10px 20px;
+                 background:#007bff;
+                 color:white;
+                 border:none;
+                 border-radius:6px;">
+    Submit QC
+  </button>
+</form>

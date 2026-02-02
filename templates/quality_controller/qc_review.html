@@ -1,0 +1,54 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "QC Review" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/qc_review.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class="qc-review-container">
+    <div class="header-section">
+        <h1><span>{% trans "QC Review – Box" %}</span> {{ qc.packing_box.id }}</h1>
+        <div class="view-stock-header-right">          
+            <a href="" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+    
+    <div class="qc-review-card">
+
+        <div class="qc-info">
+            <h3>{% trans "Packing Box Details" %}</h3>
+            <p><strong>{% trans "Weight" %}:</strong> {{ qc.packing_box.weight }} kg</p>
+            <p><strong>{% trans "Dimensions" %}:</strong> 
+                {{ qc.packing_box.length }} x {{ qc.packing_box.width }} x {{ qc.packing_box.height }} cm
+            </p>
+        </div>
+    
+        <form class="qc-form" method="POST">
+            {% csrf_token %}
+    
+            <label for="remarks">{% trans "Remarks" %}:</label>
+            <textarea id="remarks" name="remarks" placeholder="Add your QC remarks here..."></textarea>
+    
+            <div class="qc-action-buttons">
+                <button type="submit" name="action" value="approve" class="btn-back btn-approve">
+                    {% trans "Approve" %}
+                </button>
+    
+                <button type="submit" name="action" value="reject" class="btn-back btn-reject">
+                    {% trans "Reject" %}
+                </button>
+            </div>
+        </form>
+    
+    </div>
+    
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,177 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% trans "Warehouse Management System" %}{% endblock %}</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{% static 'images/warevos.png' %}">
+  <link rel="shortcut icon" type="image/png" href="{% static 'images/tab.png' %}">
+
+  <!-- Fonts & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+  <!-- Base CSS -->
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/company_code_popup.css' %}">
+  <link rel="stylesheet" href="{% static 'css/error_message.css' %}">
+  <link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
+  <link rel="stylesheet" href="{% static 'css/maintenance/maintenance_popup.css' %}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body dir="{% if LANGUAGE_CODE == 'ar' %}rtl{% else %}ltr{% endif %}">
+
+<div class="page-container">
+
+  {% include 'includes/header.html' %}
+
+  <main class="content-wrap">
+    {% if session_warning %}
+<div style="background:#fff3cd;padding:10px;text-align:center;">
+    ⚠️ Session expires in {{ session_warning }} minutes.
+</div>
+{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include 'includes/footer.html' %}
+
+</div>
+
+
+
+{% if show_modal %}
+<div id="companyModal" class="company-modal-overlay">
+  <div class="company-modal-box">
+    <h3><span>{% trans "Enter Company " %}</span>{% trans "Code" %}</h3>
+
+    <form method="post" action="{% url 'set_company' %}">
+      {% csrf_token %}
+      <label for="company_code" class="company-label">{% trans "Company Code" %} :</label>
+      <input type="text" id="company_code" name="company_code" required autofocus class="company-input">
+      <button type="submit" class="company-btn">{% trans "Continue" %}</button>
+    </form>
+
+    <div class="error-container">
+      {% if messages %}
+        {% for message in messages %}
+          <p class="form-error-message {{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const modal = document.getElementById("companyModal");
+  if (modal) {
+    modal.classList.add("show");
+    document.body.classList.add("modal-open");
+  }
+});
+</script>
+{% endif %}
+
+<!------------------------------ chatbot  --------------------->
+
+<!-- CHATBOT LAUNCHER -->
+<button id="chatbot-launcher" class="chatbot-launcher">
+  <img src="{% static 'images/chatbot-warehouse.png' %}" alt="Chatbot">
+  <span>Need Help?</span>
+</button>
+
+<!-- CHATBOT CONTAINER -->
+<div id="chatbot-container" class="chatbot-container">
+
+  <!-- WELCOME SCREEN -->
+  <div id="welcome-screen" class="welcome-screen">
+    <div class="welcome-screen-header">
+      <button class="welcome-close-btn">×</button>
+    </div>
+    <div class="welcome-screen-body">
+      <img src="{% static 'images/warevos.png' %}" class="company-logo" alt="Company Logo">
+      <h3><span>Welcome</span> to Smart Assistant</h3>
+      <p>I’m here to help you with orders, inventory & support.</p>
+      <div class="chatbot-buttons">
+        <button id="start-chat-btn" class="chatbot-btn">Start Chat</button>
+      </div>
+    </div>    
+  </div>
+
+  <!-- CHAT SCREEN -->
+  <div id="chat-screen" class="chat-screen">
+    <div class="chat-header">
+      <div class="header-left">
+        <img src="{% static 'images/warevos-removebg.png' %}" alt="">
+      </div>
+      <button id="close-chat" class="chat-close-btn">×</button>
+    </div>
+
+    <div class="chat-body" id="chat-body">
+      <p class="bot-msg">Hello 👋 How can I assist you today?</p>
+    </div>
+
+    <div class="chat-footer">
+      <input type="text" id="chat-input" placeholder="Type your message...">
+      <button id="send-btn">➤</button>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+  <!-- -----------------------------------------------------  -->
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="{% static 'js/main.js' %}" defer></script>
+<script src="{% static 'js/error_message.js' %}" defer></script>
+<script src="{% static 'js/chatbot.js' %}" defer></script>
+
+{% block scripts %}{% endblock %}
+
+{% if request.maintenance_active %}
+<div id="maintenanceModal" class="maintenance-modal">
+  <div class="maintenance-modal-content">
+    <h3><span>{% trans "System" %}</span> {% trans "Maintenance" %}</h3>
+    <p>{% trans "The system is currently under maintenance.<br>Some actions may not be available." %}</p>
+    <div class="maintenance-modal-buttons">
+      <button id="closeMaintenance" class="maintenance-btn-confirm">OK</button>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.body.classList.add("modal-open");
+
+  const closeBtn = document.getElementById("closeMaintenance");
+  const modal = document.getElementById("maintenanceModal");
+
+  closeBtn.addEventListener("click", function () {
+    modal.classList.add("fade-out");
+    setTimeout(() => {
+      modal.style.display = "none";
+      document.body.classList.remove("modal-open");
+    }, 300);
+  });
+});
+</script>
+{% endif %}
+
+</body>
+</html>

@@ -1,0 +1,121 @@
+{% extends "base_user.html" %}
+{% load i18n %}
+
+{% block title %}
+{% trans "Dispatch Quality Check" %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- PAGE HEADER -->
+  <div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+      <h2 class="mb-1">{% trans "Dispatch Quality Check" %}</h2>
+      <p class="text-muted mb-0">
+        <strong>{% trans "PO Number:" %}</strong> {{ po.po_number }}
+        &nbsp;|&nbsp;
+        <!-- <strong>{% trans "Dispatch Status:" %}</strong>
+        <span class="badge bg-primary">
+          {{ dispatch.status }}
+        </span> -->
+      </p>
+    </div>
+
+   
+  </div>
+
+  <!-- QUALITY CHECK FORM -->
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="card shadow-sm">
+      <div class="card-body p-0">
+
+        <table class="table table-bordered table-striped mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 50px;">#</th>
+              <th>{% trans "Product" %}</th>
+              <th>{% trans "Category" %}</th>
+              <th class="text-center">{% trans "Ordered Qty" %}</th>
+              <th class="text-center">{% trans "QC Status" %}</th>
+              <th>{% trans "QC Remarks" %}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for item in items %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+
+              <td>
+                <strong>{{ item.product }}</strong>
+              </td>
+
+              <td>{{ item.category }}</td>
+
+              <td class="text-center">
+                {{ item.quantity_ordered }}
+              </td>
+
+              <!-- QC STATUS -->
+              <td class="text-center">
+                <select
+                  name="qc_status_{{ item.id }}"
+                  class="form-select form-select-sm"
+                  required
+                >
+                  <option value="">-- Select --</option>
+                  <option value="PASSED"
+                    {% if item.qc_status == "PASSED" %}selected{% endif %}
+                  >
+                    {% trans "Passed" %}
+                  </option>
+                  <option value="FAILED"
+                    {% if item.qc_status == "FAILED" %}selected{% endif %}
+                  >
+                    {% trans "Failed" %}
+                  </option>
+                  <option value="PENDING"
+                    {% if item.qc_status == "PENDING" %}selected{% endif %}
+                  >
+                    {% trans "Pending" %}
+                  </option>
+                </select>
+              </td>
+
+              <!-- QC REMARKS -->
+              <td>
+                <input
+                  type="text"
+                  name="qc_remarks_{{ item.id }}"
+                  value="{{ item.qc_remarks|default:'' }}"
+                  class="form-control form-control-sm"
+                  placeholder="{% trans 'Optional remarks' %}"
+                >
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">
+                {% trans "No products found for this Purchase Order." %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="mt-4 d-flex justify-content-end gap-2">
+      <button type="submit" class="btn btn-success px-4">
+        {% trans "Save Quality Check" %}
+      </button>
+    </div>
+
+  </form>
+</div>
+{% endblock %}

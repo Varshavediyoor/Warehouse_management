@@ -1,0 +1,143 @@
+/* ───────── TABLE CARD ───────── */
+.dashboard-table-wrap {
+    background: #fff;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+    margin-top: 10px;
+    border-radius: 14px;
+    overflow: hidden; /* card never expands */
+  }
+  
+  /* ───────── SCROLL AREA ───────── */
+  .table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #2c8cfb #f1f1f1;
+  }
+
+.dashboard-table-wrap,
+.table-scroll {
+  min-width: 0;
+}
+  
+  /* Webkit scrollbar */
+  .table-scroll::-webkit-scrollbar {
+    height: 10px;
+  }
+  
+  .table-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .table-scroll::-webkit-scrollbar-thumb {
+    background: #2c8cfb;
+    border-radius: 10px;
+  }
+  
+  .table-scroll::-webkit-scrollbar-thumb:hover {
+    background: #0066ff;
+  }
+  
+  /* ───────── TABLE ───────── */
+  .dashboard-table {
+    width: 100%;
+    min-width: 750px; /* 🔑 keeps columns aligned */
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  
+  /* HEADER */
+  .dashboard-table thead {
+    background: linear-gradient(90deg, #2c4c71, #2c8cfb);
+  }
+  
+  .dashboard-table thead th {
+    padding: 14px 16px;
+    color: #fff;
+    font-weight: 500;
+    text-align: center;
+    white-space: nowrap;
+  }
+  
+  /* BODY */
+  .dashboard-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #e5e7eb;
+    color: #374151;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  
+  /* LEFT ALIGN TEXT COLUMNS */
+  .dashboard-table td:first-child,
+  .dashboard-table td:nth-child(2) {
+    text-align: left;
+  }
+  
+  /* ROW HOVER */
+  .dashboard-table tbody tr:hover {
+    background: #f9fbff;
+  }
+  
+  /* EMPTY STATE */
+  .no-box {
+    text-align: center !important;
+    font-size: 14px;
+    color: #6b7280;
+  }
+  
+  /* ───────── BADGES ───────── */
+  .badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-block;
+    color:black;
+  }
+  
+  .success {
+    background: rgba(10, 180, 80, 0.15);
+    color: #0b7d3a;
+  }
+  
+  .danger {
+    background: rgba(255, 80, 80, 0.15);
+    color: #b31212;
+  }
+  
+  .pending {
+    background: rgba(250, 204, 21, 0.18);
+    color: #92400e;
+  }
+  
+  .info {
+    background: rgba(44, 140, 251, 0.15);
+    color: #1e40af;
+  }
+  
+  .warning {
+    background: rgba(245, 158, 11, 0.18);
+    color: #92400e;
+  }
+  
+  /* ───────── MOBILE ───────── */
+  @media (max-width: 600px) {
+    .dashboard-table-wrap {
+        border-radius: 5px;
+      }
+
+    .dashboard-table {
+      min-width: 650px;
+    }
+  
+    .dashboard-table th,
+    .dashboard-table td {
+      padding: 10px 12px;
+      font-size: 12px;
+    }
+  }
+  

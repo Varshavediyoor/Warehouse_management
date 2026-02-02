@@ -1,0 +1,102 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Delivery Orders – Return Requests" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/rma/so_delivery_order_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="delivery-order-list">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Return Request -" %}</span>
+                {% trans "Delivery Orders" %}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>{% trans "Delivery No" %}</th>
+                        <th>{% trans "Customer" %}</th>
+                        <th>{% trans "Status" %}</th>
+                        <th>{% trans "Delivery Date" %}</th>
+                        <th>{% trans "Invoice" %}</th>
+                        <th>{% trans "Action" %}</th>
+                    </tr>
+                </thead>
+
+                {% for do in delivery_orders %}
+                <tr>
+                    <td>{{ do.delivery_no }}</td>
+                    <td>{{ do.order.customer_name }}</td>
+                    <td>{{ do.status }}</td>
+                    <td>{{ do.delivery_date|date:"Y-m-d H:i" }}</td>
+
+                    <!-- Invoice Column -->
+                    <td>
+                        {% if do.invoices.exists %}
+                            {% with inv=do.invoices.last %}
+                                <a href="{% url 'finance:invoice_detail' inv.id %}" class="link-primary">
+                                    {{ inv.invoice_no }}
+                                </a>
+                            {% endwith %}
+                        {% elif do.order.invoices.exists %}
+                            {% with inv=do.order.invoices.last %}
+                                <a href="{% url 'finance:invoice_detail' inv.id %}" class="link-primary">
+                                    {{ inv.invoice_no }}
+                                </a>
+                            {% endwith %}
+                        {% else %}
+                            <span class="text-muted">{% trans "Not Invoiced" %}</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Action Column -->
+                    <td>
+                        {% if not do.return_requests.exists %}
+                            <div class="action-buttons">
+                                <a class="action-btn normal"
+                                   href="{% url 'salesofficer:create_return_request' do.id %}">
+                                    {% trans "Request Return" %}
+                                </a>
+                            </div>
+                        {% else %}
+                            {% trans "Return Requested" %}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">
+                        {% trans "No delivery orders available for return." %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+  <!-- Pagination Controls -->
+  <div class="pagination-container" id="tablePagination"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

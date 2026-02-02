@@ -1,0 +1,12 @@
+<h3>Delete Purchase Order</h3>
+
+<p>
+    Are you sure you want to delete
+    <strong>{{ po.po_number }}</strong>?
+</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, Delete</button>
+    <a href="{% url 'purchase_order_list' %}">Cancel</a>
+</form>

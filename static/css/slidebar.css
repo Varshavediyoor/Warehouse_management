@@ -1,0 +1,151 @@
+/* -----------------------------------------------------------
+   MOBILE SLIDE SIDEBAR
+----------------------------------------------------------- */
+.mobile-sidebar {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    width: 260px;
+    height: 100vh;
+    background: #fff;
+    z-index: 9999;
+    padding: 20px 15px;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.15);
+    transition: left 0.35s ease;
+
+    /* ✅ Enable scrolling */
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Custom scrollbar */
+.mobile-sidebar::-webkit-scrollbar {
+    width: 3px;
+}
+
+.mobile-sidebar::-webkit-scrollbar-thumb {
+    background: #2c8cfb;
+    border-radius: 10px;
+}
+
+.mobile-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+
+.mobile-sidebar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.mobile-sidebar ul li {
+    margin: 25px 0;
+    opacity: 0;
+    transform: translateX(-30px);
+    animation: slideInLeft 0.6s ease forwards;
+}
+
+.mobile-sidebar ul li a {
+    text-decoration: none;
+    color: #2c4c71;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
+
+/* SLIDE-IN ACTIVE STATE */
+.mobile-sidebar.active {
+    left: 0;
+}
+
+/* DARK OVERLAY */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgb(255, 255, 255, .1);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(15px);
+    display: none;
+    z-index: 9998;
+}
+
+/* Show overlay */
+.sidebar-overlay.active {
+    display: block;
+}
+
+
+/* CLOSE BUTTON INSIDE SIDEBAR */
+.close-button-container {
+    display: flex;
+    justify-content: right;
+}
+
+.close-button-container i{
+    font-size: 30px;
+    color: #2c8cfb;
+}
+
+.sidebar-close-btn {
+    font-weight: bold;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333;
+    transition: 0.2s ease-in-out;
+}
+
+/* LANGUAGE DROPDOWN */
+.language-dropdown {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding-left: 25px;
+    margin-top: 8px;
+    transition: max-height 0.35s ease, opacity 0.25s ease;
+}
+
+/* When active */
+#languageLi.active .language-dropdown {
+    max-height: 300px;
+    opacity: 1;
+}
+
+/* FIX: Make dropdown items visible */
+.language-dropdown li {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    margin: 10px 0;
+}
+
+
+.language-dropdown a {
+    font-size: 14px;
+    color: #2c4c71;
+    display: block;
+    padding: 6px 0;
+}
+
+.language-dropdown a.active {
+    color: #2c8cfb;
+    font-weight: 600;
+}
+
+.dropdown-arrow {
+    margin-left: auto;
+    transition: transform 0.3s ease;
+}
+
+#languageLi.active .dropdown-arrow {
+    transform: rotate(180deg);
+}

@@ -1,0 +1,111 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "GRN Review" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/inventory_manager/grn_review_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+<div class="grn-container">
+
+    <!-- header  -->
+    <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1><span>{% trans "Goods " %}</span> {% trans "Receipt Notes" %}</h1>
+      </div>
+      <div class="wh-header-right">          
+          <a href="{% url 'inventory_manager_dashboard' %}" class="btn-back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+  </div>
+
+<!-- Filter / Search -->
+<form method="GET" class="filter-form">
+  <div class="filter-field">
+      <input type="text"
+             name="search"
+             placeholder="{% trans 'Search by GRN Number' %}"
+             value="{{ search_query }}">
+  </div>
+
+  <div class="filter-field">
+      <select name="supplier">
+          <option value="">{% trans "All Suppliers" %}</option>
+          {% for sup in suppliers %}
+              <option value="{{ sup }}" {% if sup == supplier_filter %}selected{% endif %}>
+                  {{ sup }}
+              </option>
+          {% endfor %}
+      </select>
+  </div>
+
+  <div class="filter-action">
+      <button type="submit">{% trans "Filter" %}</button>
+  </div>
+</form>
+
+
+    <!-- Table -->
+<div class="table-scroll-wrapper">
+  <div class="table-container">
+      <table class="table-content" id="tableContent">
+      <thead>
+        <tr>
+          <th>{% trans "GRN Number" %}</th>
+          <th>{% trans "Supplier" %}</th>
+          <th>{% trans "Received Date" %}</th>
+          <th>{% trans "Status" %}</th>
+          <th>{% trans "Action" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for grn in grns %}
+        <tr class="grn-row">
+          <td data-label="{% trans 'GRN Number' %}">{{ grn.grn_number }}</td>
+          <td data-label="{% trans 'Supplier' %}">{{ grn.supplier }}</td>
+
+          <td data-label="{% trans 'Received Date' %}">{{ grn.received_date }}</td>
+          <td data-label="{% trans 'Status' %}">
+              {% if grn.approval_status == 'Approved' %}
+                  <span class="status-badge approved">{% trans "Approved" %}</span>
+              {% elif grn.approval_status == 'Pending' %}
+                  <span class="status-badge pending">{% trans "Pending" %}</span>
+              {% else %}
+                  <span class="status-badge rejected">{% trans "Rejected" %}</span>
+              {% endif %}
+          </td>
+
+          <td data-label="{% trans 'Action' %}">
+            <div class="action-buttons">
+              <a href="{% url 'grn_review_detail' grn.id %}" class="action-btn normal">
+                <i class="bi bi-eye"></i> {% trans "Review" %}
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="no-data">{% trans "No GRNs to review." %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <!-- Pagination Controls -->
+  <div class="pagination-container" id="tablePagination"></div>
+</div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}
+

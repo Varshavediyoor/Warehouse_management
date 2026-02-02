@@ -1,0 +1,439 @@
+.gate-pass-page{
+    /* Animation */
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(25px) scale(0.98);
+        filter: blur(6px);
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+/* ---------------------------- Header ---------------------------- */
+
+.wh-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  
+  @keyframes slideFromRight {
+    0% {
+    transform: translateX(80px); /* Start slightly off-screen to the right */
+    opacity: 0;
+    }
+    100% {
+    transform: translateX(0); /* End in place */
+    opacity: 1;
+    }
+    }
+  
+  .wh-header-section h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c4c71;
+  
+    animation: slideFromRight 0.9s ease-out forwards;
+    opacity: 0; /* Start invisible */
+  }
+  
+  .wh-header-section h1 span {
+    color: #2c8cfb;
+  }
+  
+  .wh-header-section p{
+    font-size: 13px;
+  }
+  
+  .wh-header-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+  }
+  
+  .btn-back {
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border-radius: 30px;
+    color: #fff;
+    padding: .4rem 2rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden; /* ✅ Keeps shine animation inside button */
+    position: relative;
+  
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+  }
+  
+  .btn-back:hover {
+    transform: scale(1.05);
+  }
+    
+  .btn-back::before {
+    content: "";
+    position: absolute;
+    width: 80px; /* ✅ Slightly smaller for smooth edge transition */
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+    
+  .btn-back:hover::before {
+    animation: shine 1.5s ease-out infinite;
+  }
+    
+  @keyframes shine {
+    0% {
+        left: -80px;
+    }
+    60% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+  }
+  
+  
+  @media (max-width: 845px) {
+    .wh-header-section {
+        margin-top: 0rem;
+    }
+  
+  .wh-header-section h1{
+    font-size: 28px;
+  }
+  
+  .wh-header-right{
+    gap: 0.5rem;
+  }
+  
+  .wh-header-right a{
+    font-size: 11px;
+    width: 100px;
+    padding: .3rem .6rem;
+  }
+  }
+  
+  @media (max-width: 670px) {
+    .wh-header-section h1{
+      font-size: 26px;
+      max-width: 400px;
+    }
+  
+    .wh-header-section p{
+      font-size: 12px;
+    }
+  
+    .wh-header-right a{
+      width: 80px;
+    }
+  
+    .wh-header-right a{
+      width: 80px;
+    }
+  }
+  
+  @media (max-width: 550px) {
+    .wh-header-section h1{
+      font-size: 20px;
+      max-width: 350px;
+    }
+    .wh-header-left p{
+      display: none;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .wh-header-section h1{
+      font-size: 20px;
+      max-width: 250px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .wh-header-section h1{
+      font-size: 20px;
+    }
+
+    .wh-header-right{
+        display: flex;
+        flex-direction: column;
+      }
+    
+    .btn-back.back{
+        order: 1;
+    }
+
+    .btn-back.print{
+        order: 2;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .wh-header-section h1{
+      font-size: 16px;
+      max-width: 200px;
+    }
+  }
+
+  /* -------------------------------------------------------- */
+  
+  /* ================= CARD ================= */
+  .gate-pass-card {
+    background: #fff;
+    max-width: 1000px;
+    margin: 1rem auto;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #dbeafe;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+  }
+  
+  /* ================= TOP ================= */
+  .pass-top {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    border-bottom: 1px dashed #c7d2fe;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .pass-top label {
+    font-size: 12px;
+    color: #64748b;
+  }
+  
+  .pass-top p {
+    font-size: 15px;
+    font-weight: 600;
+    color: #2c4c71;
+  }
+  
+  /* ================= BODY ================= */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+  
+  .info-item label {
+    font-size: 12px;
+    color: #64748b;
+  }
+  
+  .info-item p {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  
+  /* ================= PHOTOS ================= */
+  .photo-section h3 {
+    margin-bottom: 14px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #2c4c71;
+  }
+  
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  
+  .photo-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f9fafb;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  }
+  
+  .photo-card span {
+    display: block;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px;
+    background: #e0edff;
+    color: #1e3a8a;
+  }
+  
+  .photo-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+  
+  /* ================= FOOTER ================= */
+  .pass-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  
+  .signature-line {
+    width: 220px;
+    border-bottom: 2px solid #000;
+    margin-top: 25px;
+  }
+  
+  .stamp-box {
+    width: 160px;
+    height: 80px;
+    border: 2px dashed #555;
+    margin-top: 12px;
+  }
+  
+  /* ================= RESPONSIVE ================= */
+  @media (max-width: 768px) {
+    .pass-top,
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .gate-pass-header {
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-start;
+    }
+  
+    .pass-footer {
+      flex-direction: column;
+      gap: 30px;
+    }
+  }
+  
+  /* ================= PRINT ================= */
+/* ================= PRINT OPTIMIZATION (A4) ================= */
+@media print {
+
+    /* Force A4 size */
+    @page {
+      size: A4;
+      margin: 12mm;
+    }
+  
+    /* Hide everything except gate pass */
+    body * {
+      visibility: hidden;
+    }
+  
+    #printArea,
+    #printArea * {
+      visibility: visible;
+    }
+  
+    #printArea {
+      position: absolute;
+      inset: 0;
+    }
+  
+    /* Remove shadows & heavy styles */
+    .gate-pass-card {
+      box-shadow: none;
+      padding: 16px;
+    }
+  
+    /* Reduce header spacing */
+    .gate-pass-header {
+      margin-bottom: 10px;
+    }
+  
+    .gate-pass-header h1 {
+      font-size: 22px;
+    }
+  
+    /* Tighten top section */
+    .pass-top {
+      gap: 12px;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+    }
+  
+    .pass-top p,
+    .info-item p {
+      font-size: 13px;
+    }
+  
+    /* Reduce info spacing */
+    .info-grid {
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+  
+    /* ---- IMAGE OPTIMIZATION ---- */
+    .photo-grid {
+      gap: 10px;
+    }
+  
+    .photo-card img {
+      height: 120px;          /* ⬅ Reduced from 180px */
+      object-fit: contain;    /* ⬅ Prevent cropping */
+      background: #fff;
+    }
+  
+    .photo-card span {
+      font-size: 11px;
+      padding: 6px;
+    }
+  
+    /* Footer tighter */
+    .pass-footer {
+      margin-top: 18px;
+    }
+  
+    .signature-line {
+      width: 180px;
+      margin-top: 18px;
+    }
+  
+    .stamp-box {
+      width: 140px;
+      height: 70px;
+    }
+  
+    /* Hide print button */
+    .print-btn {
+      display: none !important;
+    }
+  }
+  
+  

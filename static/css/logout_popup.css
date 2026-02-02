@@ -1,0 +1,255 @@
+/* 🌟 Logout Modal Overlay */
+.logout-modal {
+  display: flex;
+  opacity: 0;
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background: rgb(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.3s ease;
+}
+
+/* visible state (used when showing modal) */
+.logout-modal.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+
+/* visible state (used when showing modal) */
+.logout-modal.show {
+  display: flex;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* fade-out animation */
+.logout-modal.fade-out {
+  animation: fadeOut 0.3s ease forwards;
+}
+
+/* 🌟 Modal Box */
+.logout-modal-content {
+  background: rgb(255, 255, 255, .8);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  padding: 3rem;
+  border-radius: 25px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  animation: popUp 0.4s ease forwards;
+}
+
+.logout-modal-content h3 {
+  color: #2c8cfb;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.logout-modal-content h3 span {
+  color: #2c4c71;
+}
+
+.logout-modal-content p{
+  color: #2c4c71;
+  font-size: 14px;
+  margin-bottom: 1.5rem;
+}
+
+/* 🌟 Modal Buttons */
+.logout-modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 1.5rem;
+}
+
+.logout-modal-buttons a {
+  text-decoration: none;
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+  /* OK button */
+  .logout-btn-confirm {
+    background: linear-gradient(90deg, #E03F3F, #cd0d0d);
+    color: #fff;
+  }
+  
+  /* Cancel button */
+  .logout-btn-cancel {
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    color: #fff;
+  }
+
+
+.logout-btn-confirm:hover {
+ transform: scale(1.05);
+}
+
+.logout-btn-confirm::before {
+content: "";
+position: absolute;
+width: 80px;
+height: 100%;
+background-image: linear-gradient(
+  120deg,
+  rgba(255, 255, 255, 0) 30%,
+  rgba(255, 255, 255, 0.8),
+  rgba(255, 255, 255, 0) 70%
+);
+top: 0;
+left: -80px;
+opacity: 0.6;
+pointer-events: none;
+}
+.logout-btn-confirm:hover::before { animation: shine 1.5s ease-out infinite; }
+
+.logout-btn-cancel:hover {
+transform: scale(1.05);
+}
+
+.logout-btn-cancel::before {
+content: "";
+position: absolute;
+width: 80px;
+height: 100%;
+background-image: linear-gradient(
+ 120deg,
+ rgba(255, 255, 255, 0) 30%,
+ rgba(255, 255, 255, 0.8),
+ rgba(255, 255, 255, 0) 70%
+);
+top: 0;
+left: -80px;
+opacity: 0.6;
+pointer-events: none;
+}
+.logout-btn-cancel:hover::before { animation: shine 1.5s ease-out infinite; }
+
+@keyframes shine {
+0% { left: -80px; }
+60% { left: 100%; }
+100% { left: 100%; }
+}
+
+
+/* ✨ Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes popUp {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===========================
+ RESPONSIVE LOGOUT MODAL
+ =========================== */
+
+/* Tablets (≤ 768px) */
+@media (max-width: 768px) {
+.logout-modal-content {
+  width: 90%;
+  max-width: 420px;
+  padding: 2.2rem;
+  border-radius: 22px;
+}
+
+.logout-modal-content h3 {
+  font-size: 1.6rem;
+}
+
+.logout-modal-content p {
+  font-size: 13.5px;
+}
+}
+
+/* Mobile devices (≤ 480px) */
+@media (max-width: 480px) {
+.logout-modal-content {
+  width: 92%;
+  padding: 1.8rem 1.5rem;
+  border-radius: 18px;
+}
+
+.logout-modal-content h3 {
+  font-size: 1.4rem;
+}
+
+.logout-modal-content p {
+  font-size: 13px;
+}
+
+.logout-modal-buttons {
+  flex-direction: column;
+  gap: 10px;
+}
+
+.logout-btn-confirm{
+  order: 1;
+}
+
+.logout-btn-cancel{
+  order: 2;
+}
+
+.logout-modal-buttons a {
+  padding: 10px;
+  font-size: 14px;
+}
+}
+
+/* Very small / compact screens (≤ 360px) */
+@media (max-width: 360px) {
+.logout-modal-content {
+  padding: 1.4rem 1.2rem;
+}
+
+.logout-modal-content h3 {
+  font-size: 1.25rem;
+}
+
+.logout-modal-content p {
+  font-size: 12.5px;
+}
+}
+
+/* Short-height screens (landscape phones) */
+@media (max-height: 520px) {
+.logout-modal {
+  align-items: flex-start;
+  padding-top: 2rem;
+}
+
+.logout-modal-content {
+  max-height: 90vh;
+  overflow-y: auto;
+}
+}

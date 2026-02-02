@@ -1,0 +1,91 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Putaway Task List" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/inventory_manager/putaway/putaway_task_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="putaway_task_list">
+
+    <!-- header  -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Putaway " %}</span> {% trans "Task List" %}</h1>
+        </div>
+        <div class="wh-header-right">          
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                    <tr>
+                        <!-- Product name -->
+                        <td>{{ task.staging_item.grn_item.product_name }}</td>
+            
+                        <!-- Quantity -->
+                        <td>{{ task.staging_item.quantity }}</td>
+            
+                        <!-- From location -->
+                        <td>N/A</td>  <!-- Or replace with staging location if you have it -->
+            
+                        <!-- To location -->
+                        <td>
+                            {% if task.suggested_location %}
+                                {{ task.suggested_location.full_path }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+            
+                        <td>
+                            {% if task.status == 'PENDING' %}
+                                <form method="post" action="{% url 'warehouse_manager:complete_putaway_task' task.id %}">
+                                    {% csrf_token %}
+                                    <div class="action-buttons">
+                                        <button type="submit" class="action-btn normal">Complete</button>
+                                    </div>
+                                </form>
+                            {% else %}
+                            <div class="action-buttons">
+                                <button type="button" class="action-btn disable" disabled>Completed</button>
+                            </div>
+                            {% endif %}
+                        </td>
+            
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5">No tasks found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

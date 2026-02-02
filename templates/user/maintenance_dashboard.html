@@ -1,0 +1,377 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Storekeeper Dashboard" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/maintenance/maintenance_dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/user_dashboard_table.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="db-header">
+  <h1><span>{% trans "Maintenance " %}</span> {% trans "Dashboard" %}</h1>
+  <p>{% trans "Monitor system health, scheduled maintenance, alerts, and operational stability in real time." %}</p>
+</div>
+
+<div class="dashboard-layout">
+  <!-- Left Section -->
+  <div class="left-section">
+  
+    <div class="im-cards">
+
+      <!-- INBOUND ITEMS -->
+      <div class="im-card fade-up">
+        <div class="maint-card-bubble"></div>
+          <div class="im-card-image">
+            <img src="{% static 'images/maintenance.png' %}" alt="card-image">
+          </div>
+          <div class="im-info">
+            <h4>{% trans "System Health Checks (Today)" %}</h4>
+            <p class="im-number">{{ health_checks_today|default:"0" }}</p>
+            <span class="im-sub">
+              {% trans "This week:" %} {{ health_checks_week|default:"0" }}
+            </span>
+          </div>
+      </div>
+  
+      <!-- PUTAWAY TASKS -->
+      <div class="im-card fade-up delay-1">
+        <div class="maint-card-bubble"></div>
+          <div class="im-card-image">
+            <img src="{% static 'images/finance-summary.png' %}" alt="card-image">
+          </div>
+          <div class="im-info">
+            <h4>{% trans "Pending Maintenance Tasks" %}</h4>
+            <p class="im-number">{{ maintenance_pending|default:"0" }}</p>
+            <span class="im-sub">
+              {% trans "In progress:" %} {{ maintenance_in_progress|default:"0" }}
+            </span>
+          </div>
+      </div>
+  
+      <!-- LOW STOCK ALERTS -->
+      <div class="im-card fade-up delay-2">
+        <div class="maint-card-bubble"></div>
+          <div class="im-card-image">
+            <img src="{% static 'images/low-stock.png' %}" alt="card-image">
+          </div>
+          <div class="im-info">
+            <h4>{% trans "System Alerts & Failures" %}</h4>
+            <p class="im-number">{{ active_alerts|default:"0" }}</p>
+            <span class="im-sub">
+              {% trans "Critical issues:" %} {{ critical_issues|default:"0" }}
+            </span>
+          </div>
+      </div>
+  
+  </div>
+
+
+  <aside class="quick-actions responsive">
+    <div class="quick-action-heading">
+      <h3>{% trans "Quick Actions" %}</h3>
+    </div>
+    <div class="actions-grid">
+        <!-- Django links as you already have -->
+          <a href="{% url 'add_maintenance_notification' %}" class="action-button">{% trans "Add Notification" %}</a>
+          <a href="{% url 'notification_list' %}" class="action-button">{% trans "View All Notifications" %}</a>
+          <a href="#" class="action-button">{% trans "Log Maintenance Issue" %}</a>
+          <a href="#" class="action-button">{% trans "Schedule Maintenance" %}</a>
+          <a href="#" class="action-button">{% trans "Close Maintenance Task" %}</a>
+          <a href="#" class="action-button">{% trans "Freeze Location" %}</a>
+          <a href="#" class="action-button">{% trans "Maintenance Reports" %}</a>
+      </div>
+    <div class="quick-actions-img">
+      <img src="{% static 'images/quick-actions.png' %}" alt="quick-actions-img">
+    </div>
+  </aside>
+  
+    
+  <section class="maintenance-instructions">
+    <h2 class="section-title">{% trans "Maintenance Instructions" %}</h2>
+  
+    <div class="maintenance-layout">
+  
+      <!-- LEFT MAIN CARD -->
+      <div class="maint-card">
+        <div class="maint-header">
+          <img src="{% static 'images/guidelines.png' %}" alt="maintenance">
+          <h4>{% trans "System Maintenance Guidelines" %}</h4>
+        </div>
+  
+        <ul class="maint-list">
+          <li>
+            <span class="maint-badge critical">Critical</span>
+            {% trans "Perform daily system health checks before business hours." %}
+          </li>
+  
+          <li>
+            <span class="maint-badge warning">Warning</span>
+            {% trans "Ensure all scheduled jobs and background services are running." %}
+          </li>
+  
+          <li>
+            <span class="maint-badge info">Info</span>
+            {% trans "Clear application logs and temporary files weekly." %}
+          </li>
+  
+          <li>
+            <span class="maint-badge warning">Warning</span>
+            {% trans "Verify database backups and test restore once per week." %}
+          </li>
+  
+          <li>
+            <span class="maint-badge critical">Critical</span>
+            {% trans "Apply security patches immediately for critical vulnerabilities." %}
+          </li>
+        </ul>
+      </div>
+  
+      <!-- RIGHT INFO PANEL -->
+      <div class="maint-side-card">
+        <h3>{% trans "Maintenance Notes" %}</h3>
+  
+        <div class="note">
+          <strong>{% trans "Downtime Window:" %}</strong>
+          <p>{% trans "Sunday 12:00 AM – 3:00 AM IST" %}</p>
+        </div>
+  
+        <div class="note">
+          <strong>{% trans "Backup Policy:" %}</strong>
+          <p>{% trans "Daily incremental, weekly full backups retained for 30 days." %}</p>
+        </div>
+  
+        <div class="note">
+          <strong>{% trans "Escalation Contact:" %}</strong>
+          <p>{% trans "IT Admin / System Engineer" %}</p>
+        </div>
+      </div>
+  
+    </div>
+  </section>
+  
+  
+<!-------------------- recent activities table ------------------>
+<div class="recent-activities">
+  <h2>{% trans "Recent Activities" %}</h2>
+ <!-- TABLE PREVIEW SECTION -->
+ <div class="dashboard-table-wrap">
+
+  <div class="table-scroll">
+    <table class="dashboard-table">
+        <thead>
+          <tr>
+            <th>Activity</th>
+            <th>Component</th>
+            <th>Details</th>
+            <th>Status</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+      
+        <tbody>
+          <tr>
+            <td>System Health Check</td>
+            <td>Application Server</td>
+            <td>CPU & Memory Verified</td>
+            <td><span class="badge success">Completed</span></td>
+            <td>Today, 09:10 AM</td>
+          </tr>
+      
+          <tr>
+            <td>Scheduled Maintenance</td>
+            <td>Database Server</td>
+            <td>Index Optimization</td>
+            <td><span class="badge info">In Progress</span></td>
+            <td>Today, 10:45 AM</td>
+          </tr>
+      
+          <tr>
+            <td>Backup Process</td>
+            <td>System Backup</td>
+            <td>Daily Backup Executed</td>
+            <td><span class="badge success">Successful</span></td>
+            <td>Today, 01:30 AM</td>
+          </tr>
+      
+          <tr>
+            <td>Alert Triggered</td>
+            <td>Storage Service</td>
+            <td>Disk Usage Reached 85%</td>
+            <td><span class="badge warning">Attention</span></td>
+            <td>Yesterday, 06:20 PM</td>
+          </tr>
+      
+          <tr>
+            <td>Service Restart</td>
+            <td>Authentication Service</td>
+            <td>Unexpected Restart Detected</td>
+            <td><span class="badge danger">Resolved</span></td>
+            <td>2 Days Ago</td>
+          </tr>
+      
+          <!-- Empty state -->
+          <!--
+          <tr>
+            <td colspan="5" class="no-box">No recent maintenance activities.</td>
+          </tr>
+          -->
+        </tbody>
+      </table>
+      
+  </div>
+</div>  
+</div>
+
+
+
+<!-- ---------------------------------------------------------- -->
+  </div>
+
+  <!-- Right Section -->
+  <div class="right-section">
+    <aside class="quick-actions">
+      <div class="quick-action-heading">
+        <h3>{% trans "Quick Actions" %}</h3>
+      </div>
+      <div class="actions-grid">
+        <!-- Django links as you already have -->
+          <a href="{% url 'add_maintenance_notification' %}" class="action-button">{% trans "Add Notification" %}</a>
+          <a href="{% url 'notification_list' %}" class="action-button">{% trans "View All Notifications" %}</a>
+          <a href="#" class="action-button">{% trans "Log Maintenance Issue" %}</a>
+          <a href="#" class="action-button">{% trans "Schedule Maintenance" %}</a>
+          <a href="#" class="action-button">{% trans "Close Maintenance Task" %}</a>
+          <a href="#" class="action-button">{% trans "Freeze Location" %}</a>
+          <a href="#" class="action-button">{% trans "Maintenance Reports" %}</a>
+      </div>
+      <div class="quick-actions-img">
+        <img src="{% static 'images/quick-actions.png' %}" alt="quick-actions-img">
+      </div>
+    </aside>
+  </div>
+
+</div>
+
+<!-- SESSION TIMER BOX -->
+<!-- SESSION EXPIRY POPUP -->
+<div id="sessionPopupOverlay"
+   style="
+      display:none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(2px);
+      z-index: 9998;
+   ">
+</div>
+
+<div id="sessionPopup"
+   style="
+      display:none;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 25px 35px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      text-align: center;
+      z-index: 9999;
+      width: 340px;
+   ">
+  <h3 style="margin-bottom: 10px; color:#b30000;">Session Expiring</h3>
+  <p style="margin-bottom: 10px;">
+      You have been inactive. You will be logged out in:
+  </p>
+
+  <div style="
+      font-size: 28px;
+      font-weight: bold;
+      color: #d00000;
+      margin-bottom: 15px;
+  ">
+      <span id="popupCountdown">05:00</span>
+  </div>
+
+  <button onclick="stayLoggedIn()" style="
+      padding: 8px 20px;
+      background: #007bff;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+  ">Stay Logged In</button>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+  let idleTime = 0;
+  const idleLimit = 120; // 2 minutes inactivity
+  let logoutTimer = 300; // 5 minutes countdown
+  let countdownActive = false;
+
+  const popup = document.getElementById("sessionPopup");
+  const overlay = document.getElementById("sessionPopupOverlay");
+  const popupCountdown = document.getElementById("popupCountdown");
+
+  // Reset activity
+  function resetActivity() {
+      idleTime = 0;
+
+      if (countdownActive) {
+          countdownActive = false;
+          logoutTimer = 300; // Reset timer
+          popup.style.display = "none";
+          overlay.style.display = "none";
+      }
+  }
+
+  // Stay logged-in button
+  function stayLoggedIn() {
+      resetActivity();
+  }
+
+  // Listeners
+  window.onload = resetActivity;
+  document.onmousemove = resetActivity;
+  document.onkeypress = resetActivity;
+  document.onclick = resetActivity;
+  document.onscroll = resetActivity;
+
+  // Timer loop
+  setInterval(function () {
+      idleTime++;
+
+      // Start popup countdown
+      if (idleTime >= idleLimit && !countdownActive) {
+          countdownActive = true;
+          popup.style.display = "block";
+          overlay.style.display = "block";
+      }
+
+      if (countdownActive) {
+          let minutes = Math.floor(logoutTimer / 60);
+          let seconds = logoutTimer % 60;
+
+          popupCountdown.innerHTML =
+              String(minutes).padStart(2, "0") + ":" +
+              String(seconds).padStart(2, "0");
+
+          logoutTimer--;
+
+          if (logoutTimer <= 0) {
+              window.location.href = "{% url 'user_login' %}";
+          }
+      }
+  }, 1000);
+</script>
+
+{% endblock %}
+

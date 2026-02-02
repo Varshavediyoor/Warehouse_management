@@ -1,0 +1,53 @@
+<h2>Inbound QC Inspection</h2>
+
+<form method="post" enctype="multipart/form-data">
+{% csrf_token %}
+
+{% if error %}
+  <p style="color:red;"><strong>Error:</strong> {{ error }}</p>
+{% endif %}
+
+{% for p in products %}
+<hr>
+<h3>{{ p.name }} ({{ p.variant }})</h3>
+<p><strong>Category:</strong> {{ p.category }}</p>
+<p>Ordered Qty: {{ p.ordered_qty }}</p>
+
+<label>Received Qty</label><br>
+<input type="number" name="received_{{ p.id }}" required><br><br>
+
+<label>Approved Qty</label><br>
+<input type="number" name="approved_{{ p.id }}" required><br><br>
+
+<label>Rejected Qty</label><br>
+<input type="number" name="rejected_{{ p.id }}" required><br><br>
+
+<h4>Checklist</h4>
+
+{% for pid, checklist in checklist_map.items %}
+    {% if pid == p.id %}
+        {% for chk in checklist %}
+            <p>
+              {{ chk.name }} {% if chk.is_mandatory %}*{% endif %}<br>
+              <input type="radio"
+                     name="check_{{ p.id }}_{{ chk.id }}"
+                     value="yes"
+                     required> Yes
+              <input type="radio"
+                     name="check_{{ p.id }}_{{ chk.id }}"
+                     value="no"> No
+            </p>
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+
+<label>QC Photos (1–3)</label><br>
+<input type="file" name="photos_{{ p.id }}" multiple accept="image/*"><br><br>
+
+<textarea name="remarks_{{ p.id }}" placeholder="Remarks"></textarea>
+
+{% endfor %}
+
+<br><br>
+<button type="submit">Submit QC</button>
+</form>

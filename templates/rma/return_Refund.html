@@ -1,0 +1,41 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Process Refund" %}{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+
+    <div class="page-header">
+        <h3>{% trans "Refund Processing" %} - RMA #{{ rma.id }}</h3>
+    </div>
+
+    <div class="card p-4">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label">{% trans "Refund Amount" %}</label>
+                <input type="number" name="amount" value="{{ rma.refund_amount }}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label>{% trans "Refund Mode" %}</label>
+                <select name="mode" class="form-control" required>
+                    <option value="razorpay">Razorpay</option>
+                    <option value="wallet">Wallet</option>
+                    <option value="manual">Manual</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label>{% trans "Notes (optional)" %}</label>
+                <textarea name="notes" class="form-control"></textarea>
+            </div>
+
+            <button class="btn btn-success">{% trans "Process Refund" %}</button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

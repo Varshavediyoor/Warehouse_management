@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% if vendor %}Edit{% else %}Add{% endif %} Vendor</title>
+</head>
+<body>
+
+<h2>{% if vendor %}Edit{% else %}Add{% endif %} Vendor</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <label>Vendor Name *</label><br>
+    <input type="text" name="vendor_name" value="{{ vendor.vendor_name|default:'' }}" required><br><br>
+
+    <label>Email</label><br>
+    <input type="email" name="email" value="{{ vendor.email|default:'' }}"><br><br>
+
+    <label>Phone Number</label><br>
+    <input type="text" name="phone_number" value="{{ vendor.phone_number|default:'' }}"><br><br>
+
+    <label>Contact Person</label><br>
+    <input type="text" name="contact_person" value="{{ vendor.contact_person|default:'' }}"><br><br>
+
+    <label>Address</label><br>
+    <textarea name="address">{{ vendor.address|default:'' }}</textarea><br><br>
+
+    <label>GST No</label><br>
+    <input type="text" name="gst_no" value="{{ vendor.gst_no|default:'' }}"><br><br>
+
+    <label>
+        <input type="checkbox" name="is_active" {% if vendor.is_active or not vendor %}checked{% endif %}>
+        Active
+    </label><br><br>
+
+    <button type="submit">Save</button>
+</form>
+
+
+</body>
+</html>

@@ -1,0 +1,182 @@
+/* Centered Container */
+.delete-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+/* Delete Card */
+.delete-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 700px;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.6s ease-in-out;
+    margin-top: 2rem;
+}
+
+.delete-icon i {
+    font-size: 3rem;
+    color: #2c8cfb;
+    display: inline-block; /* required for transform */
+    animation: shake 3.8s ease-in-out infinite; /* total = 0.8s shake + 3s pause */
+}
+
+/* Keyframes */
+@keyframes shake {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    5% { transform: rotate(-20deg); }
+    10% { transform: rotate(5deg); }
+    15% { transform: rotate(-4deg); }
+    20% { transform: rotate(4deg); }
+    25% { transform: rotate(-3deg); }
+    30% { transform: rotate(3deg); }
+    35%, 100% { transform: rotate(0deg); } /* smooth back to normal */
+}
+
+
+
+
+/* Title */
+.delete-title {
+    color: #2c8cfb;
+    font-size: 24px;
+    margin: 15px 0;
+    font-weight: 600;
+}
+
+/* Text */
+.delete-text {
+    color: #555;
+    font-size: 16px;
+    margin-bottom: 25px;
+}
+
+/* Stock Info Box */
+.stock-info {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 30px;
+    text-align: left;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.stock-info p {
+    margin: 6px 0;
+}
+
+/* Button Container */
+.btn-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* Shared Shine Animation Button Style */
+/* Shared Shine Animation Button Style */
+.btn-cancel,
+.btn-delete {
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border-radius: 30px;
+    color: #fff;
+    padding: .6rem 2rem;   /* same padding */
+    width: 150px;          /* set same width for both */
+    text-align: center;    /* center text */
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden;
+    position: relative;
+    border: none;
+    cursor: pointer;
+}
+
+
+/* Specific Background Colors */
+.btn-cancel {
+    background: linear-gradient(90deg, #2c8cfb, #3c6696); 
+}
+
+.btn-delete {
+    background: linear-gradient(90deg, #ff4d4d, #b30000); /* Red gradient */
+}
+
+
+
+/* Hover Effect */
+.btn-cancel:hover,
+.btn-delete:hover {
+    transform: scale(1.05);
+    color: #fff;
+}
+ 
+
+/* Shine effect */
+.btn-cancel::before,
+.btn-delete::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.btn-cancel:hover::before,
+.btn-delete:hover::before {
+    animation: shine 1.5s ease-out infinite;
+}
+
+/* Keyframes - already available but included for safety */
+@keyframes shine {
+    0% { left: -80px; }
+    60% { left: 100%; }
+    100% { left: 100%; }
+}
+
+
+
+
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 500px) {
+    .btn-cancel,
+    .btn-delete {
+        font-size: 13px;
+        padding: .5rem 1rem;   /* same padding */
+        width: 120px;          /* set same width for both */
+
+    }
+    
+}

@@ -1,0 +1,86 @@
+{% extends 'base_admin.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Approve Password Reset" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/approve_reset.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="approval-layout">
+
+    <!-- header  -->
+    <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1><span>{% trans "Password " %}</span> {% trans "Reset Request" %}</h1>
+      </div>
+      <div class="wh-header-right">          
+          <a href="" class="btn-back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="approval-content">
+
+    <!-- DETAILS -->
+    <div class="approval-card">
+      <div class="approval-card-header">
+        <h3>{% trans "Request Information" %}</h3>
+        <span class="approval-status">
+          {% trans "Awaiting Review" %}
+        </span>
+      </div>
+
+      <div class="info-table">
+        <div class="row">
+          <span>{% trans "Email Address" %}</span>
+          <strong>{{ pr.email }}</strong>
+        </div>
+
+        <div class="row">
+          <span>{% trans "User Account" %}</span>
+          <strong>{{ pr.user.username }}</strong>
+        </div>
+
+        <div class="row">
+          <span>{% trans "Requested On" %}</span>
+          <strong>{{ pr.requested_at }}</strong>
+        </div>
+
+        <div class="row reason">
+          <span>{% trans "Reason for Reset" %}</span>
+          <strong>{{ pr.reason|linebreaksbr }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTION -->
+    <div class="approval-card action-card">
+      <h3>{% trans "Approval Action" %}</h3>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <div class="action-bar">
+
+          <a href="{% url 'admin_reset_requests' %}" class="action-btn cancel">
+            {% trans "Cancel & Go Back" %}
+          </a>
+
+          <button type="submit" class="action-btn normal">
+            {% trans "Approve & Send Reset Link" %}
+          </button>
+
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+</section>
+
+{% endblock %}   

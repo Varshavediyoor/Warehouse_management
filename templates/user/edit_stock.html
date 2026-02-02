@@ -1,0 +1,206 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Edit Stock" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/add_stock.css' %}">
+<style>
+  .sku-warning {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-page">
+
+    <!-- header  -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Edit " %}</span> {% trans "Stock Item" %}</h1>
+        </div>
+        <div class="wh-header-right"> 
+            <a href="{% url 'warehouse_manager:view_stock' %}" class="btn-back view">
+                <i class="fas fa-eye"></i> {% trans "View Stocks" %}
+            </a>         
+            <a href="{% url 'warehouse_manager_dashboard' %}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="form-card">
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="input-grid">
+                <div class="form-group">
+                    <label>{% trans "Product Name" %}</label>
+                    {{ form.name }}
+                </div>
+
+                <div class="form-group">
+                    <label>{% trans "SKU" %}</label>
+                    {{ form.sku }}
+                    <div id="sku-warning" class="sku-warning"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>{% trans "Category" %}</label>
+                    {{ form.category }}
+                </div>
+
+                <div class="form-group">
+                    <label>{% trans "Supplier" %}</label>
+                    {{ form.supplier }}
+                </div>
+
+                <div class="form-group" id="group-size">
+                    <label>{% trans "Size" %}</label>
+                    {{ form.size }}
+                </div>
+
+                <div class="form-group" id="group-color">
+                    <label>{% trans "Color" %}</label>
+                    {{ form.color }}
+                </div>
+
+                <div class="form-group" id="group-batch_number">
+                    <label>{% trans "Batch Number" %}</label>
+                    {{ form.batch_number }}
+                </div>
+
+                <div class="form-group">
+                    <label>{% trans "Unit Price" %}</label>
+                    {{ form.unit_price }}
+                </div>
+
+                <div class="form-group">
+                    <label>{% trans "Quantity" %}</label>
+                    {{ form.quantity }}
+                </div>
+
+                <div class="form-group" id="group-expiry_date">
+                    <label>{% trans "Expiry Date" %}</label>
+                    {{ form.expiry_date }}
+                </div>
+
+                <div class="form-group">
+                    <label>{% trans "Warehouse Rack" %}</label>
+                    {{ form.rack }}
+                </div>
+
+                <div class="form-group">
+                    <label>{% trans "Warehouse Zone" %}</label>
+                    {{ form.zone }}
+                </div>
+
+                <div class="form-group">
+                    <label>{% trans "Warehouse Shelf" %}</label>
+                    {{ form.shelf }}
+                </div>
+
+                <div class="form-group image-upload">
+                    <label>{% trans "Product Image" %}</label>
+                        {{ form.product_image }}
+
+                        {% if form.current_image_url %}
+                        <div style="display:flex;flex-direction:column;align-items:center;">
+                            <img src="{{ form.current_image_url }}">
+                            <span>{{ form.current_image_name }}</span>
+                        </div>
+                        {% endif %}
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button type="submit" class="btn-submit">{% trans "Update Item" %}</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<!-- JavaScript for SKU Auto-generation & Dynamic Field Visibility -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const fields = ['category', 'supplier', 'size', 'color', 'batch_number'];
+        const skuInput = document.getElementById('id_sku');
+        const skuWarning = document.getElementById('sku-warning');
+        const categoryField = document.getElementById("id_category");
+    
+        // Field groups
+        const sizeGroup = document.getElementById("group-size");
+        const colorGroup = document.getElementById("group-color");
+        const expiryGroup = document.getElementById("group-expiry_date");
+        const batchGroup = document.getElementById("group-batch_number");
+    
+        // SKU Auto Generator
+        async function generateSKU() {
+            const params = fields.map(f => {
+                const el = document.getElementById('id_' + f);
+                return el ? `${f}=${encodeURIComponent(el.value.trim())}` : `${f}=`;
+            }).join('&');
+    
+            try {
+                const response = await fetch(`/generate-sku/?${params}`);
+                const data = await response.json();
+                skuInput.value = data.sku || '';
+    
+                const checkResponse = await fetch(`/check-sku-exists/?sku=${skuInput.value}`);
+                const checkData = await checkResponse.json();
+                if (checkData.exists && skuInput.value !== "{{ stock.sku }}") {
+                    skuWarning.style.display = "block";
+                    skuWarning.textContent = "{% trans 'Warning: This SKU already exists! Quantities will merge if you save.' %}";
+                } else {
+                    skuWarning.style.display = "none";
+                }
+            } catch (err) {
+                console.error('SKU generation failed:', err);
+            }
+        }
+    
+        // Field Visibility Logic
+        function updateFieldVisibility() {
+            const cat = categoryField.value.toLowerCase();
+    
+            // Hide all optional fields by default
+            sizeGroup.style.display = "none";
+            colorGroup.style.display = "none";
+            expiryGroup.style.display = "none";
+    
+            // Batch number always visible
+            batchGroup.style.display = "block";
+    
+            // Show fields based on category
+            if (cat === "clothing") {
+                sizeGroup.style.display = "block";
+                colorGroup.style.display = "block";
+            } else if (cat === "food") {
+                expiryGroup.style.display = "block";
+            }
+        }
+    
+        // Attach listeners
+        fields.forEach(f => {
+            const el = document.getElementById('id_' + f);
+            if (el) el.addEventListener('input', generateSKU);
+        });
+    
+        categoryField.addEventListener("change", () => {
+            updateFieldVisibility();
+            generateSKU(); // regenerate SKU if category changes
+        });
+    
+        // Initial load
+        updateFieldVisibility();
+        generateSKU();
+    });
+    </script>
+    
+
+{% endblock %}

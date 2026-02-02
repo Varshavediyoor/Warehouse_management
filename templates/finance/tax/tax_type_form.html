@@ -1,0 +1,64 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Add Tax Type" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/finance/tax/tax_type_form.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="tax-type-page">
+
+      <!-- Header -->
+      <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Add " %}</span>
+                {% trans " Tax Type" %}
+            </h1>
+            <p>{% trans "Create a tax classification such as GST, VAT, or Service Tax" %}</p>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+  <!-- Card -->
+  <div class="tax-type-card">
+
+    <!-- Illustration -->
+    <div class="card-icon">
+      <i class="bi bi-tags"></i>
+    </div>
+
+    <form method="post" class="tax-type-form">
+      {% csrf_token %}
+
+      <div class="form-group">
+        {{ form.code.label_tag }}
+        {{ form.code }}
+        <small class="hint">{% trans "Example: GST, VAT, CGST" %}</small>
+      </div>
+
+      <div class="form-group">
+        {{ form.name.label_tag }}
+        {{ form.name }}
+        <small class="hint">{% trans "Example: Goods and Services Tax" %}</small>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-save">
+          <i class="bi bi-check-circle"></i> {% trans "Save Tax Type" %}
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

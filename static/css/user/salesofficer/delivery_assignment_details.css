@@ -1,0 +1,147 @@
+/* Fade-in Animation */
+.delivery-detail-container {
+    animation: fadeIn 1s ease forwards;
+    margin: 20px auto;
+    max-width: 1100px;
+}
+
+/* Header Section */
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.header-section h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c4c71;
+}
+
+.header-section h1 span {
+    color: #2c8cfb;
+}
+
+/* Back Button (same style as list pages) */
+.btn-back {
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border-radius: 30px;
+    color: #fff;
+    padding: .4rem 2rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-back:hover {
+    transform: scale(1.05);
+}
+
+.btn-back::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.btn-back:hover::before {
+    animation: shine 1.5s ease-out infinite;
+}
+
+/* Detail Card */
+.detail-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    margin-bottom: 25px;
+    transition: all 0.3s ease-in-out;
+}
+
+.detail-card:hover {
+    transform: translateY(-3px);
+}
+
+/* Section Title */
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2c4c71;
+    margin-bottom: 15px;
+    border-left: 5px solid #2c8cfb;
+    padding-left: 10px;
+}
+
+/* Detail Table */
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.detail-table th,
+.detail-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: left;
+    font-size: 14px;
+}
+
+.detail-table th {
+    width: 30%;
+    color: #2c4c71;
+    font-weight: 600;
+    background: #f8faff;
+}
+
+.detail-table td {
+    color: #333;
+}
+
+/* Status Badge */
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    color: #fff;
+    font-weight: 500;
+    font-size: 13px;
+    display: inline-block;
+    text-transform: capitalize;
+}
+
+.status-badge.out_for_delivery { background: #f2c46b; color: #333; }
+.status-badge.delivered { background: #32cd7b; }
+.status-badge.pending { background: #e03f3f; }
+.status-badge.assigned { background: #2c8cfb; }
+
+/* Text Muted */
+.text-muted {
+    color: #888 !important;
+}
+
+/* Animation Effects */
+@keyframes shine {
+    0% { left: -80px; }
+    60% { left: 100%; }
+    100% { left: 100%; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}

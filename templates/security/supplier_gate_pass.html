@@ -1,0 +1,117 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Supplier Gate Pass" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/security/supplier_gate_pass.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="gate-pass-page">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Supplier " %}</span>
+                {% trans " Gate Pass" %}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="" class="btn-back print" onclick="window.print()"><i class="bi bi-printer"></i> {% trans "Print" %}</a>
+            <a href="javascript:history.back()" class="btn-back back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- GATE PASS CARD -->
+    <div class="gate-pass-card" id="printArea">
+
+        <!-- PASS TOP -->
+        <div class="pass-top">
+            <div>
+                <label>{% trans "Gate Pass No" %}</label>
+                <p>{{ entry.gate_pass_number|default:"-" }}</p>
+            </div>
+            <div>
+                <label>{% trans "PO Number" %}</label>
+                <p>{{ entry.dispatch.purchase_order.po_number }}</p>
+            </div>
+            <div>
+                <label>{% trans "Entry Time" %}</label>
+                <p>{{ entry.entry_time|date:"d M Y, h:i A" }}</p>
+            </div>
+        </div>
+
+        <!-- PASS BODY -->
+        <div class="pass-body">
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>{% trans "Vehicle Number" %}</label>
+                    <p>{{ entry.vehicle_number }}</p>
+                </div>
+
+                <div class="info-item">
+                    <label>{% trans "Driver Name" %}</label>
+                    <p>{{ entry.driver_name }}</p>
+                </div>
+
+                <div class="info-item">
+                    <label>{% trans "Driver ID Number" %}</label>
+                    <p>{{ entry.driver_id_number|default:"-" }}</p>
+                </div>
+            </div>
+
+            <!-- PHOTO SECTION -->
+            <div class="photo-section">
+                <h3>{% trans "Captured Proof Images" %}</h3>
+
+                <div class="photo-grid">
+
+                    {% if entry.vehicle_photo_front %}
+                    <div class="photo-card">
+                        <span>{% trans "Vehicle Front" %}</span>
+                        <img src="{{ entry.vehicle_photo_front.url }}">
+                    </div>
+                    {% endif %}
+
+                    {% if entry.vehicle_photo_rear %}
+                    <div class="photo-card">
+                        <span>{% trans "Vehicle Rear" %}</span>
+                        <img src="{{ entry.vehicle_photo_rear.url }}">
+                    </div>
+                    {% endif %}
+
+                    {% if entry.driver_photo %}
+                    <div class="photo-card">
+                        <span>{% trans "Driver ID Proof" %}</span>
+                        <img src="{{ entry.driver_photo.url }}">
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="pass-footer">
+            <div>
+                <strong>{% trans "Security Officer Signature" %}</strong>
+                <div class="signature-line"></div>
+            </div>
+
+            <div>
+                <strong>{% trans "Authorized Stamp" %}</strong>
+                <div class="stamp-box"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

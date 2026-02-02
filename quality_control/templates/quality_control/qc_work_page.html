@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QC Work Page</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    a {
+      text-decoration: none;
+      color: #1976d2;
+      font-weight: bold;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>QC Work Page</h2>
+<p>Gate verified invoices pending QC</p>
+
+<table>
+  <tr>
+    <th>PO Number</th>
+    <th>Invoice</th>
+    <th>Category</th>
+    <th>Status</th>
+    <th>QC</th>
+    <th>Vehicle Entry</th>
+    <th>QC Report</th>
+  </tr>
+
+  {% for row in inspections %}
+  <tr>
+    <!-- PO -->
+    <td>{{ row.qc.po_number }}</td>
+
+    <!-- Invoice -->
+    <td>
+      {{ row.qc.invoice_number|default:"-" }}
+    </td>
+
+    <!-- Category -->
+    <td>
+      {{ row.qc.category|default:"-" }}
+    </td>
+
+    <!-- Status -->
+    <td>
+      <b>{{ row.qc.status }}</b>
+    </td>
+
+    <!-- Open QC -->
+    <td>
+      <a href="{% url 'qc_detail' row.qc.id %}">
+        Open QC
+      </a>
+    </td>
+
+    <!-- Vehicle Entry -->
+    <td>
+      {% if row.vehicle_entry %}
+        <a href="{% url 'security:entry_pass_preview' row.vehicle_entry.id %}">
+          View Pass
+        </a>
+      {% else %}
+        -
+      {% endif %}
+    </td>
+
+    <!-- QC Report -->
+    <td>
+      {% if row.qc.invoice_number %}
+        <a href="{% url 'qc_invoice_report' row.qc.invoice_number %}">
+          View Report
+        </a>
+      {% else %}
+        -
+      {% endif %}
+    </td>
+  </tr>
+  {% empty %}
+  <tr>
+    <td colspan="7">No QC items available</td>
+  </tr>
+  {% endfor %}
+</table>
+
+</body>
+</html>

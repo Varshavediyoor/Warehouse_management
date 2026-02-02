@@ -1,0 +1,180 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "GRN Details" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/procurement_officer/grn_detail.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="grn-container">
+    <!-- header  -->
+    <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1><span>{% trans "GRN " %}</span> {% trans "Details" %}</h1>
+      </div>
+      <div class="wh-header-right">          
+          <a href="#" class="btn-back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+  </div>
+
+  <div class="grn-info-card">
+    <h3>{{ grn.grn_number }}</h3>
+    <div class="grn-info-grid">
+      <div class="info-block">
+         <p><strong>{% trans "Supplier" %}:</strong> {{ grn.supplier.supplier_name|default:grn.supplier.user.username }}</p>
+
+        <p><strong>{% trans "" %}{% trans "PO Number" %}:</strong> {{ grn.purchase_order.po_number }}</p>
+        <p><strong>{% trans "" %}{% trans "Received Date" %}:</strong> {{ grn.received_date }}</p>
+      </div>
+      <div class="info-block">
+
+      <p><strong>Status:</strong>
+        {% if grn.approval_status == 'Approved' %}
+          <span class="status-badge approved">{{ grn.approval_status }}</span>
+        {% elif grn.approval_status == 'Rejected' %}
+          <span class="status-badge rejected">{{ grn.approval_status }}</span>
+        {% else %}
+          <span class="status-badge pending">{{ grn.approval_status }}</span>
+        {% endif %}
+      </p>
+        <p><strong>{% trans "" %}PO Match Summary:</strong>
+          {% if grn.po_match_status == "Fully Matched" %}
+            <span class="status-badge approved">{{ grn.po_match_status }}</span>
+          {% elif grn.po_match_status == "Partially Matched" %}
+            <span class="status-badge warning">{{ grn.po_match_status }}</span>
+          {% elif grn.po_match_status == "Not Matched" %}
+            <span class="status-badge rejected">{{ grn.po_match_status }}</span>
+          {% else %}
+            <span class="status-badge pending">{{ grn.po_match_status }}</span>
+          {% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grn-table-title">
+    <h3>{% trans "Received Items" %}</h3>
+    <a href="{% url 'procurement_officer:add_grn_item' grn.id %}" class="btn-back">
+      <i class="fas fa-plus"></i> {% trans "Add Item" %}
+    </a>
+  </div>
+
+  <div class="table-scroll-wrapper">
+    <div class="table-container">
+      <table class="table-content" id="tableContent">
+        <thead>
+          <tr>
+            <th>{% trans "Product" %}</th>
+            <th>{% trans "Batch" %}</th>
+            <th>{% trans "PO Qty" %}</th>
+            <th>{% trans "Received Qty" %}</th>
+            <th>{% trans "Match Status" %}</th>
+            <th>{% trans "Condition" %}</th>
+            <th>{% trans "Barcode No" %}</th>
+            <th>{% trans "Barcode Image" %}</th>
+            <th>{% trans "Status" %}</th>
+            <th>{% trans "Action" %}</th>
+          </tr>
+        </thead>
+    
+<tbody>
+  {% if grn.items.all %}
+    {% for item in grn.items.all %}
+    <tr>
+      <!-- Product -->
+      <td data-label="Product">{{ item.product_name }}</td>
+
+      <!-- Batch -->
+      <td data-label="Batch">{{ item.batch_no }}</td>
+
+      <!-- PO Qty -->
+      <td data-label="PO Qty">{{ item.po_quantity|default:"—" }}</td>
+
+      <!-- Received Qty -->
+      <td data-label="Received Qty">{{ item.quantity_received }}</td>
+
+      <!-- Match Status -->
+      <td data-label="Match Status">
+        {% if item.match_status == "Matched" %}
+          <span class="status-badge approved">{{ item.match_status }}</span>
+        {% elif "mismatch" in item.match_status|lower %}
+          <span class="status-badge partial">{{ item.match_status }}</span>
+        {% elif item.match_status == "Not in PO" %}
+          <span class="status-badge rejected">{{ item.match_status }}</span>
+        {% else %}
+          <span class="status-badge pending">{{ item.match_status }}</span>
+        {% endif %}
+      </td>
+
+      <!-- Condition (MISSING BEFORE — now fixed) -->
+      <td data-label="Condition">{{ item.condition }}</td>
+
+      <!-- Barcode No -->
+      <td data-label="Barcode No">{{ item.barcode_number }}</td>
+
+      <!-- Barcode Image -->
+      <td data-label="Barcode Image">
+        {% if item.barcode_image %}
+          <a href="{% url 'procurement_officer:scan_grn_barcode' item.barcode_number %}">
+            <img src="{{ item.barcode_image.url }}" alt="Barcode" width="80" class="barcode-img">
+          </a>
+        {% else %}
+          <span class="text-muted">{% trans "No barcode" %}</span>
+        {% endif %}
+      </td>
+
+      <!-- Status -->
+      <td data-label="Status">
+        {% if item.verification_status == "Pending" %}
+          <span class="status-badge warning">{% trans "Pending" %}</span>
+        {% elif item.verification_status == "Approved" %}
+          <span class="status-badge approved">{% trans "Approved" %}</span>
+        {% else %}
+          <span class="status-badge rejected">{% trans "Rejected" %}</span>
+        {% endif %}
+      </td>
+
+      <!-- Action -->
+      <td data-label="Action">
+        {% if user.groups.first.name == "Warehouse Manager" %}
+          {% if item.verification_status == "Pending" %}
+          <div class="action-buttons">
+            <a href="{% url 'approve_grn_item' item.id %}" class="action-btn normal">{% trans "Approve" %}</a>
+            <a href="{% url 'reject_grn_item' item.id %}" class="action-btn reject">{% trans "Reject" %}</a>
+          </div>
+          {% else %}
+            <small class="text-muted">{% trans "Reviewed" %}</small>
+          {% endif %}
+        {% else %}
+          <small class="text-muted">{% trans "N/A" %}</small>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  {% else %}
+    <tr class="empty-row">
+      <td colspan="10">
+        <div class="empty-message">
+          <p>{% trans "No received items found for this GRN." %}</p>
+        </div>
+      </td>
+    </tr>
+  {% endif %}
+</tbody>
+
+      </table>
+    </div> 
+    <!-- Pagination Controls -->
+    <div class="pagination-container" id="tablePagination"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

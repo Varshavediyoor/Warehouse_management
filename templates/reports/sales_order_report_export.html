@@ -1,0 +1,288 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sales Order Report</title>
+
+  <style>
+    /* ================= PAGE ================= */
+    @page { size: A4; margin: 18mm 14mm; }
+    body {
+      font-family: "Helvetica", "Arial", sans-serif;
+      font-size: 11px;
+      color: #2c4c71;
+    }
+    h1, h2 { margin: 0; }
+
+    /* ================= HEADER ================= */
+    .header {
+      display: table;
+      width: 100%;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #2c8cfb;
+      margin-bottom: 16px;
+    }
+    .header-left { display: table-cell; width: 70%; vertical-align: middle; }
+    .header-right { display: table-cell; width: 30%; text-align: right; vertical-align: middle; }
+    .company-name { font-size: 20px; font-weight: 700; color: #2c8cfb; }
+    .company-details { font-size: 10px; color: #4b5563; line-height: 1.4; }
+    .logo { width: 95px; }
+
+    /* ================= REPORT INFO ================= */
+    .report-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .report-info h2 { font-size: 16px; font-weight: 700; }
+    .meta { font-size: 10px; color: #6b7280; }
+    .report-badge {
+      background: #2c8cfb;
+      color: #ffffff;
+      padding: 4px 10px;
+      font-size: 9px;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ================= SUMMARY ================= */
+    .summary {
+      display: table;
+      width: 100%;
+      margin-bottom: 12px;
+      background: #f1f5f9;
+      border-left: 4px solid #2c8cfb;
+    }
+    .summary-item {
+      display: table-cell;
+      padding: 10px;
+    }
+    .summary-item span {
+      font-size: 9px;
+      color: #6b7280;
+    }
+    .summary-item strong {
+      display: block;
+      font-size: 14px;
+      color: #2c4c71;
+    }
+
+    /* ================= KPIs ================= */
+    .kpi-row {
+      display: table;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    .kpi-card {
+      display: table-cell;
+      padding: 10px;
+      text-align: center;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+    }
+    .kpi-card span {
+      font-size: 9px;
+      color: #6b7280;
+    }
+    .kpi-card strong {
+      display: block;
+      font-size: 15px;
+      margin-top: 4px;
+    }
+    .kpi-orders strong { color: #2c8cfb; }
+    .kpi-sales strong { color: #16a34a; }
+    .kpi-refund strong { color: #dc2626; }
+
+    /* ================= TABLE ================= */
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+    }
+    .report-table thead {
+      background: #2c8cfb;
+      color: #ffffff;
+    }
+    .report-table th,
+    .report-table td {
+      padding: 8px 6px;
+      border: 1px solid #2c4c71;
+      font-size: 10px;
+    }
+    .report-table tbody tr:nth-child(even) {
+      background: #f8fafc;
+    }
+
+    .status {
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 9px;
+      font-weight: bold;
+    }
+    .status.draft { background: #fef3c7; color: #92400e; }
+    .status.approved { background: #dcfce7; color: #166534; }
+    .status.cancelled { background: #fee2e2; color: #991b1b; }
+
+    /* ================= CHARTS ================= */
+    .charts {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .chart {
+      flex: 1 1 45%;
+      text-align: center;
+    }
+    .chart img {
+      width: 100%;
+      max-height: 250px;
+    }
+
+    /* ================= FOOTER ================= */
+    .footer {
+      position: fixed;
+      bottom: -10mm;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 9px;
+      color: #6b7280;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 6px;
+    }
+    .footer .page:after {
+      content: counter(page);
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <h1 class="company-name">Warewose Pvt Ltd</h1>
+    <p class="company-details">
+      Warehouse & Inventory Management System<br>
+      GST: 32ABCDE1234F1Z5<br>
+      support@warewose.com | +91 98765 43210
+    </p>
+  </div>
+  <div class="header-right">
+    <img src="{% static 'images/warevos.png' %}" class="logo">
+  </div>
+</header>
+
+<!-- REPORT INFO -->
+<section class="report-info">
+  <div>
+    <h2>Sales Order Report</h2>
+    <p class="meta">Generated on: {{ generated_on|date:"d M Y, H:i" }}</p>
+  </div>
+  <div class="report-badge">INTERNAL REPORT</div>
+</section>
+
+<!-- SUMMARY -->
+<section class="summary">
+  <div class="summary-item">
+    <span>Total Records</span>
+    <strong>{{ orders|length }}</strong>
+  </div>
+  <div class="summary-item">
+    <span>Report Type</span>
+    <strong>Sales Orders</strong>
+  </div>
+</section>
+
+<!-- KPIs -->
+<!-- KPIs -->
+<section class="kpi-row">
+  <div class="kpi-card kpi-orders">
+    <span>Total Orders</span>
+    <strong>{{ kpis.total_orders }}</strong>
+  </div>
+  <div class="kpi-card kpi-sales">
+    <span>Total Sales</span>
+    <strong>{{ kpis.total_sales|floatformat:2 }}</strong>
+  </div>
+  <div class="kpi-card kpi-refund">
+    <span>Total Refund</span>
+    <strong>{{ kpis.total_refunds|floatformat:2 }}</strong>
+  </div>
+  <div class="kpi-card kpi-fulfilled">
+    <span>Fulfilled Orders</span>
+    <strong>{{ kpis.fulfilled_orders }}</strong>
+  </div>
+</section>
+
+
+<!-- CHARTS -->
+<section class="charts">
+  <div class="chart">
+    <h2>Monthly Sales Overview</h2>
+    <img src="data:image/png;base64,{{ monthly_sales_chart }}">
+  </div>
+
+  <div class="chart">
+    <h2>Order Status Distribution</h2>
+    <img src="data:image/png;base64,{{ status_distribution_chart }}">
+  </div>
+
+  <div class="chart" style="flex:1 1 100%; margin-top:16px;">
+    <h2>Trending Products</h2>
+    {% if trending_products_chart %}
+      <img src="data:image/png;base64,{{ trending_products_chart }}">
+    {% else %}
+      <p>No trending products data available</p>
+    {% endif %}
+  </div>
+</section>
+
+<!-- TABLE -->
+<table class="report-table">
+  <thead>
+    <tr>
+      <th>Order No</th>
+      <th>Customer Name</th>
+      <th>Address</th>
+      <th>Phone</th>
+      <th>Email</th>
+      <th>Remarks</th>
+      <th>Order Date</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in orders %}
+    <tr>
+      <td>{{ order.order_no }}</td>
+      <td>{{ order.customer_name }}</td>
+      <td>{{ order.customer_address|default:"-" }}</td>
+      <td>{{ order.customer_phone|default:"-" }}</td>
+      <td>{{ order.customer_email|default:"-" }}</td>
+      <td>{{ order.remarks|default:"-" }}</td>
+      <td>{{ order.order_date|date:"d-m-Y H:i" }}</td>
+      <td>
+        <span class="status {{ order.status|lower }}">
+          {{ order.status_display }}
+        </span>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="8" style="text-align:center;">No records found</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- FOOTER -->
+<footer class="footer">
+  © {{ generated_on|date:"Y" }} Warewose Pvt Ltd · Confidential · Page <span class="page"></span>
+</footer>
+
+</body>
+</html>

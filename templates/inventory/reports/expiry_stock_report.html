@@ -1,0 +1,125 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Expiry Stock Report" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/inventory_manager/expiry_stock_report.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="expiry-stock-report-container">
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Expiry " %}</span> {% trans " Stock Report" %}</h1>
+        </div>
+        <div class="wh-header-right">          
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+    
+<!-- ================= Search / Filter ================= -->
+<form method="get" class="search-filters">
+    <div class="filter-group">
+        <input type="text" name="name"
+               placeholder="{% trans 'Product Name' %}"
+               value="{{ request.GET.name }}">
+    </div>
+
+    <div class="filter-group">
+        <input type="text" name="sku"
+               placeholder="{% trans 'SKU' %}"
+               value="{{ request.GET.sku }}">
+    </div>
+
+    <div class="filter-group">
+        <input type="text" name="batch_number"
+               placeholder="{% trans 'Batch No' %}"
+               value="{{ request.GET.batch_number }}">
+    </div>
+
+    <div class="filter-group">
+        <select name="status">
+            <option value="">{% trans 'All Status' %}</option>
+            <option value="Good" {% if request.GET.status == 'Good' %}selected{% endif %}>
+                {% trans 'Good' %}
+            </option>
+            <option value="Expiring Soon" {% if request.GET.status == 'Expiring Soon' %}selected{% endif %}>
+                {% trans 'Expiring Soon' %}
+            </option>
+            <option value="Expired" {% if request.GET.status == 'Expired' %}selected{% endif %}>
+                {% trans 'Expired' %}
+            </option>
+        </select>
+    </div>
+
+    <div class="filter-actions">
+        <button type="submit" class="btn-search">
+            <i class="bi bi-search"></i> {% trans 'Search' %}
+        </button>
+
+        <a href="{% url 'warehouse_manager:expiry_stock_report' %}" class="btn-reset">
+            <i class="bi bi-arrow-clockwise"></i> {% trans 'Reset' %}
+        </a>
+    </div>
+</form>
+
+    
+    <!-- table  -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>{% trans "Product" %}</th>
+                        <th>{% trans "SKU" %}</th>
+                        <th>{% trans "Batch No" %}</th>
+                        <th>{% trans "Quantity" %}</th>
+                        <th>{% trans "Expiry Date" %}</th>
+                        <th>{% trans "Days Left" %}</th>
+                        <th>{% trans "Status" %}</th>
+                        <th>{% trans "Location" %}</th>
+                    </tr>
+                </thead>
+            
+                <tbody>
+                    {% for batch in batches %}
+                    <tr class="{% if batch.days_remaining < 0 %}expired{% elif batch.days_remaining <= 7 %}expiring-soon{% endif %}">
+                        <td data-label="{% trans 'Product' %}">{{ batch.stock.name }}</td>
+                        <td data-label="{% trans 'SKU' %}">{{ batch.stock.sku }}</td>
+                        <td data-label="{% trans 'Batch No' %}">{{ batch.batch_number }}</td>
+                        <td data-label="{% trans 'Quantity' %}">{{ batch.quantity_available }}</td>
+                        <td data-label="{% trans 'Expiry Date' %}">{{ batch.expiry_date|default:"No Expiry" }}</td>
+                        <td data-label="{% trans 'Days Left' %}">{% if batch.days_remaining < 0 %}0{% else %}{{ batch.days_remaining }}{% endif %}</td>
+                        <td data-label="{% trans 'Status' %}">
+                            {% if batch.days_remaining < 0 %}
+                                <span class="status-badge rejected">Expired</span>
+                            {% elif batch.days_remaining <= 7 %}
+                                <span class="status-badge bg-warning partial">Expiring Soon</span>
+                            {% else %}
+                                <span class="status-badge received">Good</span>
+                            {% endif %}
+                        </td>
+                        <td data-label="{% trans 'Location' %}">{{ batch.storage_location|default:"-" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">{% trans "No expiring stock found" %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

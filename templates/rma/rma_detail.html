@@ -1,0 +1,150 @@
+{% extends 'base_user.html' %}
+{% load static i18n math_filters %}
+
+{% block title %}{% trans "RMA Detail" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/rma/rma_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="rma-page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1>RMA #{{ rma.id }}</h1>
+      <p class="sub-text">{% trans "Return Merchandise Authorization details" %}</p>
+    </div>
+    <span class="status-badge status-{{ rma.status|lower }}">
+      {{ rma.status|capfirst }}
+    </span>
+  </div>
+
+  <!-- RMA Info -->
+  <div class="info-grid">
+
+    <div class="info-card">
+      <h3>{% trans "RMA Information" %}</h3>
+      <div class="info-row">
+        <span>{% trans "Reason" %}</span>
+        <strong>{{ rma.reason }}</strong>
+      </div>
+      <div class="info-row">
+        <span>{% trans "Created By" %}</span>
+        <strong>{{ rma.created_by.username }}</strong>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <h3>{% trans "Original Sales Invoice" %}</h3>
+      {% if sales_invoice %}
+        <div class="info-row">
+          <span>{% trans "Invoice No" %}</span>
+          <strong>{{ sales_invoice.invoice_no }}</strong>
+        </div>
+        <a
+          href="{% if sales_invoice.pdf %}{{ sales_invoice.pdf.url }}{% else %}{% url 'finance:view_sales_invoice' invoice_id=sales_invoice.id %}{% endif %}"
+          target="_blank"
+          class="action-btn"
+        >
+          {% trans "View Invoice" %}
+        </a>
+      {% else %}
+        <p class="muted">{% trans "No Sales Invoice Found" %}</p>
+      {% endif %}
+    </div>
+
+  </div>
+
+  {% if rma.refund %}
+  <!-- Refund Section -->
+  <div class="section-card">
+    <div class="section-header">
+      <h2>{% trans "Refund / Payment Details" %}</h2>
+    </div>
+
+    <div class="refund-grid">
+      <div>
+        <span>{% trans "Refund Mode" %}</span>
+        <strong>{{ rma.refund.get_refund_mode_display }}</strong>
+      </div>
+      <div>
+        <span>{% trans "Reference ID" %}</span>
+        <strong>{{ rma.refund.razorpay_ref_id }}</strong>
+      </div>
+      <div>
+        <span>{% trans "Refund Amount" %}</span>
+        <strong class="amount">₹{{ rma.refund.refund_amount|floatformat:2 }}</strong>
+      </div>
+    </div>
+
+    <!-- Original Order Items -->
+    <h4 class="table-title">{% trans "Original Order Items" %}</h4>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>{% trans "Product" %}</th>
+            <th>{% trans "Qty" %}</th>
+            <th>{% trans "Unit Price" %}</th>
+            <th>{% trans "Total" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in rma.sales_order.items.all %}
+          <tr>
+            <td>{{ item.stock.product.name|default:"N/A" }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>₹{{ item.unit_price|floatformat:2 }}</td>
+            <td>₹{{ item.subtotal|floatformat:2 }}</td>
+          </tr>
+          {% endfor %}
+          <tr class="total-row">
+            <td colspan="3">{% trans "Total Order Amount" %}</td>
+            <td>₹{{ rma.sales_order.total_amount|floatformat:2 }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Returned Items -->
+    <h4 class="table-title">{% trans "Returned Items" %}</h4>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>{% trans "Product" %}</th>
+            <th>{% trans "Qty" %}</th>
+            <th>{% trans "Unit Price" %}</th>
+            <th>{% trans "Total" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in rma.items.all %}
+          <tr>
+            <td>{{ item.order_item.stock.product.name|default:"N/A" }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>₹{{ item.order_item.unit_price|floatformat:2 }}</td>
+            <td>₹{{ item.quantity|mul:item.order_item.unit_price|floatformat:2 }}</td>
+          </tr>
+          {% endfor %}
+          <tr class="total-row refund">
+            <td colspan="3">{% trans "Total Refund Amount" %}</td>
+            <td>₹{{ rma.refund.refund_amount|floatformat:2 }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <a href="{% url 'finance:refund_invoice' refund_id=rma.refund.id %}"
+       target="_blank"
+       class="download-btn">
+      {% trans "Download Refund Invoice" %}
+    </a>
+
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

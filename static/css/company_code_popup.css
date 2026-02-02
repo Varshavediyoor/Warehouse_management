@@ -1,0 +1,141 @@
+.company-modal-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 9999;
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.company-modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 🎯 Smooth and Elegant Popup Growth */
+.company-modal-box {
+    background: #fff;
+    padding: 40px 40px 60px 40px;
+    border-radius: 10px;
+    width: 400px;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+    transform: scale(0.85);
+    opacity: 0;
+    transition:
+        transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),  /* Smooth natural easing */
+        opacity 0.4s ease-in-out;
+}
+
+.company-modal-overlay.show .company-modal-box {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.company-modal-box h3 {
+    color: #2c4c71;
+    font-size: 24px;
+    margin-bottom: 1rem;
+}
+
+.company-modal-box h3 span {
+    color: #2c8cfb;
+}
+
+/* Label — exactly same as login page */
+.company-label {
+    margin-bottom: 8px;
+    color: #446285;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    display: block;
+}
+
+/* Input — matching login design */
+.company-modal-box input {
+    width: 100%;
+    max-width: 350px;
+    padding: 0.6rem;
+    border-radius: 10px;
+    border: 2px solid #2c8cfb;
+    font-size: 0.9rem;
+    color: #333;
+    background-color: white;
+    margin: 0 auto 1rem auto;
+    display: block;
+}
+
+.company-modal-box input:focus {
+    outline: none;
+    box-shadow: 0 0 5px #2c8cfb;
+}
+
+/* Button styling update for consistency */
+.company-btn {
+    width: 100%;
+    max-width: 350px;
+    padding: 0.7rem;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    color: #ffffff;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 0 auto;
+    display: block;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden; /* ✅ Keeps shine animation inside button */
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.company-btn:hover {
+    transform: scale(1.01);
+}
+    
+.company-btn::before {
+    content: "";
+    position: absolute;
+    width: 80px; /* ✅ Slightly smaller for smooth edge transition */
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+    
+.company-btn:hover::before {
+    animation: shine 1.5s ease-out infinite;
+}
+    
+    @keyframes shine {
+      0% {
+          left: -80px;
+      }
+      60% {
+          left: 100%;
+      }
+      100% {
+          left: 100%;
+      }
+    }
+

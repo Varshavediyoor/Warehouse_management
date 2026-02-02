@@ -1,0 +1,40 @@
+{% extends "base_user.html" %}
+{% block content %}
+
+<h2>Putaway - {{ grn.grn_number }}</h2>
+
+<form method="post">
+{% csrf_token %}
+
+<label>Zone</label>
+<input type="text" name="zone" required>
+
+<label>Rack</label>
+<input type="text" name="rack" required>
+
+<label>Shelf</label>
+<input type="text" name="shelf">
+
+<hr>
+
+<table>
+<tr>
+  <th>Product</th>
+  <th>SKU</th>
+  <th>Qty</th>
+</tr>
+
+{% for item in items %}
+<tr>
+  <td>{{ item.product_name }}</td>
+  <td>{{ item.product_sku }}</td>
+  <td>{{ item.quantity_received }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<button type="submit">Confirm Putaway</button>
+
+</form>
+
+{% endblock %}

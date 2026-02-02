@@ -1,0 +1,124 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Gate Entry Details" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/security/gate_entry_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="gate-entry-wrapper">
+    <!-- header  -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Gate" %}</span> {% trans " Entry Details" %}</h1>
+            <div class="gate-entry-header-id">
+                <span class="entry-id">#{% trans "Entry ID" %}: {{ entry.id }}</span>
+            
+                <span class="status-badge
+                  {% if entry.validation_status == 'APPROVED' %} approved
+                  {% elif entry.validation_status == 'REJECTED' %} rejected
+                  {% else %} pending {% endif %}">
+                  {{ entry.validation_status }}
+                </span>
+            </div>
+        </div>
+        <div class="wh-header-right">          
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+  <!-- HEADER -->
+  <div class="gate-entry-header">
+
+  </div>
+
+  <!-- BASIC INFO -->
+  <div class="gate-info-grid">
+
+    <div class="info-card">
+      <i class="bi bi-truck"></i>
+      <div>
+        <span>{% trans "Vehicle Number" %}</span>
+        <strong>{{ entry.vehicle_number }}</strong>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <i class="bi bi-person-badge"></i>
+      <div>
+        <span>{% trans "Driver Name" %}</span>
+        <strong>{{ entry.driver_name }}</strong>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- DOCUMENT VERIFICATION -->
+  <div class="section-card">
+    <h3><i class="bi bi-file-earmark-check"></i> {% trans "Document Verification" %}</h3>
+
+    <ul class="doc-list">
+      <li class="{% if entry.invoice_verified %}ok{% else %}no{% endif %}">
+        <i class="bi bi-receipt"></i> {% trans "Invoice Verified" %}
+      </li>
+      <li class="{% if entry.delivery_order_verified %}ok{% else %}no{% endif %}">
+        <i class="bi bi-truck-flatbed"></i> {% trans "Delivery Order Verified" %}
+      </li>
+      <li class="{% if entry.gate_pass_verified %}ok{% else %}no{% endif %}">
+        <i class="bi bi-shield-check"></i> {% trans "Gate Pass Verified" %}
+      </li>
+    </ul>
+  </div>
+
+  <!-- ACTIONS -->
+  {% if entry.validation_status == 'PENDING' %}
+  <div class="section-card danger-zone">
+    <h3><i class="bi bi-exclamation-triangle"></i> {% trans "Validation Action" %}</h3>
+
+    <form method="post" action="{% url 'Security:gate_entry_validate' entry.id %}">
+      {% csrf_token %}
+
+      <textarea name="remarks"
+                placeholder="{% trans 'Remarks (required if rejecting)' %}"
+                class="remarks-box"></textarea>
+
+      <div class="action-buttons">
+        <button type="submit" name="action" value="reject" class="action-btn btn-reject">
+          <i class="bi bi-x-circle"></i> {% trans "Reject Entry" %}
+        </button>
+
+        <button type="submit" name="action" value="approve" class="action-btn btn-approve">
+          <i class="bi bi-check-circle"></i> {% trans "Approve Entry" %}
+        </button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  <!-- INVOICES -->
+  <div class="section-card">
+    <h3><i class="bi bi-receipt-cutoff"></i> {% trans "Related Invoices" %}</h3>
+
+    {% if invoices %}
+    <div class="invoice-list">
+      {% for invoice in invoices %}
+      <div class="invoice-item">
+        <span><strong>{{ invoice.invoice_no }}</strong></span>
+        <span>{{ invoice.invoice_date }}</span>
+        <span>₹ {{ invoice.total_amount }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+      <p class="no-data">{% trans "No invoices found for this gate entry." %}</p>
+    {% endif %}
+  </div>
+
+</section>
+
+{% endblock %}

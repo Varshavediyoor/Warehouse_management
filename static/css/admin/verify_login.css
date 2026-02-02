@@ -1,0 +1,158 @@
+.otp-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 4rem;
+}
+
+/* ========== OTP Card ========== */
+.otp-card {
+    background: #ffffff;
+    border: 1px solid #a5b8cc33;
+    border-radius: 16px;
+    padding: 40px;
+    width: 360px;
+    box-shadow: 0 8px 20px rgba(68, 98, 133, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: fadeInUp 0.7s ease;
+}
+
+.otp-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(68, 98, 133, 0.15);
+}
+
+/* ========== Titles ========== */
+.otp-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #2c8cfb;
+    margin-bottom: 8px;
+}
+
+.otp-subtitle {
+    font-size: 13px;
+    color: #446285;
+    margin-bottom: 25px;
+}
+
+/* ========== Input ========== */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.otp-input {
+    width: 100%;
+    padding: 10px 13px;
+    border-radius: 10px;
+    border: 1.8px solid #a5b8cc;
+    text-align: center;
+    font-size: 1.2rem;
+    letter-spacing: 5px;
+    background-color: #f7f9fa;
+    color: #2c4c71;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.otp-input:focus {
+    border-color: #2c8cfb;
+    box-shadow: 0 0 8px rgba(44, 140, 251, 0.3);
+    background-color: #ffffff;
+}
+
+/* ========== Buttons ========== */
+/* ========== Button ========== */
+.btn-verify {
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border: none;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 12px 0;
+    border-radius: 30px;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden; /* ✅ Keeps shine animation inside button */
+    position: relative;
+    margin-top: 15px;
+}
+
+.btn-verify:hover {
+    transform: scale(1.02);
+}
+
+.btn-verify::before {
+    content: "";
+    position: absolute;
+    width: 80px; /* ✅ Slightly smaller for smooth edge transition */
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+    
+.btn-verify:hover::before {
+    animation: shine 1.5s ease-out infinite;
+}
+    
+@keyframes shine {
+    0% {
+        left: -80px;
+    }
+    60% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* ========== Resend Button ========== */
+.btn-resend {
+    background: none;
+    border: none;
+    color: #446285;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.btn-resend:disabled {
+    color: #5cacfa;
+    cursor: not-allowed;
+}
+
+.btn-resend:hover:not(:disabled) {
+    color: #2c8cfb;
+}
+
+/* ========== Hint Text ========== */
+.hint-text {
+    margin-top: 15px;
+    font-size: 0.85rem;
+    color: #446285;
+}
+
+/* ========== Animations ========== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

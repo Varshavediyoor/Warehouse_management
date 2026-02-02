@@ -1,0 +1,33 @@
+{% extends "base_user.html" %}
+{% block content %}
+
+<h2>My Transfer Requests</h2>
+
+{% for message in messages %}
+  <p style="color: green;">{{ message }}</p>
+{% endfor %}
+
+<table border="1" cellpadding="6">
+    <tr>
+        <th>Request No</th>
+        <th>To Warehouse</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    {% for t in transfers %}
+    <tr>
+        <td>{{ t.request_no }}</td>
+        <td>{{ t.receiver_warehouse_code }}</td>
+        <td>{{ t.status }}</td>
+        <td>
+            <!-- View Details Link -->
+            <a href="{% url 'salesofficer:transfer_detail' t.id %}">View Details</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br>
+<a href="{% url 'salesofficer:create_transfer' %}">Create New Transfer</a>
+
+{% endblock %}

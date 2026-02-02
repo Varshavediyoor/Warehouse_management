@@ -1,0 +1,53 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Create Location" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/inventory_manager/location/create_form.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="form-wrapper">
+    <div class="form-card">
+
+        <!-- Header -->
+        <div class="form-header">
+            <div>
+                <h2>
+                    {% if form.instance.pk %}
+                        <span>{% trans "Edit " %}</span>{% trans "Location" %}
+                    {% else %}
+                        <span>{% trans "Create " %}</span>{% trans "Location" %}
+                    {% endif %}
+                </h2>
+                <p class="subtitle">
+                    {% trans "Add or update warehouse locations for better inventory management." %}
+                </p>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <form method="post" class="custom-form">
+            {% csrf_token %}
+
+            <div class="form-grid">
+                {{ form.as_p }}
+            </div>
+
+            <!-- Actions -->
+            <div class="action-buttons">
+                <a href="{% url 'location_list' %}" class="action-btn cancel">
+                    {% trans "Cancel" %}
+                </a>
+                <button type="submit" class="action-btn normal">
+                    {% trans "Save Location" %}
+                </button>
+            </div>
+        </form>
+
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Return QC" %}{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+
+    <div class="page-header">
+        <h3>{% trans "QC Check" %} - RMA #{{ rma.id }}</h3>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="card p-4">
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Item" %}</th>
+                        <th>{% trans "Qty" %}</th>
+                        <th>{% trans "QC Result" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in items %}
+                    <tr>
+                        <td>{{ i.order_item.product }}</td>
+                        <td>{{ i.quantity }}</td>
+                        <td>
+                            <select class="form-control" name="qc_{{ i.id }}">
+                                <option value="good">{% trans "Good - Restock" %}</option>
+                                <option value="scrap">{% trans "Scrap" %}</option>
+                                <option value="repair">{% trans "Repair / WIP" %}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <button class="btn btn-primary">{% trans "Submit QC" %}</button>
+
+        </div>
+    </form>
+
+</div>
+{% endblock %}

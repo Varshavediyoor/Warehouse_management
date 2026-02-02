@@ -1,0 +1,93 @@
+{% extends 'base_admin.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Clients" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/client/client_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin/admin_report_table.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="role-header">
+
+    <!-- header  -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Clients " %}</span> {% trans " List" %}</h1>
+            <p class="subtext">{% trans "View and manage all registered client companies." %}</p>
+        </div>
+        <div class="wh-header-right"> 
+            <a href="{% url 'client_create' %}" class="btn-back add">
+                <i class="bi bi-plus"></i> {% trans "Add Client" %}
+            </a>         
+            <a href="{% url 'custom_admin_dashboard' %}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+  {% if clients %}
+  <div class="table-scroll-wrapper">
+    <div class="table-container">
+        <table class="report-table" id="reportTable">
+            <thead>
+                <tr>
+                    <th>Logo</th>
+                    <th>Company Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+        
+            <tbody>
+                {% for client in clients %}
+                <tr>
+                    <td>
+                        {% if client.company_logo %}
+                            <img src="{{ client.company_logo.url }}" class="logo">
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+        
+                    <td>{{ client.company_name }}</td>
+                    <td>{{ client.email }}</td>
+                    <td>{{ client.phone }}</td>
+        
+                    <td>
+                        <div class="action-buttons">
+                            <a class="action-btn normal" href="{% url 'client_detail' client.id %}">
+                                View
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="no-data">
+                        {% trans "No clients found" %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+     <!-- Pagination Controls -->
+     <div class="pagination-container" id="tablePagination"></div>
+  </div>
+  {% else %} 
+  <div class="no-clients">
+    <p>No clients found.</p>
+  </div>
+  {% endif %}
+  
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="{% static 'js/admin/admin_report_tables.js' %}"></script>
+{% endblock %}

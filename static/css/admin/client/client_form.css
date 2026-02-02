@@ -1,0 +1,299 @@
+.client-form-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(25px) scale(0.98);
+        filter: blur(6px);
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+  }
+
+/* ----------- Header ----------- */
+.register-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+  }
+  
+  .register-header h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c4c71;
+    opacity: 0;
+    transform: translateX(-30px);
+    animation: titleSlideIn 0.8s ease-out forwards;
+    animation-delay: 0.3s;
+  }
+  
+  @keyframes titleSlideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  .register-header h1 span {
+    color: #2c8cfb;
+  }
+  
+  /* Back button */
+  .register-header a {
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border-radius: 30px;
+    color: #fff;
+    padding: 0.4rem 2rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden;
+    position: relative;
+    opacity: 0;
+    transform: translateX(50px);
+    animation: slideInRight 0.8s ease-out forwards;  /* 🎯 Animation added */
+  }
+  
+  /* 🎬 Keyframes for slide-in animation from right */
+  @keyframes slideInRight {
+    0% {
+      opacity: 0;
+      transform: translateX(50px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  
+  .register-header a:hover {
+    transform: scale(1.05);
+  }
+  
+  .register-header a::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 100%;
+    background-image: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  
+  .register-header a:hover::before {
+    animation: shine 1.5s ease-out infinite;
+  }
+  
+  @keyframes shine {
+    0% {
+      left: -80px;
+    }
+    60% {
+      left: 100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+
+.form-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.08);
+    display: grid;
+    grid-template-columns: 2fr 5fr;   /* Updated ratio */
+    overflow: hidden;
+}
+
+
+.illustration-box {
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    padding: 30px 15px;
+    border-top-right-radius: 18px;
+    border-bottom-right-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.illustration-box img {
+    width: 100%;
+    max-width: 300px;
+    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.1));
+}
+
+.illustration-content {
+    margin-top: 25px;
+}
+
+.instruction-list {
+    list-style: none;
+    padding: 0 15px;
+    margin-top: 1.5rem;
+    width: 100%;
+  }
+  
+  .instruction-list li {
+    margin-bottom: 0.7rem;
+    color: #fff;
+    padding-left: 25px;
+    position: relative;
+    line-height: 1.6;
+    font-size: 13px;
+  }
+  
+  .instruction-list li::before {
+    content: "✔";
+    color: #fff;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+
+.form-box {
+    padding: 35px 30px;
+}
+
+.form-grid {
+    display: grid;
+    padding: 2rem;
+    border-radius: 20px;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    border-right: 6px solid #bddcff;
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+.form-field label {
+    font-weight: 600;
+    font-size: 13px;
+    color: #1a2e47;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    height: 45px;               /* 👈 Same height as input */
+    border: 1px solid #5cacfa;
+    background: #f8faff;
+    transition: 0.3s;
+    font-size: 14px;
+    resize: none;               /* 👈 Prevent manual resizing */
+    overflow: hidden;           /* 👈 Keep clean look */
+}
+
+.form-field textarea {
+    height: 65px;
+}
+
+
+.form-field input:focus,
+.form-field textarea:focus {
+    border-color: #6a96e6;
+    background: #fff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(106, 150, 230, 0.2);
+}
+
+
+/* Button */
+.btn-register {
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border: none;
+    color: white;
+    padding: 0.6rem 5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 17px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    margin-top: 25px;
+    display: inline-block;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden;
+    /* ✅ Keeps shine animation inside button */
+    position: relative;
+  }
+  
+  .btn-register:hover {
+    transform: scale(1.05);
+  }
+  
+  .btn-register::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    /* ✅ Slightly smaller for smooth edge transition */
+    height: 100%;
+    background-image: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(255, 255, 255, 0.8),
+      rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  
+  .btn-register:hover::before {
+    animation: shine 1.5s ease-out infinite;
+  }
+  
+  @keyframes shine {
+    0% {
+      left: -80px;
+    }
+    60% {
+      left: 100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }

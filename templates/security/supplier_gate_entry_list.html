@@ -1,0 +1,79 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Supplier Gate Entry List" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/security/supplier_gate_entry_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class="supplier-container">
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Supplier " %}</span>
+                {% trans " Gate Entries" %}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>PO No</th>
+                        <th>Vehicle</th>
+                        <th>Driver</th>
+                        <th>Status</th>
+                        <th>Entry Time</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in entries %}
+                    <tr>
+                        <td>{{ e.dispatch.purchase_order.po_number }}</td>
+                        <td>{{ e.vehicle_number }}</td>
+                        <td>{{ e.driver_name }}</td>
+                        <td>{{ e.get_status_display }}</td>
+                        <td>{{ e.entry_time }}</td>
+                        <td>
+                            <div class="action-buttons supplier">
+                                <a href="{% url 'security:supplier_gate_pass_view' e.id %}"
+                                class="action-btn normal">
+                                Gate Pass
+                                </a>
+    
+                                {% if e.status == "IN" %}
+                                <a href="{% url 'security:supplier_gate_exit' e.id %}"
+                                class="action-btn delete">
+                                Exit
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

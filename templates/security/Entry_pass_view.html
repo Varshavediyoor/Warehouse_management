@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Warehouse Entry Pass</title>
+    <style>
+        body{font-family:Arial;padding:20px}
+        .card{border:1px solid #ccc;padding:20px;width:400px}
+        .btns{margin-top:20px}
+        button{padding:8px 15px;margin-right:10px}
+    </style>
+</head>
+<body>
+
+<div class="card">
+
+<h2>WAREHOUSE ENTRY PASS</h2>
+
+<p><b>PO No:</b> {{ entry.po_invoice.po_number }}</p>
+<p><b>Vehicle No:</b> {{ entry.vehicle_number }}</p>
+<p><b>Gate No:</b> {{ entry.gate_no }}</p>
+<p><b>Entry Time:</b> {{ entry.entry_time }}</p>
+<p><b>Security:</b> {{ entry.checked_by.username }}</p>
+
+{% if entry.barcode %}
+<img src="{{ entry.barcode.url }}" width="250">
+{% endif %}
+<h4>Captured Images</h4>
+
+
+{% if entry.front_image %}
+<img src="{{ entry.front_image.url }}" width="200"><br>
+{% endif %}
+
+{% if entry.rear_image %}
+<img src="{{ entry.rear_image.url }}" width="200"><br>
+{% endif %}
+
+{% if entry.side_image %}
+<img src="{{ entry.side_image.url }}" width="200"><br>
+{% endif %}
+
+{% if entry.driver_image %}
+<img src="{{ entry.driver_image.url }}" width="200"><br>
+{% endif %}
+
+
+<div class="btns">
+    <button onclick="window.print()">🖨 Print Pass</button>
+
+    <a href="{% url 'security:entry_pass_pdf' entry.id %}">
+        <button type="button">📥 Download PDF</button>
+    </a>
+</div>
+
+</div>
+
+</body>
+</html>

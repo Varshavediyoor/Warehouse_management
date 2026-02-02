@@ -1,0 +1,55 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Confirm QC Approval" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/qc_approve.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="qc-approve-wrapper">
+
+  <div class="qc-approve-card fade-up">
+
+    <!-- ICON -->
+    <div class="qc-icon">
+      <i class="bi bi-patch-check-fill"></i>
+    </div>
+
+    <!-- TITLE -->
+    <h2><span>{% trans "Confirm " %}</span>{% trans "QC Approval" %}</h2>
+    <p class="qc-task">
+      {% trans "Task ID" %}: <strong>#{{ task.id }}</strong>
+    </p>
+
+    <!-- INFO BOX -->
+    <div class="qc-info-box">
+      <p>
+        <i class="bi bi-info-circle"></i>
+        {% trans "Accepted quantities will be permanently moved to Internal Stock." %}
+      </p>
+      <p class="warning">
+        <i class="bi bi-exclamation-triangle"></i>
+        {% trans "This action cannot be undone." %}
+      </p>
+    </div>
+
+    <!-- ACTIONS -->
+    <form method="post" class="action-buttons">
+      {% csrf_token %}
+      <a href="{% url 'quality_controller:qc_task_detail' task.id %}"
+      class="action-btn normal">
+     <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+      </a>
+      <button type="submit" class="action-btn approve">
+        <i class="bi bi-check-circle"></i> {% trans "Approve" %}
+      </button>
+    </form>
+
+  </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}Invoice {{ invoice.invoice_no }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/finance/invoice_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="invoice-detail-header">
+  <div class="invoice-detail-header-left">
+    <h1>Invoice <span>{{ invoice.invoice_no }}</span></h1>
+    <p class="subtext">Manage and review all sales invoice records</p>
+  </div>
+  <a href="javascript:history.back()" class="btn-back"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+
+<div class="invoice-wrapper">
+
+    <!-- HEADER -->
+    <div class="invoice-header">
+        <div class="company-section">
+            <img src="{% static 'images/logo-png.png' %}" class="company-logo">
+            <h2>CodEdu Software Technologies</h2>
+            <p class="company-address">
+                123 Business Street,<br>
+                Chennai, India
+            </p>
+        </div>
+
+        <div class="invoice-meta">
+            <h1>INVOICE</h1>
+            <p>
+                <strong>Invoice No:</strong> {{ invoice.invoice_no }}<br>
+                <strong>Date:</strong> {{ invoice.invoice_date|date:"d M Y" }}<br>
+                <strong>Status:</strong>
+                <span class="inv-status {{ invoice.status|lower }}">
+                    {{ invoice.status }}
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <!-- BILL & ORDER -->
+    <div class="info-grid">
+        <div class="info-card">
+            <h4>Bill To</h4>
+            <p>
+                <strong>{{ invoice.order.customer_name }}</strong><br>
+                {{ invoice.order.customer_address|default:"-" }}<br>
+                Phone: {{ invoice.order.customer_phone|default:"-" }}<br>
+                Email: {{ invoice.order.customer_email|default:"-" }}
+            </p>
+        </div>
+
+        <div class="info-card">
+            <h4>Order Details</h4>
+            <p>
+                <strong>Order No:</strong> {{ invoice.order.order_no }}<br>
+                <strong>Order Date:</strong> {{ invoice.order.order_date|date:"d M Y" }}<br>
+                <strong>Salesperson:</strong> {{ invoice.order.created_by.username|default:"-" }}
+            </p>
+        </div>
+    </div>
+
+    <!-- ITEMS TABLE -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
+                        <th>Tax Rate</th>
+                        <th>Tax Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order_items %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td class="text-start">{{ item.stock.name|default:"-" }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.unit_price|floatformat:2 }}</td>
+                        <td>{{ item.amount|floatformat:2 }}</td>
+                        <td>{{ item.tax_rate|floatformat:2 }}%</td>
+                        <td>{{ item.tax_amount|floatformat:2 }} {{ currency }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="empty">No items found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TOTALS -->
+    <div class="totals-box">
+        <table>
+            <tr>
+                <th>Subtotal:</th>
+                <td>{{ invoice.subtotal|floatformat:2 }} {{ currency }}</td>
+            </tr>
+            <tr>
+                <th>{{ tax_type }}:</th>
+                <td>{{ tax_amount|floatformat:2 }} {{ currency }}</td>
+            </tr>
+            <tr class="grand">
+                <th>Grand Total:</th>
+                <td>{{ grand_total|floatformat:2 }} {{ currency }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- SIGNATURE & TERMS -->
+    <div class="signature-row">
+        <div class="terms-box">
+            <h4>Terms & Conditions</h4>
+            <p>
+                All goods sold are subject to our standard business policies. 
+                Payment should be made within the agreed period. 
+                The company will not be responsible for delays caused by external agents.
+            </p>
+        </div>
+  
+        <div class="sign-box single-sign">
+            <div class="line"></div>
+            <p>Authorized Signature</p>
+        </div>
+    </div>
+
+    <hr class="invoice-hr">
+
+    <div class="invoice-end">
+        <p><i class="bi bi-telephone-fill"></i> 9898767898</p>
+        <p><i class="bi bi-envelope-fill"></i> company@gmail.com</p>
+        <p><i class="bi bi-globe"></i> www.website.com</p>
+    </div>
+</div>
+
+{% endblock %}

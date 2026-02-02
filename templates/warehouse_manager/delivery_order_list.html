@@ -1,0 +1,121 @@
+{% extends "base_user.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Delivery Orders" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/warehouse_manager/delivery_order_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="delivery-order-container">
+
+    <!-- header  -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Delivery " %}</span> {% trans "Order List" %}</h1>
+        </div>
+        <div class="wh-header-right">          
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+<!-- Filters -->
+<form method="get" class="filter-form">
+    <select name="year">
+        <option value="">{% trans "All Years" %}</option>
+        {% for y in years %}
+            <option value="{{ y }}" {% if selected_year == y|stringformat:"s" %}selected{% endif %}>
+                {{ y }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <select name="month">
+        <option value="">{% trans "All Months" %}</option>
+        {% for m in months %}
+            <option value="{{ m.value }}" {% if selected_month == m.value|stringformat:"s" %}selected{% endif %}>
+                {{ m.label }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit" class="action-btn view">{% trans "Filter" %}</button>
+</form>
+
+
+
+    <!-- table  -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+            <thead>
+                <tr>
+                    <th>{% trans "DO No" %}</th>
+                    <th>{% trans "Sales Order No" %}</th>
+                    <th>{% trans "Customer" %}</th>
+                    <th>{% trans "Total Items" %}</th>
+                    <th>{% trans "Picklist Exists" %}</th>
+                    <th>{% trans "Action" %}</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for do in delivery_orders %}
+                <tr>
+                    <td>{{ do.delivery_no }}</td>
+                    <td>{{ do.order.order_no }}</td>
+                    <td>{{ do.order.customer_name }}</td>
+                    <td>{{ do.items.count }}</td>
+
+                    <td>
+                        {% if do.picklist_exists %}
+                            <span class="status-badge tag-completed">
+                                {% trans "Yes" %}
+                            </span>
+                        {% else %}
+                            <span class="status-badge tag-pending">
+                                {% trans "No" %}
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <div class="action-buttons">
+                            {% if do.picklist_exists %}
+                            <a href="{% url 'warehouse_manager:view_picklist' do.first_picklist.id %}"
+                               class="action-btn normal">
+                                {% trans "View Picklist" %}
+                            </a>
+                        {% else %}
+                            <a href="{% url 'warehouse_manager:start_picking' do.id %}"
+                               class="action-btn normal">
+                                {% trans "Generate Picklist" %}
+                            </a>
+                        {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="no-data">
+                        {% trans "No delivery orders available." %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+            <!-- Pagination Controls -->
+            <div class="pagination-container" id="tablePagination"></div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

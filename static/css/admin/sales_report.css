@@ -1,0 +1,234 @@
+/* Container */
+.wh-admin-report-container {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+    margin-top: 30px;
+}
+
+/* Header Section */
+.wh-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.wh-header-left h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.wh-header-left h1 span {
+    color: #0d6efd;
+}
+
+.wh-header-left .subtext {
+    color: #6c757d;
+    font-size: 0.95rem;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background-color: #f8f9fa;
+    color: #495057;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: 0.2s;
+}
+
+.btn-back:hover {
+    background-color: #e2e6ea;
+}
+
+/* Filter Form */
+.filter-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.filter-form input,
+.filter-form select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    font-size: 0.9rem;
+}
+
+.filter-form button {
+    background-color: #0d6efd;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.filter-form button:hover {
+    background-color: #0b5ed7;
+}
+
+/* Report Meta */
+.report-meta {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+.records-count {
+    font-weight: 600;
+    color: #495057;
+}
+
+.generated-date {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    color: #fff;
+    transition: 0.2s;
+}
+
+.action-btn.excel {
+    background-color: #198754;
+}
+
+.action-btn.excel:hover {
+    background-color: #157347;
+}
+
+.action-btn.pdf {
+    background-color: #dc3545;
+}
+
+.action-btn.pdf:hover {
+    background-color: #bb2d3b;
+}
+
+/* Table */
+.table-scroll-wrapper {
+    overflow-x: auto;
+}
+
+.table-container {
+    min-width: 100%;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.report-table th,
+.report-table td {
+    padding: 10px 8px;
+    text-align: center;
+    vertical-align: middle;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.report-table thead th {
+    background-color: #343a40;
+    color: #fff;
+    font-weight: 600;
+}
+
+.report-table tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+.no-data {
+    color: #6c757d;
+    padding: 15px 0;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fff;
+    display: inline-block;
+}
+
+.status-badge.pending {
+    background-color: #6c757d; /* Grey */
+}
+
+.status-badge.partial {
+    background-color: #ffc107; /* Yellow */
+    color: #212529;
+}
+
+.status-badge.received {
+    background-color: #198754; /* Green */
+}
+
+.status-badge.cancelled {
+    background-color: #dc3545; /* Red */
+}
+
+/* Pagination */
+.pagination-container {
+    margin-top: 15px;
+    text-align: center;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .wh-header-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .report-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .filter-form {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.status-badge { 
+    padding: 3px 6px; 
+    border-radius: 4px; 
+    font-size: 12px; 
+    color: white; 
+    font-weight: bold;
+}
+
+.draft { background-color: #ffc107; }       /* yellow */
+.submitted { background-color: #17a2b8; }   /* blue */
+.approved { background-color: #28a745; }    /* green */
+.rejected { background-color: #dc3545; }    /* red */
+.reserved { background-color: #6f42c1; }    /* purple */
+.fulfilled { background-color: #20c997; }   /* teal */
+.closed { background-color: #343a40; }      /* dark grey */
+.cancelled { background-color: #6c757d; }   /* grey */

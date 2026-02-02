@@ -1,0 +1,73 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Putaway List" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/inventory_manager/putaway/putaway_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="putaway_list_container">
+    <!-- header  -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Putaway" %}</span> {% trans " Rules" %}</h1>
+        </div>
+        <div class="wh-header-right">       
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <div class="meta-action-buttons">
+        <a href="{% url 'putaway_rule_create' %}" class="add-btn">+ Add New Rule</a>   
+    </div>
+    <!-- table  -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Preferred Location</th>
+                        <th>Priority</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rule in rules %}
+                    <tr>
+                        <td>{{ rule.product }}</td>
+                        <td>{{ rule.category }}</td>
+                        <td>{{ rule.preferred_location.full_path }}</td>
+                        <td>{{ rule.priority }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{% url 'putaway_rule_update' rule.id %}" class="action-btn edit">Edit</a>
+                                <a href="{% url 'putaway_rule_delete' rule.id %}" class="action-btn delete">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align:center;">No rules found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

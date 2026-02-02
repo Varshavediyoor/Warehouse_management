@@ -1,0 +1,79 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "purchase Invoice List" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/finance/purchase_invoice_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="purchase-invoice-list-container">
+    <!-- header  -->
+    <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1><span>{% trans "Purchase" %}</span> {% trans "Invoice List" %}</h1>
+      </div>
+      <div class="wh-header-right">          
+          <a href="javascript:history.back()" class="btn-back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+    </div>
+
+    <!-- table  -->
+    <div class="table-scroll-wrapper">
+      <div class="table-container">
+          <table class="table-content" id="tableContent">
+            <thead>
+              <tr>
+                <th>{% trans "Invoice No" %}</th>
+                <th>{% trans "Supplier" %}</th>
+                <th>{% trans "Purchase Order" %}</th>
+                <th>{% trans "Date" %}</th>
+                <th>{% trans "Total Amount" %}</th>
+                <th>{% trans "Status" %}</th>
+                <th>{% trans "Actions" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for inv in purchase_invoices %}
+              <tr>
+                <td>{{ inv.invoice_no }}</td>
+                <td>{{ inv.supplier.supplier_name }}</td>
+                <td>{{ inv.purchase_order.purchase_order_no }}</td>
+                <td>{{ inv.invoice_date|date:"d M Y" }}</td>
+                <td>{{ inv.total_amount|floatformat:2 }}</td>
+                <td>
+                  <span class="
+                    {% if inv.status == 'Paid' %}status-badge received
+                    {% elif inv.status == 'Partially Paid' %}status-badge partial
+                    {% else %}status-badge pending
+                    {% endif %}">
+                    {{ inv.status }}
+                  </span>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <a href="{% url 'finance:purchase_invoice_detail' inv.id %}" class="action-btn normal">{% trans "View" %}</a>
+                    {% if inv.pdf %}
+                    <a href="{{ inv.pdf.url }}" class="action-btn pdf" target="_blank">PDF</a>{% endif %}
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+      </div>
+      <!-- Pagination Controls -->
+      <div class="pagination-container" id="tablePagination"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

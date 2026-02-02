@@ -1,0 +1,90 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Add Tax Rule" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/finance/tax/tax_rule_form.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="tax-rule-page">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+      <div class="wh-header-left">
+          <h1>
+              <span>{% trans "Add " %}</span>
+              {% trans " Tax Rule" %}
+          </h1>
+          <p>{% trans "Define taxation rules based on category, location, and rate" %}</p>
+      </div>
+      <div class="wh-header-right">
+          <a href="javascript:history.back()" class="btn-back">
+              <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+          </a>
+      </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="tax-rule-card">
+
+    <div class="card-illustration">
+      <i class="bi bi-receipt-cutoff"></i>
+    </div>
+
+    <form method="post" class="tax-rule-form">
+      {% csrf_token %}
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          {{ form.tax_type.label_tag }}
+          {{ form.tax_type }}
+        </div>
+
+        <div class="form-group">
+          {{ form.category.label_tag }}
+          {{ form.category }}
+        </div>
+
+        <div class="form-group">
+          {{ form.country.label_tag }}
+          {{ form.country }}
+        </div>
+
+        <div class="form-group">
+          {{ form.state.label_tag }}
+          {{ form.state }}
+        </div>
+
+        <div class="form-group">
+          {{ form.rate.label_tag }}
+          <div class="rate-input">
+            {{ form.rate }}
+            <span class="suffix">%</span>
+          </div>
+        </div>
+
+        <div class="form-group checkbox-group">
+          {{ form.is_active }}
+          <label for="{{ form.is_active.id_for_label }}">
+            {% trans "Active Rule" %}
+          </label>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-save">
+          <i class="bi bi-check-circle"></i> {% trans "Save Tax Rule" %}
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

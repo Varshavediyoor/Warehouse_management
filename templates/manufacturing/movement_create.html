@@ -1,0 +1,12 @@
+{% extends "base_user.html" %}
+
+{% block content %}
+<h2>Create Manufacturing Movement</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <p>This is a placeholder for material issue / FG receipt.</p>
+  <button type="submit" class="btn btn-primary">Create Movement</button>
+</form>
+
+{% endblock %}

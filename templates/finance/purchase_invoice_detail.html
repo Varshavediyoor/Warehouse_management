@@ -1,0 +1,161 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Purchase Invoice" %} {{ invoice.invoice_no }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/finance/invoice_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="invoice-detail-header">
+  <div class="invoice-detail-header-left">
+    <h1>{% trans "Invoice" %} <span>{{ invoice.invoice_no }}</span></h1>
+    <p class="subtext">{% trans "Review all purchase invoice details" %}</p>
+  </div>
+  <a href="{% url 'finance:purchase_invoice_list' %}" class="btn-back">
+    <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+  </a>
+</div>
+
+<div class="invoice-wrapper">
+
+    <!-- HEADER -->
+    <div class="invoice-header">
+        <div class="company-section">
+            <img src="{% static 'images/logo.png' %}" class="company-logo">
+            <h2>Warevos</h2>
+            <p class="company-address">
+                123 Business Street,<br>
+                Chennai, India
+            </p>
+        </div>
+
+        <div class="invoice-meta">
+            <h1>INVOICE</h1>
+            <p>
+                <strong>Invoice No:</strong> {{ invoice.invoice_no }}<br>
+                <strong>Invoice Date:</strong> {{ invoice.invoice_date|date:"d M Y" }}<br>
+                <strong>Status:</strong>
+                <span class="inv-status {{ invoice.status|lower }}">
+                    {{ invoice.status }}
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <!-- SUPPLIER & ORDER -->
+    <div class="info-grid">
+        <div class="info-card">
+            <h4>Supplier</h4>
+            <p>
+                <strong>{{ invoice.supplier.supplier_name }}</strong><br>
+                {{ invoice.supplier.address|default:"-" }}<br>
+                Phone: {{ invoice.supplier.phone|default:"-" }}<br>
+                Email: {{ invoice.supplier.email|default:"-" }}
+            </p>
+        </div>
+
+        <div class="info-card">
+            <h4>Order Details</h4>
+            <p>
+                <strong>PO No:</strong> {{ invoice.purchase_order.po_number }}<br>
+                <strong>Order Date:</strong>
+                {{ invoice.purchase_order.order_date|date:"d M Y" }}
+            </p>
+        </div>
+    </div>
+
+    <!-- ITEMS TABLE -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Product</th>
+                        <th>Qty Ordered</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+  <td class="text-start">{{ item.product.name }}</td>
+<td>{{ item.quantity_ordered }}</td>
+<td>{{ item.unit_price|floatformat:2 }}</td>
+<td>{{ item.line_total|floatformat:2 }}</td>
+
+
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="empty">No items found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TOTALS -->
+    <div class="totals-box">
+        <table>
+            <tr>
+                <th>Subtotal:</th>
+                <td>{{ subtotal|floatformat:2 }} {{ currency }}</td>
+            </tr>
+
+            <tr>
+                <th>Tax:</th>
+                <td>{{ tax_amount|floatformat:2 }} {{ currency }}</td>
+            </tr>
+
+            <tr class="grand">
+                <th>Grand Total:</th>
+                <td>{{ grand_total|floatformat:2 }} {{ currency }}</td>
+            </tr>
+<!-- 
+            <tr>
+                <th>Total Paid:</th>
+                <td>{{ total_paid|floatformat:2 }} {{ currency }}</td>
+            </tr>
+
+            <tr class="balance">
+                <th>Balance Due:</th>
+                <td>{{ balance_due|floatformat:2 }} {{ currency }}</td>
+            </tr> -->
+        </table>
+    </div>
+
+    <!-- TERMS & SIGNATURE -->
+    <div class="signature-row">
+        <div class="terms-box">
+            <h4>Terms & Conditions</h4>
+            <p>
+                All goods are subject to company policies.
+                Payment must be made within the agreed period.
+                Warranty and service depend on manufacturer terms.
+            </p>
+        </div>
+
+        <div class="sign-box single-sign">
+            <div class="line"></div>
+            <p>Authorized Signature</p>
+        </div>
+    </div>
+
+    <hr class="invoice-hr">
+
+    <div class="invoice-end">
+        <p><i class="bi bi-telephone-fill"></i> 9898767898</p>
+        <p><i class="bi bi-envelope-fill"></i> company@gmail.com</p>
+        <p><i class="bi bi-globe"></i> www.website.com</p>
+    </div>
+
+</div>
+
+{% endblock %}

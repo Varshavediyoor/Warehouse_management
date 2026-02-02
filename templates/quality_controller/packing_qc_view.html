@@ -1,0 +1,84 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Packing QC View" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/packing_qc_view.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="qc-view-wrapper">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Packing QC" %}</span> {% trans "(View Only)" %}</h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="#" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Card -->
+    <div class="qc-view-card">
+
+        <!-- QC Checklist -->
+        <div class="qc-section">
+            <h3>{% trans "Packing Verification Summary" %}</h3>
+
+            <ul class="qc-list">
+                <li>
+                    <span>{% trans "Carton OK" %}</span>
+                    <span class="value">{{ qc.carton_ok }}</span>
+                </li>
+                <li>
+                    <span>{% trans "Cushioning OK" %}</span>
+                    <span class="value">{{ qc.cushioning_ok }}</span>
+                </li>
+                <li>
+                    <span>{% trans "Fragile Label" %}</span>
+                    <span class="value">{{ qc.fragile_label }}</span>
+                </li>
+                <li>
+                    <span>{% trans "Weight OK" %}</span>
+                    <span class="value">{{ qc.weight_ok }}</span>
+                </li>
+                <li>
+                    <span>{% trans "Customer Label OK" %}</span>
+                    <span class="value">{{ qc.customer_label_ok }}</span>
+                </li>
+                <li>
+                    <span>{% trans "Documents Added" %}</span>
+                    <span class="value">{{ qc.documents_added }}</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Info -->
+        <div class="qc-info">
+            <div class="info-box">
+                <small>{% trans "Packed By" %}</small>
+                <strong>{{ qc.packed_by }}</strong>
+            </div>
+
+            <div class="info-box">
+                <small>{% trans "Packed On" %}</small>
+                <strong>{{ qc.packed_on }}</strong>
+            </div>
+        </div>
+
+        <!-- Action -->
+        <div class="action-buttons">
+            <a href="{% url 'quality_controller:outbound_qc' grn.id %}" class="action-btn continue">
+                {% trans "Continue" %} →
+            </a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

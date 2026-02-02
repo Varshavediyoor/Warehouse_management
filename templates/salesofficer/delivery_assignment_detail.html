@@ -1,0 +1,110 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Delivery Assignment Details" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/salesofficer/delivery_assignment_details.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="delivery-detail-container">
+    
+    <!-- Header Section -->
+    <div class="header-section">
+        <h1><span>{% trans "Delivery" %}</span> {% trans "Details" %}</h1>
+        <a href="{% url 'salesofficer:delivery_assignment_list' %}" class="btn-back">
+            <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+        </a>
+    </div>
+
+    <!-- Assignment Info Card -->
+    <div class="detail-card">
+        <h2 class="section-title">{% trans "Assignment Information" %}</h2>
+        <table class="detail-table">
+            <tbody>
+                <tr>
+                    <th>{% trans "Picklist ID" %}</th>
+                    <td>{{ assignment.picklist.id }}</td>
+                </tr>
+                <tr>
+                    <th>{% trans "Order Number" %}</th>
+                    <td>
+                        {% if assignment.picklist.order %}
+                            {{ assignment.picklist.order.order_number }}
+                        {% else %}
+                            <span class="text-muted">{% trans "No linked order" %}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>{% trans "Customer" %}</th>
+                    <td>
+                        {% if assignment.picklist.order.customer %}
+                            {{ assignment.picklist.order.customer.name }}
+                        {% else %}
+                            <span class="text-muted">N/A</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>{% trans "Delivery Boy" %}</th>
+                    <td>{{ assignment.delivery_boy.user.username }}</td>
+                </tr>
+                <tr>
+                    <th>{% trans "Status" %}</th>
+                    <td>
+                        <span class="status-badge {{ assignment.status|lower }}">
+                            {{ assignment.status|title }}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>{% trans "Assigned Date" %}</th>
+                    <td>{{ assignment.assigned_date|date:"M d, Y H:i" }}</td>
+                </tr>
+                <tr>
+                    <th>{% trans "Remarks" %}</th>
+                    <td>{{ assignment.remarks|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <th>{% trans "Delivery Status" %}</th>
+                    <td>{{ assignment.delivery_status }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Picklist Items Section -->
+    {% if assignment.picklist %}
+    <div class="detail-card mt-4">
+        <h2 class="section-title">{% trans "Picklist Items" %}</h2>
+        <table class="detail-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Item" %}</th>
+                    <th>{% trans "Batch" %}</th>
+                    <th>{% trans "Expiry Date" %}</th>
+                    <th>{% trans "Quantity" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in assignment.picklist.items.all %}
+                    <tr>
+                        <td>{{ item.stock.name }}</td>
+                        <td>{{ item.batch_number }}</td>
+                        <td>{{ item.expiry_date|date:"M d, Y" }}</td>
+                        <td>{{ item.quantity }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">{% trans "No items in this picklist" %}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

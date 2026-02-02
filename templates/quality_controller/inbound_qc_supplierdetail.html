@@ -1,0 +1,8 @@
+<h4>
+    QC Status :
+    {% if qc.qc_status == "PASSED" %}
+        <span class="badge bg-success">PASSED</span>
+    {% else %}
+        <span class="badge bg-danger">FAILED</span>
+    {% endif %}
+</h4>

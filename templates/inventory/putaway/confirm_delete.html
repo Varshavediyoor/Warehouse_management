@@ -1,0 +1,24 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Confirm Delete" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/inventory_manager/putaway/confirm_delete.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="delete-modal-content">
+    <h3><span>{% trans "Delete" %}</span> {% trans "Confirmation" %}</h3>
+    <p>{% trans "Are you sure you want to delete the rule for" %} <strong>{{ rule.product }}</strong>?</p>
+    <div class="action-buttons">
+        <a href="{% url 'putaway_rule_list' %}" class="action-btn cancel">{% trans "Cancel" %}</a>
+        <form method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="action-btn confirm">{% trans "Yes, Delete" %}</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

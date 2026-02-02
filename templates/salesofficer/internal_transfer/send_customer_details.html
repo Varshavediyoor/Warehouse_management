@@ -1,0 +1,21 @@
+{% extends "base_user.html" %}
+
+{% block content %}
+<h2>Send Customer Details - {{ transfer.request_no }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+    <label for="customer_name">Customer Name:</label>
+    <input type="text" id="customer_name" name="customer_name" value="{{ transfer.customer_name }}" required><br><br>
+
+    <label for="customer_contact">Customer Contact:</label>
+    <input type="text" id="customer_contact" name="customer_contact" value="{{ transfer.customer_contact }}" required><br><br>
+
+    <label for="customer_address">Customer Address:</label>
+    <textarea id="customer_address" name="customer_address" required>{{ transfer.customer_address }}</textarea><br><br>
+
+    <button type="submit">Send Details</button>
+    <a href="{% url 'salesofficer:transfer_detail' transfer.id %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

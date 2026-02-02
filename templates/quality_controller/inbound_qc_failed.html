@@ -1,0 +1,89 @@
+{% extends "base_user.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Inbound QC-Failed" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/quality/inbound_qc_failed.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="supplier-container">
+
+    <!-- HEADER -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Inbound " %}</span>
+                {% trans "QC – FAILED" %}
+            </h1>
+            <p>
+                <strong>{% trans "PO Number:" %}</strong> {{ po.po_number }} <br>
+                <span class="badge bg-danger">FAILED</span>
+            </p>
+        </div>
+
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- FAILED QC TABLE -->
+    <div class="table-scroll-x po-table-wrapper">
+        <table class="po-item-table">
+            <thead class="po-table-head">
+                <tr>
+                    <th>S.No</th>
+                    <th>{% trans "Product" %}</th>
+                    <th>{% trans "Ordered Qty" %}</th>
+                    <th class="text-danger">{% trans "Rejected Qty" %}</th>
+                    <th>{% trans "Unit Price" %}</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in items_with_total %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td class="product-name">{{ row.item.product.name }}</td>
+                    <td>{{ row.item.quantity_ordered }}</td>
+                    <td class="fw-bold text-danger">
+                        {{ qc.rejected_qty|default:"0" }}
+                    </td>
+                    <td>₹ {{ row.item.unit_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- QC REMARKS -->
+    <div class="qc-remarks-card">
+        <div class="qc-remarks-header">
+            <i class="bi bi-chat-left-text"></i>
+            <strong>{% trans "Remarks" %}</strong>
+        </div>
+
+        <div class="qc-remarks-body">
+            {{ qc.quantity_remark|default:"— No remarks provided —" }}
+        </div>
+    </div>
+
+    <!-- ACTION -->
+    <div class="qc-action-bar">
+        <!-- <a href="#" class="scrap-btn">
+            <i class="bi bi-trash"></i>
+            {% trans "Move to Scrap" %}
+        </a> -->
+        <a href="{% url 'quality_controller:move_qc_failed_to_scrap' po.po_number %}"
+   class="scrap-btn"
+   onclick="return confirm('Are you sure you want to move rejected items to scrap?');">
+    <i class="bi bi-trash"></i>
+    {% trans "Move to Scrap" %}
+</a>
+    </div>
+
+</div>
+{% endblock %}

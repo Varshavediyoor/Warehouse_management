@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QC Detail</title>
+
+  <style>
+    .qc-card {
+      border: 1px solid #ccc;
+      padding: 14px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      background: #fafafa;
+    }
+    .qc-desc { color:#333; margin-top:8px; }
+    .qc-instructions {
+      background:#f4f6f8;
+      padding:10px;
+      border-left:4px solid #1976d2;
+      white-space:pre-wrap;
+      margin-top:6px;
+      font-size:14px;
+    }
+    .qc-img {
+      max-width:260px;
+      border:1px solid #aaa;
+      margin-top:8px;
+      display:block;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>QC Detail</h2>
+
+<h3>Invoice Information</h3>
+<p><b>Invoice Number:</b> <span id="invoice_number">Loading...</span></p>
+<p><b>Product:</b> <span id="product_name">Loading...</span></p>
+<p><b>Category:</b> <span id="category">Loading...</span></p>
+
+<hr>
+
+<form id="qcForm">
+  {% csrf_token %}
+
+  <h3>QC Quantities</h3>
+
+  <label>Received Quantity</label><br>
+  <input type="number" id="received_qty"><br><br>
+
+  <label>Approved Quantity</label><br>
+  <input type="number" id="approved_qty"><br><br>
+
+  <label>Rejected Quantity</label><br>
+  <input type="number" id="rejected_qty"><br><br>
+
+  <h3>OCR Details</h3>
+
+  <label>Batch Number</label><br>
+  <input type="text" id="batch_number" readonly><br><br>
+
+  <label>Manufacture Date</label><br>
+  <input type="date" id="manufacture_date" readonly><br><br>
+
+  <label>Expiry Date</label><br>
+  <input type="date" id="expiry_date" readonly><br><br>
+
+  <hr>
+
+  <h3>QC Checklist</h3>
+  <div id="qcChecklistContainer"></div>
+
+  <button type="button" onclick="submitQC()">Save QC</button>
+</form>
+
+<hr>
+
+<p><b>Status:</b> <span id="qc_status">Loading...</span></p>
+
+<script>
+/* ================= API URLS ================= */
+const QC_DETAIL_API = "{% url 'api_qc_detail' qc_id %}";
+const QC_SUBMIT_API = "{% url 'api_qc_submit' qc_id %}";
+
+let qcAnswers = [];
+const activeCameras = {};
+
+/* ================= DATE FIX ================= */
+function toISODate(dateStr) {
+  if (!dateStr) return "";
+  if (dateStr.includes("-") && dateStr.split("-")[0].length === 2) {
+    const [dd, mm, yyyy] = dateStr.split("-");
+    return `${yyyy}-${mm}-${dd}`;
+  }
+  return dateStr.split("T")[0];
+}
+
+/* ================= LOAD QC DETAIL ================= */
+fetch(QC_DETAIL_API)
+  .then(r => r.json())
+  .then(data => {
+
+    console.log("QC API RESPONSE:", data);
+
+    if (data.error) {
+      alert("QC Error: " + data.error);
+      return;
+    }
+
+    invoice_number.innerText = data.invoice_number || "-";
+    product_name.innerText = data.product_name || "-";
+    category.innerText = data.category || "-";
+    qc_status.innerText = data.status || "-";
+
+    received_qty.value = data.received_qty ?? 0;
+    approved_qty.value = data.approved_qty ?? 0;
+    rejected_qty.value = data.rejected_qty ?? 0;
+
+    batch_number.value = data.batch_number ?? "";
+    manufacture_date.value = toISODate(data.manufacture_date);
+    expiry_date.value = toISODate(data.expiry_date);
+
+    qcAnswers = Array.isArray(data.answers) ? data.answers : [];
+    renderChecklist(qcAnswers);
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Failed to load QC details");
+  });
+
+/* ================= RENDER CHECKLIST ================= */
+function renderChecklist(answers) {
+  qcChecklistContainer.innerHTML = "";
+
+  if (!answers.length) {
+    qcChecklistContainer.innerHTML = "<p>No checklist available</p>";
+    return;
+  }
+
+  answers.forEach(ans => {
+    qcChecklistContainer.innerHTML += `
+      <div class="qc-card">
+        <label>
+          <input type="checkbox"
+            data-id="${ans.checklist_item}"
+            ${ans.answer ? "checked" : ""}
+            onchange="onChecklistToggle(${ans.checklist_item})">
+          <b>${ans.checklist_name}</b>
+          ${ans.mandatory ? "<span style='color:red'> *</span>" : ""}
+        </label>
+
+        ${ans.description ? `<div class="qc-desc"><b>Description:</b><br>${ans.description}</div>` : ""}
+        ${ans.inspection_instructions ? `<div><b>Inspection Instructions:</b><div class="qc-instructions">${ans.inspection_instructions}</div></div>` : ""}
+        ${ans.reference_image ? `<div><b>Reference Image:</b><br><img src="${window.location.origin + ans.reference_image}" class="qc-img"></div>` : ""}
+
+        <hr>
+
+        <label>Remarks</label><br>
+        <textarea rows="2" style="width:100%;" data-remarks="${ans.checklist_item}">${ans.remarks || ""}</textarea>
+
+        <br><br>
+
+        <video id="video_${ans.checklist_item}" width="220" height="160" style="border:1px solid #999;"></video><br>
+        <button type="button" onclick="startCamera(${ans.checklist_item})">🎥 Open Camera</button>
+        <button type="button" onclick="takePhoto(${ans.checklist_item})">📸 Take Photo</button>
+
+        <canvas id="canvas_${ans.checklist_item}" style="display:none;"></canvas>
+        <input type="hidden" id="photo_${ans.checklist_item}">
+        <img id="preview_${ans.checklist_item}" class="qc-img" style="display:none;">
+      </div>`;
+  });
+}
+
+/* ================= CAMERA (OLD LOGIC RESTORED) ================= */
+async function startCamera(id) {
+  if (activeCameras[id]) return;
+
+  const video = document.getElementById("video_" + id);
+  if (!video) return;
+
+  const stream = await navigator.mediaDevices.getUserMedia({ video:true });
+  video.srcObject = stream;
+  video.muted = true;
+  video.playsInline = true;
+  await video.play();
+
+  activeCameras[id] = true;
+}
+
+function stopCamera(id) {
+  const video = document.getElementById("video_" + id);
+  if (video && video.srcObject) {
+    video.srcObject.getTracks().forEach(t => t.stop());
+    video.srcObject = null;
+    activeCameras[id] = false;
+  }
+}
+
+function onChecklistToggle(id) {
+  const cb = document.querySelector(`input[data-id="${id}"]`);
+  if (!cb) return;
+  cb.checked ? stopCamera(id) : startCamera(id);
+}
+
+function takePhoto(id) {
+  const video = document.getElementById("video_" + id);
+  const canvas = document.getElementById("canvas_" + id);
+  const preview = document.getElementById("preview_" + id);
+  const input = document.getElementById("photo_" + id);
+
+  if (!video || !canvas) return;
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext("2d").drawImage(video, 0, 0);
+
+  const img = canvas.toDataURL("image/jpeg");
+  input.value = img;
+  preview.src = img;
+  preview.style.display = "block";
+
+  stopCamera(id);
+}
+
+/* ================= SUBMIT QC ================= */
+function submitQC() {
+  const answers = [];
+
+  qcAnswers.forEach(ans => {
+    answers.push({
+      answer_id: ans.id,
+      answer: document.querySelector(`input[data-id="${ans.checklist_item}"]`)?.checked || false,
+      remarks: document.querySelector(`textarea[data-remarks="${ans.checklist_item}"]`)?.value || "",
+      photo: document.getElementById(`photo_${ans.checklist_item}`)?.value || null
+    });
+  });
+
+  fetch(QC_SUBMIT_API, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": document.querySelector('input[name=csrfmiddlewaretoken]').value
+    },
+    body: JSON.stringify({
+      received_qty: received_qty.value,
+      approved_qty: approved_qty.value,
+      rejected_qty: rejected_qty.value,
+      batch_number: batch_number.value,
+      manufacture_date: manufacture_date.value,
+      expiry_date: expiry_date.value,
+      answers: answers
+    })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.errors) {
+      alert(d.errors.join("\n"));
+      return;
+    }
+    alert("QC Status: " + d.final_status);
+    location.reload();
+  })
+  .catch(() => alert("QC submit failed"));
+}
+</script>
+
+</body>
+</html>

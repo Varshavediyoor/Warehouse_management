@@ -1,0 +1,424 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Warehouse Manager Dashboard" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/warehouse_manager/warehouse_manager.css' %}">
+<link rel="stylesheet" href="{% static 'css/user_dashboard_table.css' %}">
+<link rel="stylesheet" href="{% static 'css/time_out.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="db-header">
+  <h1><span>{% trans "Warehouse" %}</span> {% trans "Manager" %}</h1>
+  <p>{% trans "Manage inbound, storage, dispatch, and warehouse efficiency in real time." %}</p>
+</div>
+
+<div class="dashboard-layout">
+  <!-- Left Section -->
+  <div class="left-section">
+  
+    <div class="im-cards">
+
+      <!-- INBOUND ITEMS -->
+      <div class="im-card fade-up">
+        <div class="maint-card-bubble"></div>
+          <div class="im-card-image">
+            <img src="{% static 'images/truck.png' %}" alt="card-image">
+          </div>
+          <div class="im-info">
+              <h4>{% trans "Inbound Items (Today)" %}</h4>
+              <p class="im-number">{{ inbound_today|default:"0" }}</p>
+              <span class="im-sub">{% trans "Received this week:" %} {{ inbound_week|default:"0" }}</span>
+          </div>
+      </div>
+  
+      <!-- PUTAWAY TASKS -->
+      <div class="im-card fade-up delay-1">
+        <div class="maint-card-bubble"></div>
+          <div class="im-card-image">
+            <img src="{% static 'images/storekeeper1.png' %}" alt="card-image">
+          </div>
+          <div class="im-info">
+              <h4>{% trans "Pending Putaway" %}</h4>
+              <p class="im-number">{{ putaway_pending|default:"0" }}</p>
+              <span class="im-sub">{% trans "In progress:" %} {{ putaway_progress|default:"0" }}</span>
+          </div>
+      </div>
+  
+      <!-- LOW STOCK ALERTS -->
+      <div class="im-card fade-up delay-2">
+        <div class="maint-card-bubble"></div>
+          <div class="im-card-image">
+            <img src="{% static 'images/low-stock.png' %}" alt="card-image">
+          </div>
+          <div class="im-info">
+              <h4>{% trans "Low Stock Alerts" %}</h4>
+              <p class="im-number">{{ low_stock_count|default:"0" }}</p>
+              <span class="im-sub">{% trans "Critical SKUs:" %} {{ critical_skus|default:"0" }}</span>
+          </div>
+      </div>
+  
+  </div>
+
+
+  <aside class="quick-actions responsive">
+    <div class="quick-action-heading">
+      <h3>{% trans "Quick Actions" %}</h3>
+    </div>
+    <!--  -->
+      <!-- <a href="#" class="action-button">{% trans "Location Utilization" %}</a>
+      <a href="#" class="action-button">{% trans "Internal Transfer Approval" %}</a>
+      <a href="#" class="action-button">{% trans "Warehouse Performance KPIs" %}</a>
+      <a href="#" class="action-button">{% trans "Stock Mismatch Alerts" %}</a>
+      <a href="#" class="action-button">{% trans "Download Warehouse Reports" %}</a>
+      <a href="#" class="action-button">{% trans "Assign Tasks(pick/putaway)" %}</a> -->
+
+  
+    <div class="quick-actions-img">
+      <img src="{% static 'images/quick-actions.png' %}" alt="quick-actions-img">
+    </div>
+  </aside>
+  
+    
+  <section class="warehouse-health">
+
+    <!-- HEADER -->
+    <div class="wh-header">
+      <h2>Warehouse Health Overview</h2>
+      <p>Real-time space utilization and operational exception summary</p>
+    </div>
+  
+    <div class="wh-grid">
+  
+      <!-- LEFT : CAPACITY UTILIZATION -->
+      <div class="wh-card capacity-card">
+        <h3>Capacity Utilization</h3>
+  
+        <div class="capacity-list">
+  
+          <div class="capacity-item">
+            <div class="cap-label">
+              <span>Storage Zone</span>
+              <span class="cap-value">78%</span>
+            </div>
+            <div class="cap-bar">
+              <span class="cap-fill storage" style="width:78%"></span>
+            </div>
+          </div>
+  
+          <div class="capacity-item">
+            <div class="cap-label">
+              <span>Inbound Area</span>
+              <span class="cap-value">64%</span>
+            </div>
+            <div class="cap-bar">
+              <span class="cap-fill inbound" style="width:64%"></span>
+            </div>
+          </div>
+  
+          <div class="capacity-item">
+            <div class="cap-label">
+              <span>QC Zone</span>
+              <span class="cap-value">42%</span>
+            </div>
+            <div class="cap-bar">
+              <span class="cap-fill qc" style="width:42%"></span>
+            </div>
+          </div>
+  
+          <div class="capacity-item">
+            <div class="cap-label">
+              <span>Scrap Area</span>
+              <span class="cap-value">18%</span>
+            </div>
+            <div class="cap-bar">
+              <span class="cap-fill scrap" style="width:18%"></span>
+            </div>
+          </div>
+  
+        </div>
+      </div>
+  
+      <!-- RIGHT : EXCEPTION SUMMARY -->
+      <div class="wh-card exception-card">
+        <h3>Exception Summary</h3>
+      
+        <div class="exception-grid">
+      
+          <div class="exception-item danger">
+            <div class="ex-icon">⚠️</div>
+            <div class="ex-content">
+              <h4>Overfilled Locations</h4>
+              <p class="ex-count">6</p>
+            </div>
+          </div>
+      
+          <div class="exception-item warning">
+            <div class="ex-icon">🚧</div>
+            <div class="ex-content">
+              <h4>Blocked Stock</h4>
+              <p class="ex-count">14</p>
+            </div>
+          </div>
+      
+          <div class="exception-item info">
+            <div class="ex-icon">📦</div>
+            <div class="ex-content">
+              <h4>Short / Excess Receipts</h4>
+              <p class="ex-count">9</p>
+            </div>
+          </div>
+      
+          <div class="exception-item critical">
+            <div class="ex-icon">❌</div>
+            <div class="ex-content">
+              <h4>QC Failures</h4>
+              <p class="ex-count">4</p>
+            </div>
+          </div>
+      
+        </div>
+      </div>
+      
+  
+    </div>
+  </section>
+
+<!---------------------- trend section  ------------------------->
+
+<section class="trend-section">
+
+  <div class="trend-header">
+    <h2>Warehouse Trends & Performance</h2>
+    <p>Operational flow, quality metrics, inventory aging, and fulfilment efficiency</p>
+  </div>
+
+  <div class="trend-grid">
+
+    <div class="trend-card">
+      <h3>Inbound vs Putaway (Daily)</h3>
+      <div class="chart-box">
+        <canvas id="inboundPutawayChart"></canvas>
+      </div>
+    </div>
+
+    <div class="trend-card">
+      <h3>QC Pass / Fail Trend</h3>
+      <div class="chart-box">
+        <canvas id="qcTrendChart"></canvas>
+      </div>
+    </div>
+
+    <div class="trend-card">
+      <h3>Inventory Aging (FIFO / FEFO)</h3>
+      <div class="chart-box">
+        <canvas id="agingChart"></canvas>
+      </div>
+    </div>
+
+    <div class="trend-card">
+      <h3>Order Fulfilment Rate</h3>
+      <div class="chart-box">
+        <canvas id="fulfilmentChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+  
+  
+<!-------------------- recent activities table ------------------>
+<div class="recent-activities">
+  <h2>{% trans "Recent Activities" %}</h2>
+ <!-- TABLE PREVIEW SECTION -->
+ <div class="dashboard-table-wrap">
+
+  <div class="table-scroll">
+    <table class="dashboard-table">
+      <thead>
+        <tr>
+          <th>Activity</th>
+          <th>Reference / Item</th>
+          <th>Quantity</th>
+          <th>Status</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>GRN Created</td>
+          <td>PO-4587</td>
+          <td>120 Units</td>
+          <td><span class="badge success">Received</span></td>
+          <td>Today, 09:05 AM</td>
+        </tr>
+
+        <tr>
+          <td>Putaway Completed</td>
+          <td>Samsung Monitor 27"</td>
+          <td>40 Units</td>
+          <td><span class="badge success">Completed</span></td>
+          <td>Today, 10:20 AM</td>
+        </tr>
+
+        <tr>
+          <td>QC Hold Applied</td>
+          <td>HP ProBook Laptop</td>
+          <td>12 Units</td>
+          <td><span class="badge warning">QC Hold</span></td>
+          <td>Today, 11:10 AM</td>
+        </tr>
+
+        <tr>
+          <td>Picklist Generated</td>
+          <td>SO-2038</td>
+          <td>18 Units</td>
+          <td><span class="badge info">Picking</span></td>
+          <td>Yesterday, 05:40 PM</td>
+        </tr>
+
+        <tr>
+          <td>Stock Adjustment</td>
+          <td>Logitech Mouse</td>
+          <td>-5 Units</td>
+          <td><span class="badge danger">Adjusted</span></td>
+          <td>Yesterday, 03:15 PM</td>
+        </tr>
+
+        <!-- Empty state -->
+        <!--
+        <tr>
+          <td colspan="5" class="no-box">No Recent activities yet.</td>
+        </tr>
+        -->
+      </tbody>
+    </table>
+  </div>
+</div>  
+</div>
+
+
+
+<!-- ---------------------------------------------------------- -->
+  </div>
+
+  <!-- Right Section -->
+  <div class="right-section">
+    <aside class="quick-actions">
+      <div class="quick-action-heading">
+        <h3>{% trans "Quick Actions" %}</h3>
+      </div>
+      
+        <!-- <a href="#" class="action-button">{% trans "Location Utilization" %}</a>
+        <a href="#" class="action-button">{% trans "Internal Transfer Approval" %}</a>
+        <a href="#" class="action-button">{% trans "Warehouse Performance KPIs" %}</a>
+        <a href="#" class="action-button">{% trans "Stock Mismatch Alerts" %}</a>
+        <a href="#" class="action-button">{% trans "Download Warehouse Reports" %}</a>
+        <a href="#" class="action-button">{% trans "Assign Tasks(pick/putaway)" %}</a> -->
+      </div>
+      <div class="quick-actions-img">
+        <img src="{% static 'images/quick-actions.png' %}" alt="quick-actions-img">
+      </div>
+    </aside>
+  </div>
+
+</div>
+
+<!-- SESSION TIMER BOX -->
+<!-- SESSION EXPIRY POPUP -->
+<div id="sessionPopupOverlay"></div>
+
+<div id="sessionPopup">
+  <div class="session-icon">⏳</div>
+
+  <h3>Session Expiring</h3>
+
+  <p>
+    You’ve been inactive for a while.<br>
+    You will be logged out in
+  </p>
+
+  <div class="countdown">
+      <span id="popupCountdown">05:00</span>
+  </div>
+
+  <button onclick="stayLoggedIn()">Stay Logged In</button>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  let idleTime = 0;
+  const idleLimit = 120; // 2 minutes inactivity
+  let logoutTimer = 300; // 5 minutes countdown
+  let countdownActive = false;
+
+  const popup = document.getElementById("sessionPopup");
+  const overlay = document.getElementById("sessionPopupOverlay");
+  const popupCountdown = document.getElementById("popupCountdown");
+
+  // Reset activity
+  function resetActivity() {
+      idleTime = 0;
+
+      if (countdownActive) {
+          countdownActive = false;
+          logoutTimer = 300; // Reset timer
+          popup.style.display = "none";
+          overlay.style.display = "none";
+      }
+  }
+
+  // Stay logged-in button
+  function stayLoggedIn() {
+      resetActivity();
+  }
+
+  // Listeners
+  window.onload = resetActivity;
+  document.onmousemove = resetActivity;
+  document.onkeypress = resetActivity;
+  document.onclick = resetActivity;
+  document.onscroll = resetActivity;
+
+  // Timer loop
+  setInterval(function () {
+      idleTime++;
+
+      // Start popup countdown
+      if (idleTime >= idleLimit && !countdownActive) {
+          countdownActive = true;
+          popup.style.display = "block";
+          overlay.style.display = "block";
+      }
+
+      if (countdownActive) {
+          let minutes = Math.floor(logoutTimer / 60);
+          let seconds = logoutTimer % 60;
+
+          popupCountdown.innerHTML =
+              String(minutes).padStart(2, "0") + ":" +
+              String(seconds).padStart(2, "0");
+
+          logoutTimer--;
+
+          if (logoutTimer <= 0) {
+              window.location.href = "{% url 'user_login' %}";
+          }
+      }
+  }, 1000);
+</script>
+<script src="{% static 'js/user/warehouse_manager.js' %}"></script>
+
+{% endblock %}
+
+

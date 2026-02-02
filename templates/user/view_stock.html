@@ -1,0 +1,142 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Stock Items" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/warehouse_manager/view_stock.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class="view-stock-container">
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1><span>{% trans "Stock " %}</span> {% trans " Items" %}</h1>
+        </div>
+        <div class="wh-header-right"> 
+            <a href="{% url 'warehouse_manager:add_stock' %}" class="btn-back view">
+                <i class="bi bi-plus-lg"></i> {% trans "Add Stock" %}
+            </a>         
+            <a href="{% url 'warehouse_manager_dashboard' %}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter/Search -->
+    <form method="GET" class="filter-form">
+        <input type="text" name="search" placeholder="{% trans 'Search by SKU, Name, Category, Supplier, Batch...' %}" value="{{ search_query }}">
+
+        <!-- ✅ Fixed Category Dropdown -->
+        <select name="category">
+            <option value="">{% trans "All Categories" %}</option>
+            {% for value, label in categories %}
+                <option value="{{ value }}" {% if category_filter == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <!-- ✅ Supplier Dropdown -->
+        <select name="supplier">
+            <option value="">{% trans "All Suppliers" %}</option>
+            {% for sup in suppliers %}
+                <option value="{{ sup.id }}" {% if supplier_filter == sup.id|stringformat:"s" %}selected{% endif %}>
+                    {{ sup.supplier_name|default:sup.user.username }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">{% trans "Filter" %}</button>
+    </form>
+
+    <!-- Table -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>{% trans "SKU" %}</th>
+                        <th>{% trans "Name" %}</th>
+                        <th>{% trans "Category" %}</th>
+                        <th>{% trans "Supplier" %}</th>
+                        <th>{% trans "Quantity" %}</th>
+                        <th>{% trans "Unit Price" %}</th>
+                        <th>{% trans "Batch No." %}</th>
+                        <th>{% trans "Expiry Date" %}</th>
+                        <th>{% trans "Rack" %}</th>
+                        <th>{% trans "Zone" %}</th>
+                        <th>{% trans "Shelf" %}</th>
+                
+                        {% if "Edit Stock" in allowed_functions or "Delete Stock" in allowed_functions %}
+                            <th>{% trans "Actions" %}</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    {% for stock in stocks %}
+                        {% if stock.is_active %}
+                            <tr>
+                                <td>{{ stock.sku }}</td>
+                                <td>{{ stock.product.name }}</td>
+
+                                <td>{{ stock.get_category_display }}</td>  <!-- ✅ readable category -->
+                                <td>{{ stock.supplier.supplier_name|default:stock.supplier.user.username }}</td>
+                                <td>{{ stock.quantity }}</td>
+                                <td>₹{{ stock.unit_price }}</td>
+                                <td>{{ stock.batch_number }}</td>
+                                <td>
+                                    {% if stock.expiry_date %}
+                                        {{ stock.expiry_date|date:"Y-m-d" }}
+                                    {% else %}
+                                        {% trans "Not Applicable" %}
+                                    {% endif %}
+                                </td>
+
+                                <td>{{ stock.rack }}</td>
+                                <td>{{ stock.zone }}</td>
+                                <td>{{ stock.shelf }}</td>
+                                {% if "Edit Stock" in allowed_functions or "Delete Stock" in allowed_functions %}
+                                <td>
+                                    <div class="action-buttons">
+                                        {% if "Edit Stock" in allowed_functions %}
+                                            <a href="{% url 'warehouse_manager:edit_stock' stock.pk %}" class="action-btn edit">
+                                                <i class="bi bi-pencil-square"></i> {% trans "Edit" %}
+                                            </a>
+                                        {% endif %}
+                                
+                                        {% if "Delete Stock" in allowed_functions %}
+                                            <a href="{% url 'warehouse_manager:delete_stock' stock.pk %}" class="action-btn delete">
+                                                <i class="bi bi-trash3"></i> {% trans "Delete" %}
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                
+                                
+                                </td>
+                                {% endif %}
+
+                            </tr>
+                        {% endif %}
+                    {% empty %}
+                        <tr>
+                            <td colspan="12" class="no-data">{% trans "No stock items available." %}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+    
+    </div>
+    {% endblock %}
+    
+    {% block scripts %}
+    <script src="{% static 'js/user/user_tables.js' %}"></script>
+    {% endblock %}

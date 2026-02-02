@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "403 Forbidden" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/403.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="forbidden-container">
+    <h1>
+        <span>4</span><span>0</span><span>3</span>
+    </h1>
+    <p>{% trans "You don’t have permission to access this page." %}</p>
+</div>
+
+{% endblock %}

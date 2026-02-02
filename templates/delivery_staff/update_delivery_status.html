@@ -1,0 +1,50 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Update Delivery Status" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/delivery_dashboard/update_delivery_status.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="update-status-container">
+
+  <div class="wh-header-section">
+    <div class="wh-header-left">
+      <h1><span>{% trans "Update" %}</span> {% trans "Delivery Status" %}</h1>
+      <p class="subtext">{% trans "Manage and update your delivery task status seamlessly." %}</p>
+    </div>
+		<div class="wh-header-right">          
+			<a href="javascript:history.back()" class="btn-back">
+				<i class="bi bi-arrow-left"></i> {% trans "Back" %}
+			</a>
+		</div>
+	</div>
+
+
+  <!-- 🔹 Form Card -->
+  <div class="update-form-container">
+    <div class="status-card">
+        <p class="assignment-info">
+          <strong>{% trans "Assignment ID:" %}</strong> {{ assignment.id }}
+        </p>
+    
+        <form method="POST" class="status-form">
+          {% csrf_token %}
+          {{ form.as_p }}
+    
+          <div class="button-group">
+            <a href="{% url 'delivery_staff:delivery_dashboard' %}" class="wh-btn btn-cancel">
+              {% trans "Cancel" %}
+            </a>
+            <button type="submit" class="wh-btn btn-save">
+              {% trans "Save" %}
+            </button>
+          </div>
+        </form>
+      </div>
+  </div>
+  
+</div>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends 'base_admin.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Edit User" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin/edit_user.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="edit-wrapper">
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <div class="instruction-image">
+      <img src="{% static 'images/freepik__upload__49138.png' %}" alt="Edit User">
+    </div>
+    <ul class="instruction-list">
+      <li>{% trans "Update user details carefully" %}</li>
+      <li>{% trans "Ensure email and phone are correct" %}</li>
+      <li>{% trans "Change role only if required" %}</li>
+      <li>{% trans "Save changes to apply updates" %}</li>
+    </ul>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+
+    <div class="edit-header">
+      <h1>{% trans "Edit User" %} <span>{{ user_obj.username }}</span></h1>
+      <a href="{% url 'admin_user_list' %}">
+        <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+      </a>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="edit-form">
+      {% csrf_token %}
+
+      <!-- USER INFO -->
+      <div class="form-section">
+        <h3>{% trans "User Information" %}</h3>
+
+        <div class="input-grid">
+          <div class="form-group">
+            {{ user_form.username.label_tag }}
+            {{ user_form.username }}
+          </div>
+
+          <div class="form-group">
+            {{ user_form.email.label_tag }}
+            {{ user_form.email }}
+          </div>
+
+          <div class="form-group">
+            {{ user_form.password.label_tag }}
+            {{ user_form.password }}
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE INFO -->
+      <div class="form-section">
+        <h3>{% trans "Profile Information" %}</h3>
+
+        <div class="input-grid">
+          <div class="form-group">
+            {{ profile_form.role.label_tag }}
+            {{ profile_form.role }}
+          </div>
+
+          <div class="form-group">
+            {{ profile_form.phone_number.label_tag }}
+            {{ profile_form.phone_number }}
+          </div>
+
+          <div class="form-group">
+            {{ profile_form.gender.label_tag }}
+            {{ profile_form.gender }}
+          </div>
+
+          <div class="form-group">
+            {{ profile_form.nationality.label_tag }}
+            {{ profile_form.nationality }}
+          </div>
+
+          <div class="form-group">
+            {{ profile_form.profile_photo.label_tag }}
+            {{ profile_form.profile_photo }}
+          </div>
+
+          <!-- <div class="form-group full-width">
+            {{ profile_form.description.label_tag }}
+            {{ profile_form.description }}
+          </div> -->
+        </div>
+      </div>
+
+      <!-- ACTION -->
+      <div class="form-actions">
+        <button type="submit" class="btn-save">
+          {% trans "Save Changes" %}
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+{% endblock %}

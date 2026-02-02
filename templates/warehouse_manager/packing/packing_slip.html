@@ -1,0 +1,119 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% trans "Packing Slip" %} – DO {{ packing.delivery_order.delivery_no }}</title>
+
+    <link rel="stylesheet" href="{% static 'css/user/warehouse_manager/packing_slip.css' %}">
+</head>
+<body>
+
+<div class="page">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-left">
+            <img src="{% static 'images/logo-png.png' %}" alt="Company Logo">
+            <div>
+                <h1>{% trans "Packing Slip" %}</h1>
+                <span>{% trans "Warehouse Packing Document" %}</span>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <p><strong>{% trans "Delivery Order" %}:</strong> {{ packing.delivery_order.delivery_no }}</p>
+            <p><strong>{% trans "Date" %}:</strong> {{ current_date }}</p>
+        </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="summary">
+        <div><strong>{% trans "Packing Status" %}:</strong> {{ packing.status }}</div>
+        <div><strong>{% trans "SO Boxes" %}:</strong> {{ total_so_boxes }}</div>
+        <div><strong>{% trans "WM Boxes" %}:</strong> {{ total_wm_boxes }}</div>
+        <div><strong>{% trans "Total Items" %}:</strong> {{ total_items }}</div>
+        <div><strong>{% trans "Total Weight" %}:</strong> {{ total_weight }} kg</div>
+    </div>
+
+    <!-- BOXES -->
+    <div class="section">
+        <h2>{% trans "Packed Boxes" %}</h2>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>{% trans "Box No" %}</th>
+                    <th>{% trans "Weight (kg)" %}</th>
+                    <th>{% trans "Dimensions (cm)" %}</th>
+                    <th>{% trans "Items Packed" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for box in boxes %}
+                <tr>
+                    <td>Box-{{ box.id }}</td>
+                    <td>{{ box.weight }}</td>
+                    <td>{{ box.length }} × {{ box.width }} × {{ box.height }}</td>
+                    <td>
+                        {% for item in box.items.all %}
+                            {{ item.order_item.product.name }} × {{ item.quantity }}<br>
+                        {% empty %}
+                            {% trans "No items" %}
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="empty">{% trans "No boxes found." %}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PICKED ITEMS -->
+    <div class="section">
+        <h2>{% trans "Picked Items Summary" %}</h2>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>{% trans "SKU" %}</th>
+                    <th>{% trans "Product Name" %}</th>
+                    <th>{% trans "Picked Qty" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in picked_items %}
+                <tr>
+                    <td>{{ item.order_item.product.sku }}</td>
+                    <td>{{ item.order_item.product.name }}</td>
+                    <td class="center">{{ item.quantity }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3" class="empty">{% trans "No picked items found." %}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <div>
+            <strong>{% trans "Packed By" %}:</strong> ____________________
+        </div>
+        <div>
+            <strong>{% trans "Verified By" %}:</strong> ____________________
+        </div>
+        <div>
+            <strong>{% trans "Signature" %}:</strong> ____________________
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

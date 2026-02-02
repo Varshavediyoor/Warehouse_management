@@ -1,0 +1,73 @@
+{% load i18n static dict_extras %}
+
+<header class="navbar" dir="{% if LANGUAGE_CODE == 'ar' %}rtl{% else %}ltr{% endif %}">
+  <div class="logo">
+    <a href="{% url 'admin_index' %}"><img src="{% static 'images/warevos.png' %}" alt="logo"></a>
+  </div>
+
+  <!-- Hamburger Menu Icon -->
+  <div id="menu-toggle" class="menu-toggle" aria-label="Open menu" role="button" tabindex="0">
+    <i class="fa-solid fa-bars" aria-hidden="true"></i>
+  </div>
+
+  <ul class="nav-links" style="text-align: {% if LANGUAGE_CODE == 'ar' %}right{% else %}left{% endif %};">
+    <li><a href="{% url 'admin_index' %}">{% trans "Home" %}</a></li>
+    <li><a href="#about">{% trans "About" %}</a></li>
+    <li><a href="#contact">{% trans "Contact Us" %}</a></li>
+    <li><a href="{% url 'user_login' %}">{% trans "Sign In" %}</a></li>
+    <li><a href="{% url 'admin_login' %}">{% trans "Admin" %}</a></li>
+
+    <!-- 🌍 Language Switcher -->
+    <li class="language-switch">
+      {% with company_code|default:"default" as current_company %}
+          {% for lang in settings.LANGUAGE_OPTIONS|get_item:current_company %}
+              <a href="{% url 'switch_language' lang %}" class="{% if LANGUAGE_CODE == lang %}active{% endif %}">
+                  {% if lang == "en" %}
+                      English
+                  {% elif lang == "ar" %}
+                      العربية
+                  {% else %}
+                      {{ lang|upper }}
+                  {% endif %}
+              </a>
+          {% endfor %}
+      {% endwith %}
+  </li>
+  
+
+  </ul>
+</header>
+
+<!-- Sidebar (hidden by default) -->
+<div id="mobile-sidebar" class="mobile-sidebar" ria-hidden="true">
+  <div class="close-btn" id="close-sidebar">
+    <i class="fa-solid fa-xmark"></i>
+  </div>
+  <ul>
+    <li><a href="{% url 'admin_index' %}">{% trans "Home" %}</a></li>
+    <li><a href="#about">{% trans "About" %}</a></li>
+    <li><a href="#contact">{% trans "Contact Us" %}</a></li>
+    <li><a href="{% url 'user_login' %}">{% trans "Sign In" %}</a></li>
+    <li><a href="{% url 'admin_login' %}">{% trans "Admin" %}</a></li>
+    <li class="language-switch-mobile">
+      <a href="{% url 'switch_language' 'en' %}" class="{% if LANGUAGE_CODE == 'en' %}active{% endif %}">
+        <i class="bi bi-globe2"></i> English
+      </a>
+      <a href="{% url 'switch_language' 'ar' %}" class="{% if LANGUAGE_CODE == 'ar' %}active{% endif %}">
+        <i class="bi bi-globe2"></i> العربية
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+
+    <!-- Popup Modal -->
+    <div id="admin-popup" class="popup-overlay">
+      <div class="popup-content">
+        <h3>{% trans "Choose an Option" %}</h3>
+        <a href="{% url 'admin_login' %}" class="popup-btn login-btn">{% trans "Admin Login" %}</a>
+        <a href="{% url 'admin_access_key' %}" class="popup-btn register-btn">{% trans "Register Admin" %}</a>
+        <button class="close-btn" onclick="closePopup()">✕</button>
+      </div>
+    </div>

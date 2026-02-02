@@ -1,0 +1,272 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Batch Report</title>
+</head>
+
+<style>
+/* ================= PAGE ================= */
+@page {
+  size: A4;
+  margin: 18mm 14mm;
+}
+
+/* ================= GLOBAL ================= */
+body {
+  font-family: "Helvetica", "Arial", sans-serif;
+  font-size: 11px;
+  color: #2c4c71;
+}
+
+h1, h2 {
+  margin: 0;
+}
+
+/* ================= HEADER ================= */
+.header {
+  display: table;
+  width: 100%;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #2c8cfb;
+  margin-bottom: 16px;
+}
+
+.header-left {
+  display: table-cell;
+  width: 70%;
+  vertical-align: middle;
+}
+
+.header-right {
+  display: table-cell;
+  width: 30%;
+  text-align: right;
+  vertical-align: middle;
+}
+
+.company-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2c8cfb;
+}
+
+.company-details {
+  font-size: 10px;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+.logo {
+  width: 95px;
+}
+
+/* ================= REPORT INFO ================= */
+.report-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.report-info h2 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.meta {
+  font-size: 10px;
+  color: #6b7280;
+}
+
+.report-badge {
+  background: #2c8cfb;
+  color: #ffffff;
+  padding: 4px 10px;
+  font-size: 9px;
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+}
+
+/* ================= SUMMARY ================= */
+.summary {
+  display: table;
+  width: 100%;
+  margin-bottom: 14px;
+  background: #f1f5f9;
+  border-left: 4px solid #2c8cfb;
+}
+
+.summary-item {
+  display: table-cell;
+  padding: 10px;
+}
+
+.summary-item span {
+  font-size: 9px;
+  color: #6b7280;
+}
+
+.summary-item strong {
+  display: block;
+  font-size: 14px;
+  color: #2c4c71;
+}
+
+/* ================= TABLE ================= */
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.report-table thead {
+  background: #2c8cfb;
+  color: #ffffff;
+}
+
+.report-table th {
+  padding: 8px 6px;
+  font-size: 10px;
+  border: 1px solid #2c4c71;
+  text-transform: uppercase;
+}
+
+.report-table td {
+  padding: 7px 6px;
+  border: 1px solid #d1d5db;
+  font-size: 10.5px;
+}
+
+.report-table tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+.right {
+  text-align: right;
+}
+
+/* ================= STATUS ================= */
+.status {
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: bold;
+}
+
+.status.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status.expired {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* ================= FOOTER ================= */
+.footer {
+  position: fixed;
+  bottom: -10mm;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 9px;
+  color: #6b7280;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 6px;
+}
+
+.footer .page:after {
+  content: counter(page);
+}
+</style>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+  <div class="header-left">
+    <h1 class="company-name">Warewose Pvt Ltd</h1>
+    <p class="company-details">
+      Warehouse & Inventory Management System<br>
+      GST: 32ABCDE1234F1Z5<br>
+      support@warewose.com | +91 98765 43210
+    </p>
+  </div>
+
+  <div class="header-right">
+    <img src="{% static 'images/warevos.png' %}" class="logo" alt="Company Logo">
+  </div>
+</header>
+
+<!-- ================= REPORT INFO ================= -->
+<section class="report-info">
+  <div>
+    <h2>Batch Report</h2>
+    <p class="meta">Generated on: {{ generated_on|date:"d M Y, H:i" }}</p>
+  </div>
+
+  <div class="report-badge">
+    INTERNAL REPORT
+  </div>
+</section>
+
+<!-- ================= SUMMARY ================= -->
+<section class="summary">
+  <div class="summary-item">
+    <span>Total Records</span>
+    <strong>{{ report_data|length }}</strong>
+  </div>
+  <div class="summary-item">
+    <span>Report Type</span>
+    <strong>Batch & Stock Information</strong>
+  </div>
+</section>
+
+<!-- ================= TABLE ================= -->
+<table class="report-table">
+  <thead>
+    <tr>
+      <th>Batch No</th>
+      <th>Product</th>
+      <th>Mfg Date</th>
+      <th>Expiry Date</th>
+      <th class="right">Quantity</th>
+      <th>Storage</th>
+      <th>Barcode</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in report_data %}
+    <tr>
+      <td>{{ row.batch_number }}</td>
+      <td>{{ row.product }}</td>
+      <td>{{ row.mfg_date|date:"d-m-Y" }}</td>
+      <td>{{ row.expiry_date|date:"d-m-Y" }}</td>
+      <td class="right">{{ row.quantity }}</td>
+      <td>{{ row.storage }}</td>
+      <td>{{ row.barcode }}</td>
+      <td>
+        <span class="status {{ row.status|lower }}">
+          {{ row.status }}
+        </span>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  © {{ generated_on|date:"Y" }} Warewose Pvt Ltd · Confidential · Page <span class="page"></span>
+</footer>
+
+</body>
+</html>

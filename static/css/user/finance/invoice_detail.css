@@ -1,0 +1,350 @@
+.invoice-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: headerFadeUp 0.8s ease-out forwards;
+    animation-delay: 0.2s;
+  }
+  
+  @keyframes headerFadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .invoice-detail-header-left {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .invoice-detail-header h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c4c71;
+    opacity: 0;
+    transform: translateX(-30px);
+    animation: titleSlideIn 0.8s ease-out forwards;
+    animation-delay: 0.3s;
+  }
+  
+  @keyframes titleSlideIn {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  
+  .invoice-detail-header h1 span {
+    color: #2c8cfb;
+    font-size: 25px;
+  }
+  
+  .subtext {
+    font-size: 0.85rem;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: subtextFadeIn 0.9s ease-out forwards;
+    animation-delay: 0.6s;
+  }
+  
+  @keyframes subtextFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .btn-back {
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border-radius: 30px;
+    color: #fff;
+    padding: .4rem 2rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .btn-back:hover {
+    transform: scale(1.05);
+  }
+  
+  .btn-back::before {
+    content: "";
+    position: absolute;
+    width: 80px;
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  
+  .btn-back:hover::before {
+    animation: shine 1.5s ease-out infinite;
+  }
+
+  @keyframes shine {
+    0% { left: -80px; }
+    60% { left: 100%; }
+    100% { left: 100%; }
+  }
+
+.invoice-wrapper {
+    max-width: 900px;
+    background: #ffffff;
+    margin: 10px auto;
+    padding: 50px 55px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.08);
+    font-size: 14px;
+    color: #2c4c71;
+    font-family: 'Inter', sans-serif;
+}
+
+/* HEADER */
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid #2c8cfb;
+    padding-bottom: 25px;
+    margin-bottom: 35px;
+}
+
+.company-section {
+    text-align: left;
+}
+
+.company-logo {
+    width: 160px;
+    margin-bottom: 15px;
+}
+
+.company-section h2 {
+    font-size: 24px;
+    margin-bottom: 5px;
+    font-weight: 700;
+    color: #2c4c71;
+}
+
+.company-address {
+    font-size: 13px;
+    color: #666;
+}
+
+.invoice-meta {
+    text-align: right;
+}
+
+.invoice-meta h1 {
+    font-size: 40px;
+    color: #2c8cfb;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.inv-status {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.inv-status.paid { background: #d4f8d3; color: #0e6f0e; }
+.inv-status.pending { background: #fff3cd; color: #a07a00; }
+.inv-status.unpaid,
+.inv-status.overdue { background: #ffd4d4; color: #a80000; }
+
+/* INFO GRID */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.info-card {
+    background: #f6f9fc;
+    padding: 20px 22px;
+    border-radius: 10px;
+    border: 1px solid #e5e8ec;
+}
+
+.info-card h4 {
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    font-size: 15px;
+    border-bottom: 1px solid #d4d8dd;
+}
+
+/* TABLE */
+.table-scroll-wrapper {
+    margin-top: 25px;
+    overflow-x: auto;
+}
+
+.table-container {
+    border: 1px solid #cbd2da;
+    overflow: hidden;
+}
+
+.table-content {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.table-content thead {
+    background: #2c8cfb;
+    color: white;
+}
+
+.table-content th {
+    padding: 14px;
+    font-weight: 600;
+    border-right: 1px solid #cbd2da; /* vertical line */
+}
+
+.table-content th:last-child {
+    border-right: none; /* remove right border from last column */
+}
+
+.table-content td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #e3e7ec;
+    border-right: 1px solid #cbd2da; /* vertical line */
+}
+
+.table-content td:last-child {
+    border-right: none; /* remove right border from last column */
+}
+
+
+.table-content tbody tr:nth-child(even) {
+    background: #f1f7ff;
+}
+
+.text-start {
+    text-align: left;
+}
+
+.empty {
+    text-align: center;
+    padding: 15px;
+    color: #999;
+}
+
+/* TOTALS */
+.totals-box {
+    width: 300px;
+    margin-left: auto;
+    margin-top: 25px;
+}
+
+.totals-box table {
+    width: 100%;
+}
+
+.totals-box th {
+    text-align: left;
+    padding: 6px 0;
+    font-weight: 600;
+}
+
+.totals-box td {
+    text-align: right;
+}
+
+.grand {
+    border-top: 2px solid #333;
+    font-size: 17px;
+    font-weight: bold;
+    padding-top: 8px;
+}
+
+/* SIGNATURE + TERMS SECTION */
+.signature-row {
+    margin-top: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    clear: both;
+    gap: 40px;
+}
+
+/* TERMS LEFT */
+.terms-box {
+    width: 55%;
+    text-align: center;  /* Center heading */
+}
+
+.terms-box h4 {
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: underline; /* Underline heading */
+    margin-bottom: 10px;
+}
+
+.terms-box p {
+    font-size: 14px;
+    line-height: 20px;
+    text-align: justify; /* Paragraph aligned left */
+}
+
+/* SIGNATURE RIGHT */
+.single-sign {
+    width: 40%;
+    text-align: center;
+}
+
+.single-sign .line {
+    border-top: 1px solid #000;
+    height: 1px;
+    margin-bottom: 6px;
+}
+
+.invoice-hr {
+    border: none;
+    border-top: 1px solid #000;
+    width: 95%;
+    margin: 25px auto;
+}
+
+.invoice-end {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.invoice-end p {
+    margin: 5px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* space between icon & text */
+}
+
+.invoice-end i {
+    font-size: 16px;
+    color: #2c8cfb; /* clean blue tone */
+}
+
+
+
+/* PRINT STYLES */
+@media print {
+    body { background: #fff; }
+    .invoice-wrapper {
+        box-shadow: none !important;
+        margin: 0;
+        padding: 25px 30px;
+        border: none;
+    }
+}

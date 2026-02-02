@@ -1,0 +1,84 @@
+{% extends 'base_user.html' %}
+{% load static i18n %}
+
+{% block title %}{% trans "Sales Invoices" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/finance/invoice_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="invoice-header">
+  <div class="invoice-header-left">
+    <h1>{% trans "Sales" %} <span>{% trans "Invoices" %}</span></h1>
+    <p class="subtext">{% trans "Manage and review all sales invoice records" %}</p>
+  </div>
+  <a href="javascript:history.back()" class="btn-back"><i class="bi bi-arrow-left"></i> {% trans "Back" %}</a>
+</div>
+
+<!-- Table -->
+<div class="table-scroll-wrapper">
+  <div class="table-container">
+      <table class="table-content" id="tableContent">
+      <thead>
+        <tr>
+          <th>{% trans "Invoice No" %}</th>
+          <th>{% trans "Order" %}</th>
+          <th>{% trans "Total" %}</th>
+          <th>{% trans "Status" %}</th>
+          <th>{% trans "Action" %}</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for inv in invoices %}
+        <tr class="invoice-row">
+          <td data-label="{% trans 'Invoice No' %}">{{ inv.invoice_no }}</td>
+          <td data-label="{% trans 'Order' %}">{{ inv.order.order_no }}</td>
+          <td data-label="{% trans 'Total' %}">{{ inv.total_amount }}</td>
+
+          <td data-label="{% trans 'Status' %}">
+            {% if inv.status == 'Paid' %}
+              <span class="status-badge approved">{% trans "Paid" %}</span>
+            {% elif inv.status == 'Pending' %}
+              <span class="status-badge pending">{% trans "Pending" %}</span>
+            {% else %}
+              <span class="status-badge rejected">{% trans "Unpaid" %}</span>
+            {% endif %}
+          </td>
+
+          <td data-label="{% trans 'Action' %}">
+            <div class="action-buttons">
+              <a href="{% url 'finance:invoice_detail' inv.id %}" class="action-btn normal">
+                <i class="bi bi-eye"></i> {% trans "View" %}
+              </a>
+              <a href="{% url 'finance:invoice_download' inv.id %}" class="action-btn approve" target="_blank">
+                <i class="bi bi-download"></i> {% trans "Download" %}
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="no-data">{% trans "No invoices found." %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+
+    </table>
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="pagination-container" id="tablePagination"></div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}
