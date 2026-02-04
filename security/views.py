@@ -21,6 +21,7 @@ from rest_framework.permissions import IsAuthenticated
 # 1. UPLOAD PO INVOICE
 # ---------------------------
 from .document_reader import read_text_from_image, read_text_from_pdf, extract_po_details
+from django.contrib.auth.decorators import login_required
 
 # class POInvoiceUploadView(APIView):
 
@@ -447,3 +448,16 @@ def entry_pass_preview(request, entry_id):
     return render(request, "security/entry_pass_view.html", {
         "entry": entry
     })
+
+
+class VehicleEntryListAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        entries = VehicleEntry.objects.select_related("po_invoice", "checked_by").all().order_by("-entry_time")
+        serializer = VehicleEntrySerializer(entries, many=True, context={"request": request})
+        return Response(serializer.data)
+
+@login_required
+def vehicle_entry_dashboard_page(request):
+    return render(request, "security/vehicle_entry_list.html")

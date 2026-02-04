@@ -75,3 +75,4 @@ class VehicleExit(models.Model):
     side_image = models.ImageField(upload_to=vehicle_exit_image_path)
 
     exit_time = models.DateTimeField(auto_now_add=True)
+

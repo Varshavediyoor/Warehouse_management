@@ -1,44 +1,72 @@
-<h2>PO {{ po.po_number }}</h2>
-<p>Status: {{ po.status }}</p>
+{% extends 'base_user.html' %}
+{% load static i18n %}
 
-<table border="1">
-<tr>
-    <th>Category</th>
-    <th>Product</th>
-    <th>Variants</th>
-    <th>Qty</th>
-</tr>
+{% block title %}{% trans "PO submitted" %}{% endblock %}
 
-{% for i in po.items.all %}
-<tr>
-    <td>{{ i.category }}</td>
-    <td>{{ i.product }}</td>
-    <td>
-        {% for cv in i.category_variant.all %}
-            <span class="badge">
-                {{ cv.name }} :
-                {% for pv in i.product_variant.all %}
-                    {% if forloop.counter0 == forloop.parentloop.counter0 %}
-                        {{ pv.value }}
-                    {% endif %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/purchase/submitted_po.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="po-container">
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>PO </span>
+                {{ po.po_number }}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <p class="po-status">
+        Status:
+        <span class="status-badge status-submitted">
+            {{ po.status }}
+        </span>
+    </p>
+    
+    <!-- Table -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>{% trans "Category" %}</th>
+                        <th>{% trans "Product" %}</th>
+                        <th>{% trans "Product Variant" %}</th>
+                        <th>{% trans "Quantity" %}</th>
+                    </tr>
+                </thead>
+                {% for i in po.items.all %}
+                <tr>
+                    <td>{{i.category}}</td>
+                    <td>{{ i.product }}</td>
+                    <td>{{i.product_variant}}</td>
+                    <td>{{ i.quantity }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">
+                        {% trans "No purchase orders found." %}
+                    </td>
+                </tr>
                 {% endfor %}
-            </span><br>
-        {% endfor %}
-    </td>
-    <td>{{ i.quantity }}</td>
-</tr>
-{% empty %}
-<tr>
-    <td colspan="4">No items added</td>
-</tr>
-{% endfor %}
-</table>
+            </table>
+        </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+</div>
+{% endblock %}
 
-{% if po.status == "SUBMITTED" %}
-<!-- <form method="post">
-    {% csrf_token %}
-    <button name="action" value="approve">Approve</button>
-    <button name="action" value="reject">Reject</button>
-</form> -->
-{% endif %}
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}
 

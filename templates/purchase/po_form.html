@@ -139,47 +139,59 @@ table th, table td {
 <div class="form-row">
     <div class="form-group">
         <label>Category</label>
-        <select name="category" required>
+        <select name="category" id="category-select" required>
             <option value="">Select</option>
             {% for c in categories %}
-            <option value="{{ c.id }}">{{ c.name }}</option>
+                <option value="{{ c.id }}">{{ c.name }}</option>
             {% endfor %}
         </select>
     </div>
 
     <div class="form-group">
         <label>Product</label>
-        <select name="product" required>
+        <select name="product" id="product-select" required>
             <option value="">Select</option>
-            {% for p in products %}
-            <option value="{{ p.id }}">{{ p.name }}</option>
+
+            {% for cat_id, prods in products_by_category.items %}
+                {% for p in prods %}
+                    <option value="{{ p.id }}"
+                            data-category="{{ cat_id }}"
+                            style="display:none;">
+                        {{ p.name }}
+                    </option>
+                {% endfor %}
             {% endfor %}
         </select>
     </div>
 </div>
 
-<div class="form-row">
-    <div class="form-group">
-        <label>Category Variants</label>
-<select name="category_variant" class="multi-select" multiple>
-    {% for cv in category_variants %}
-        <option value="{{ cv.id }}">{{ cv.name }}</option>
+
+<div class="card">
+    <h4>Product Variants</h4>
+
+    {% for product_id, variants in variants_by_product.items %}
+        <div class="variant-group"
+             data-product="{{ product_id }}"
+             style="display:none;">
+
+            {% for variant_name, values in variants.items %}
+                <div class="form-group">
+                    <label>{{ variant_name }}</label>
+                    <select name="variant_{{ variant_name }}">
+                        <option value="">Select {{ variant_name }}</option>
+                        {% for v in values %}
+                            <option value="{{ v.id }}">{{ v.value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endfor %}
+
+        </div>
     {% endfor %}
-</select>
-
-    </div>
-
-    <div class="form-group">
-        <label>Product Variants</label>
-<select name="product_variant" class="multi-select" multiple>
-    {% for pv in product_variants %}
-        <option value="{{ pv.id }}">{{ pv.value }}</option>
-    {% endfor %}
-</select>
-
-    </div>
 </div>
 
+
+ 
 <div class="form-row">
     <div class="form-group">
         <label>Quantity</label>
@@ -210,15 +222,12 @@ table th, table td {
     <td>{{ i.category }}</td>
     <td>{{ i.product }}</td>
     <td>
-        {% for cv in i.category_variant.all %}
+        {% for pv in i.product_variant.all %}
             <span class="badge">
-                {{ cv.name }} :
-                {% for pv in i.product_variant.all %}
-                    {% if forloop.counter0 == forloop.parentloop.counter0 %}
-                        {{ pv.value }}
-                    {% endif %}
-                {% endfor %}
+                {{ pv.variant.name }} : {{ pv.value }}
             </span>
+        {% empty %}
+            <span class="badge">No variants</span>
         {% endfor %}
     </td>
     <td>{{ i.quantity }}</td>
@@ -237,13 +246,30 @@ table th, table td {
 {% endif %}
 </div>
 
-
 <script>
-$(document).ready(function () {
-    $('.multi-select').select2({
-        placeholder: "Select options",
-        allowClear: true,
-        width: '100%'
+const categorySelect = document.getElementById("category-select");
+const productSelect = document.getElementById("product-select");
+const productOptions = productSelect.querySelectorAll("option[data-category]");
+const variantGroups = document.querySelectorAll(".variant-group");
+
+categorySelect.addEventListener("change", function () {
+    const categoryId = this.value;
+
+    productSelect.value = "";
+    variantGroups.forEach(v => v.style.display = "none");
+
+    productOptions.forEach(opt => {
+        opt.style.display =
+            opt.dataset.category === categoryId ? "block" : "none";
+    });
+});
+
+productSelect.addEventListener("change", function () {
+    const productId = this.value;
+
+    variantGroups.forEach(group => {
+        group.style.display =
+            group.dataset.product === productId ? "block" : "none";
     });
 });
 </script>

@@ -1,0 +1,459 @@
+/* ================= LAYOUT ================= */
+.cm-wrapper{
+    /* Animation */
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+  }
+
+@keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(25px) scale(0.98);
+        filter: blur(6px);
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+/* ---------------------------- Header ---------------------------- */
+
+.wh-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  
+  @keyframes slideFromRight {
+    0% {
+    transform: translateX(80px); /* Start slightly off-screen to the right */
+    opacity: 0;
+    }
+    100% {
+    transform: translateX(0); /* End in place */
+    opacity: 1;
+    }
+    }
+  
+  .wh-header-section h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c4c71;
+  
+    animation: slideFromRight 0.9s ease-out forwards;
+    opacity: 0; /* Start invisible */
+  }
+  
+  .wh-header-section h1 span {
+    color: #2c8cfb;
+  }
+  
+  .wh-header-section p{
+    font-size: 13px;
+  }
+  
+  .wh-header-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  
+    opacity: 0;
+    transform: translateY(25px);
+    animation: fadeSlideIn 0.8s ease-out forwards;
+  }
+  
+  .btn-back {
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    border-radius: 30px;
+    color: #fff;
+    padding: .4rem 2rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    outline: none;
+    overflow: hidden; /* ✅ Keeps shine animation inside button */
+    position: relative;
+  
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+  }
+  
+  .btn-back:hover {
+    transform: scale(1.05);
+  }
+    
+  .btn-back::before {
+    content: "";
+    position: absolute;
+    width: 80px; /* ✅ Slightly smaller for smooth edge transition */
+    height: 100%;
+    background-image: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0) 70%
+    );
+    top: 0;
+    left: -80px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+    
+  .btn-back:hover::before {
+    animation: shine 1.5s ease-out infinite;
+  }
+    
+  @keyframes shine {
+    0% {
+        left: -80px;
+    }
+    60% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+  }
+  
+  
+  @media (max-width: 845px) {
+    .wh-header-section {
+        margin-top: 0rem;
+    }
+  
+  .wh-header-section h1{
+    font-size: 28px;
+  }
+  
+  .wh-header-right{
+    gap: 0.5rem;
+  }
+  
+  .wh-header-right a{
+    font-size: 11px;
+    width: 100px;
+    padding: .3rem .6rem;
+  }
+  }
+  
+  @media (max-width: 670px) {
+    .wh-header-section h1{
+      font-size: 26px;
+      max-width: 400px;
+    }
+  
+    .wh-header-section p{
+      font-size: 12px;
+    }
+  
+    .wh-header-right a{
+      width: 80px;
+    }
+  
+    .wh-header-right a{
+      width: 80px;
+    }
+  }
+  
+  @media (max-width: 550px) {
+    .wh-header-section h1{
+      font-size: 20px;
+      max-width: 350px;
+    }
+    .wh-header-left p{
+      display: none;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .wh-header-section h1{
+      font-size: 20px;
+      max-width: 250px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .wh-header-section h1{
+      font-size: 20px;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .wh-header-section h1{
+      font-size: 16px;
+      max-width: 200px;
+    }
+  }
+
+  /* -------------------------------------------------------- */
+  
+  /* ================= CARD ================= */
+  .cm-card{
+    background: #ffffff;
+    border: 1px solid #5cacfa;
+    padding: 20px 24px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  
+  .cm-card-header p{
+    margin-top: 6px;
+    font-size: 14px;
+    opacity: 0.7;
+  }
+  
+  /* .cm-card-body{
+    padding: 26px;
+  } */
+  
+  /* ================= FORM ================= */
+  .cm-form-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
+  
+  .cm-field label{
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  
+  .cm-field input{
+    width: 100%;
+    max-width: 100%; /* prevent overflow */
+    box-sizing: border-box;
+    padding: 12px 15px;
+    border: 1px solid #2c8cfc;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    font-size: 15px;
+    background: #f8fbff;
+    box-shadow: 0 3px 8px rgba(44, 140, 251, 0.05);
+  }
+  
+  .cm-field input:focus{
+  /* border-color: #2c8cfb; */
+  background: #fff;
+  box-shadow: 0 0 10px rgba(10, 124, 255, 0.75);
+  transform: translateY(-2px);
+  outline: none;
+  }
+  
+  /* ================= TOGGLE ================= */
+  .cm-toggle{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  
+  /* switch reused */
+  .switch{
+    position: relative;
+    width: 46px;
+    height: 24px;
+  }
+  .switch input{display:none;}
+  .slider{
+    position:absolute;
+    inset:0;
+    background:#ccc;
+    border-radius:34px;
+    transition:.3s;
+  }
+  .slider:before{
+    content:"";
+    position:absolute;
+    height:18px;
+    width:18px;
+    left:3px;
+    bottom:3px;
+    background:white;
+    border-radius:50%;
+    transition:.3s;
+  }
+  .switch input:checked + .slider{
+    background:#2c8cfb;
+  }
+  .switch input:checked + .slider:before{
+    transform:translateX(22px);
+  }
+  
+  /* ================= VARIANTS ================= */
+  .cm-variant-section{
+    margin-top: 26px;
+  }
+  
+  .cm-variant-header{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    margin-bottom: 12px;
+  }
+
+  .cm-variant-header h4{
+    font-size: 18px;
+    font-weight: 700;
+  }
+  
+  .cm-variant-list{
+    display:grid;
+    gap: 12px;
+  }
+  
+  .variant-row{
+    display:flex;
+    gap: 10px;
+  }
+  
+  .variant-row input{
+  }
+  
+  .variant-row button{
+    border:none;
+    background:#ff4d4f;
+    font-size: 13px;
+    color:white;
+    border-radius:8px;
+    padding:0 12px;
+    cursor:pointer;
+  }
+  
+  /* ================= BUTTONS ================= */
+  .cm-actions{
+    margin-top: 28px;
+    display:flex;
+    gap: 14px;
+  }
+  
+  .cm-btn{
+    height: 44px;
+    padding: 0 22px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: 0.25s;
+  }
+  
+  .cm-btn.primary{
+    background: linear-gradient(90deg, #2c8cfb, #3c6696);
+    color: #fff;
+  }
+
+  .cm-btn.primary:hover {
+    transform: translateY(-1px);
+}
+  
+  .cm-btn.ghost{
+    background: #f3f4f6;
+    border: 1px solid #5cacfa;
+    color: #374151;
+  }
+  
+  /* ================= TABLE ================= */
+  .cm-table{
+    width:100%;
+    border-collapse: collapse;
+  }
+  
+  .cm-table th,
+  .cm-table td{
+    padding: 14px 12px;
+    border-bottom: 1px solid #edf1ff;
+    font-size:14px;
+  }
+  
+  .cm-table th{
+    background:#f7f9ff;
+    text-align:left;
+  }
+  
+  .center{
+    text-align:center;
+  }
+  
+  .cm-table button{
+    padding:6px 12px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+  }
+  
+  .cm-table button:first-child{
+    background:#e7f0ff;
+    color:#2c8cfb;
+  }
+  
+  .cm-table button:last-child{
+    background:#ffecec;
+    color:#ff4d4f;
+  }
+  
+  /* ================= NO DATA ================= */
+  .cm-no-data{
+    text-align:center;
+    padding: 30px;
+    opacity:0.6;
+    display:none;
+  }
+  
+  /* ================= RESPONSIVE ================= */
+  @media(max-width:768px){
+    .cm-card {
+        padding: 15px 15px;
+        border-radius: 8px;
+    }
+
+    .cm-card-header p {
+        font-size: 11px;
+    }
+
+    .cm-form-grid{
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .cm-field input{
+        padding: 10px 15px;
+        font-size: 13px;
+    }
+
+    .cm-actions {
+        justify-content: center;
+    }
+
+    .cm-btn {
+        height: 40px;
+        font-size: 12px;
+        width: 150px;
+    }
+
+    .variant-row button{
+        font-size: 12px;
+      }
+  }
+  
+
+
+

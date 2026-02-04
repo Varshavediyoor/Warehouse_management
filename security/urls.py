@@ -8,6 +8,9 @@ from .views import (
     VehicleExitView,
     supervisor_dashboard,
     scan_barcode_view,
+    vehicle_entry_dashboard_page, 
+    VehicleEntryListAPI
+
 )
 
 app_name = 'security'
@@ -20,5 +23,7 @@ urlpatterns = [
     path("scan/", scan_barcode_view, name="scan_barcode"),
     path("entry-pass/view/<int:entry_id>/", entry_pass_preview, name="entry_pass_preview"),
     path("entry-pass/pdf/<int:entry_id>/", entry_pass_pdf_view, name="entry_pass_pdf"),
+    path("vehicle-dashboard/", vehicle_entry_dashboard_page, name="vehicle_dashboard"),
+    path("api/vehicle-entries/", VehicleEntryListAPI.as_view(), name="api_vehicle_entry_list"),
 
 ]

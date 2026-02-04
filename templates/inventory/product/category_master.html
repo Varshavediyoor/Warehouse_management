@@ -1,200 +1,124 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Category Master</title>
-<style>
-body{font-family:Arial;background:#f4f6f9;padding:20px}
-.card{background:#fff;padding:15px;border-radius:10px;margin-bottom:20px}
-input,textarea{width:100%;padding:6px}
-button{padding:6px 12px;background:#0d6efd;color:#fff;border:none;border-radius:5px}
-table{width:100%;border-collapse:collapse;background:#fff}
-th,td{padding:8px;border-bottom:1px solid #ddd;font-size:13px}
-th{background:#212529;color:#fff}
-.variant-row{display:flex;gap:5px;margin-top:5px}
-</style>
-</head>
+{% extends 'base_user.html' %}
+{% load static i18n %}
 
-<body>
+{% block title %}{% trans "Category Master" %}{% endblock %}
 
-<div class="card">
-<h3>Category Master</h3>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/inventory_manager/product/category_master.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
 
-<input type="hidden" id="cat_id">
+{% block content %}
 
-<label>Name</label>
-<input id="name">
+<div class="cm-wrapper">
 
-<label>Description</label>
-<textarea id="desc"></textarea>
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Category " %}</span>
+                {% trans " Master" %}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
 
-<label>
-<input type="checkbox" id="has_expiry"> Has Expiry
-</label>
+  <!-- ================= FORM CARD ================= -->
+  <div class="cm-card cm-form-card">
+    <div class="cm-card-header">
+      <p>{% trans "Create categories with variants and expiry rules" %}</p>
+    </div>
 
-<h4>Variants</h4>
-<div id="variants"></div>
-<button onclick="addVariant()">+ Add Variant</button><br><br>
+    <div class="cm-card-body">
+      <input type="hidden" id="cat_id">
 
-<button onclick="saveCategory()">Save</button>
+      <div class="cm-form-grid">
+        <div class="cm-field">
+          <label>{% trans "Category Name" %}</label>
+          <input id="name" placeholder="Enter category name">
+        </div>
+
+        <div class="cm-field">
+          <label>{% trans "Description" %}</label>
+          <input id="desc" placeholder="Short description"></input>
+        </div>
+      </div>
+
+      <div class="cm-toggle">
+        <label class="switch">
+          <input type="checkbox" id="has_expiry">
+          <span class="slider"></span>
+        </label>
+        <span>{% trans "Has Expiry Date" %}</span>
+      </div>
+
+      <div class="cm-variant-section">
+        <div class="cm-variant-header">
+          <h4>{% trans "Variants" %}</h4>
+          <button class="cm-btn ghost" onclick="addVariant()">{% trans "+ Add Variant" %}</button>
+        </div>
+
+        <div id="variants" class="cm-variant-list"></div>
+      </div>
+
+      <div class="cm-actions">
+        <button type="button" class="cm-btn ghost" onclick="clearForm()">
+          {% trans "Clear" %}
+          </button>          
+        <button class="cm-btn primary" onclick="saveCategory()">
+            {% trans "Save Category" %}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TABLE CARD ================= -->
+
+    <!-- Table -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container product">
+            <table class="table-content" id="tableContent">
+                <thead>
+                <tr>
+                    <th>{% trans "Name" %}</th>
+                    <th>{% trans "Expiry" %}</th>
+                    <th>{% trans "Variants" %}</th>
+                    <th class="center">{% trans "Actions" %}</th>
+                </tr>
+                </thead>
+                <tbody id="cat_table"></tbody>
+            </table>
+
+            <div id="noData" class="cm-no-data">
+              {% trans "No categories found" %}
+            </div>
+        </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+
 </div>
 
-<div class="card">
-<h3>Categories</h3>
-<table>
-<thead>
-<tr>
-<th>Name</th><th>Expiry</th><th>Variants</th><th>Actions</th>
-</tr>
-</thead>
-<tbody id="cat_table"></tbody>
-</table>
-</div>
-<script>
+<div id="deleteModal" class="logout-modal">
+    <div class="logout-modal-content">
+      <h3><span>{% trans "Delete" %}</span> {% trans "Confirmation" %}</h3>
+      <p>{% trans "Are you sure you want to delete this category?" %}</p>
+  
+      <div class="logout-modal-buttons">
+        <a id="cancelDelete" class="logout-btn-cancel">{% trans "Cancel" %}</a>
+        <a id="confirmDelete" class="logout-btn-confirm">{% trans "Delete" %}</a>
+      </div>
+    </div>
+  </div>
+  
 
-let api = "/en/dashboard/inventory-manager/api/categories/";  // ✅ FIXED PATH
+{% endblock %}
 
-// ---------- CSRF ----------
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-const csrftoken = getCookie('csrftoken');
-document.getElementById("has_expiry").addEventListener("change", function(){
-    if(this.checked){
-        ensureExpiryVariant()
-    }
-})
-// ---------- VARIANTS ----------
-function addVariant(name=""){
-    let div = document.createElement("div")
-    div.className = "variant-row"
-    div.innerHTML = `
-        <input value="${name}">
-        <button type="button" onclick="this.parentElement.remove()">X</button>
-    `
-    document.getElementById("variants").appendChild(div)
-}
-
-// ---------- SAVE ----------
-function saveCategory(){
-    let id = document.getElementById("cat_id").value
-
-    let variants = []
-    document.querySelectorAll("#variants input").forEach(i=>{
-        if(i.value.trim()) variants.push({name:i.value})
-    })
-
-    let data = {
-        name: document.getElementById("name").value,
-        description: document.getElementById("desc").value,
-        has_expiry: document.getElementById("has_expiry").checked,
-        variants: variants
-    }
-
-    fetch(id ? api + id + "/" : api, {
-        method: id ? "PUT" : "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrftoken
-        },
-        body: JSON.stringify(data)
-    })
-    .then(r => {
-        if(!r.ok){
-            return r.json().then(err => { throw err })
-        }
-        return r.json()
-    })
-    .then(res => {
-        console.log("Saved:", res)
-        clearForm()
-        loadCategories()
-    })
-    .catch(err => {
-        console.error("SAVE ERROR:", err)
-        alert("Save failed. Check console.")
-    })
-}
-function ensureExpiryVariant(){
-    let exists = false
-
-    document.querySelectorAll("#variants input").forEach(i=>{
-        if(i.value.trim().toLowerCase() === "expiry"){
-            exists = true
-        }
-    })
-
-    if(!exists){
-        addVariant("Expiry")
-    }
-}
-
-// ---------- CLEAR ----------
-function clearForm(){
-    document.getElementById("cat_id").value=""
-    document.getElementById("name").value=""
-    document.getElementById("desc").value=""
-    document.getElementById("has_expiry").checked=false
-    document.getElementById("variants").innerHTML=""
-}
-
-// ---------- LOAD ----------
-function loadCategories(){
-    fetch(api)
-    .then(r=>r.json())
-    .then(data=>{
-        let rows=""
-        data.forEach(c=>{
-            rows+=`
-            <tr>
-            <td>${c.name}</td>
-            <td>${c.has_expiry ? "Yes":"No"}</td>
-            <td>${c.variants.map(v=>v.name).join(", ")}</td>
-            <td>
-                <button onclick='editCat(${JSON.stringify(c)})'>Edit</button>
-                <button onclick='deleteCat(${c.id})'>Delete</button>
-            </td>
-            </tr>`
-        })
-        document.getElementById("cat_table").innerHTML=rows
-    })
-}
-
-// ---------- EDIT ----------
-function editCat(c){
-    document.getElementById("cat_id").value = c.id
-    document.getElementById("name").value = c.name
-    document.getElementById("desc").value = c.description
-    document.getElementById("has_expiry").checked = c.has_expiry
-    document.getElementById("variants").innerHTML=""
-    c.variants.forEach(v=>addVariant(v.name))
-
-    if(c.has_expiry){
-        ensureExpiryVariant()
-    }
-}
-
-// ---------- DELETE ----------
-function deleteCat(id){
-    fetch(api + id + "/", {
-        method:"DELETE",
-        headers: {"X-CSRFToken": csrftoken}
-    }).then(()=>loadCategories())
-}
-
-loadCategories()
-
-</script>
-
-</body>
-</html>
+{% block scripts %}
+<script src="{% static 'js/user/inventory/category_master.js' %}"></script>
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

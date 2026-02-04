@@ -1,55 +1,117 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Product Master</title>
-<style>
-body{font-family:Arial;background:#f4f6f9;padding:20px}
-.card{background:#fff;padding:15px;border-radius:10px;margin-bottom:20px}
-input,select{width:100%;padding:6px}
-table{width:100%;border-collapse:collapse;background:#fff}
-th,td{padding:8px;border-bottom:1px solid #ddd;font-size:13px}
-th{background:#212529;color:#fff}
-</style>
-</head>
+{% extends 'base_user.html' %}
+{% load static i18n %}
 
-<body>
+{% block title %}{% trans "Product Master" %}{% endblock %}
 
-<div class="card">
-<h3>Product Master</h3>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/inventory_manager/product/product_master.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
 
-<input type="hidden" id="pid">
+{% block content %}
 
-<label>Product Name</label>
-<input id="pname">
+<div class="product-page">
 
-<label>Category</label>
-<select id="category" onchange="loadVariants()"></select>
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Product " %}</span>
+                {% trans " Master" %}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
 
-<div id="variant_fields"></div>
+    <!-- ================= PRODUCT FORM ================= -->
+    <div class="pm-card pm-form-card">
+        <div class="pm-card-header">
+            <p>{% trans "Create and manage products with variants" %}</p>
+        </div>
 
-<div id="expiry_div" style="display:none">
-<label>Expiry Date</label>
-<input type="date" id="expiry">
+        <div class="pm-card-body">
+            <input type="hidden" id="pid">
+
+            <div class="pm-form-grid">
+                <div class="pm-field">
+                    <label>{% trans "Product Name" %}</label>
+                    <input id="pname" placeholder="Enter product name">
+                </div>
+
+                <div class="pm-field">
+                    <label>{% trans "Category" %}</label>
+                    <select id="category" onchange="loadVariants()"></select>
+                </div>
+            </div>
+
+            <div id="variant_fields" class="pm-variant-grid"></div>
+
+            <div class="pm-actions">
+                <button class="pm-btn ghost" onclick="clearForm()">{% trans "Clear" %}</button>
+                <button class="pm-btn primary" onclick="saveProduct()">{% trans "Save Product" %}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= PRODUCT TABLE ================= -->
+
+    <!-- Table -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container product">
+            <table class="table-content" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>{% trans "Name" %}</th>
+                        <th>{% trans "Category" %}</th>
+                        <th>{% trans "Variants" %}</th>
+                        <th>{% trans "Expiry" %}</th>
+                        <th>{% trans "Action" %}</th>
+                    </tr>
+                </thead>
+            
+                <tbody id="ptable"></tbody>
+            
+                <!-- Empty state -->
+                <tbody id="noProductsRow" style="display: none;">
+                    <tr>
+                        <td colspan="5" class="no-data">
+                            {% trans "No products found" %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>            
+        </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+
 </div>
 
-<br>
-<button onclick="saveProduct()">Save Product</button>
-</div>
-
-<div class="card">
-<h3>Products</h3>
-<table>
-<thead>
-<tr>
-<th>Name</th><th>Category</th><th>Variants</th><th>Expiry</th><th>Action</th>
-</tr>
-</thead>
-<tbody id="ptable"></tbody>
-</table>
-</div>
+<!-- 🌟 Delete Product Confirmation Modal -->
+<div id="deleteModal" class="logout-modal">
+    <div class="logout-modal-content">
+      <h3>
+        <span>{% trans "Delete" %}</span> {% trans "Product" %}
+      </h3>
+      <p>{% trans "Are you sure you want to delete this product?" %}</p>
+  
+      <div class="logout-modal-buttons">
+        <a id="cancelDelete" class="logout-btn-cancel">
+          {% trans "Cancel" %}
+        </a>
+        <a id="confirmDelete" class="logout-btn-confirm">
+          {% trans "Delete" %}
+        </a>
+      </div>
+    </div>
+  </div>
+  
 
 <script>
-
 let catApi  = "/en/dashboard/inventory-manager/api/category-list/"
 let prodApi = "/en/dashboard/inventory-manager/api/products/"
 let categories = []
@@ -70,40 +132,46 @@ fetch(catApi).then(r=>r.json()).then(data=>{
     category.innerHTML = opt
 })
 
-/* ---------- VARIANTS ---------- */
 function loadVariants(){
     let cid = category.value
     let cat = categories.find(c=>c.id == cid)
 
     variant_fields.innerHTML = ""
 
-    if(cat && cat.has_expiry){
-        expiry_div.style.display="block"
-    }else{
-        expiry_div.style.display="none"
-        expiry.value=""
-    }
-
     if(cat){
-        cat.variants.forEach(v=>{
 
-            // ❗ SKIP EXPIRY VARIANT — DATE FIELD ALREADY EXISTS
+        /* ---------- EXPIRY FIELD ---------- */
+        if(cat.has_expiry){
+            variant_fields.innerHTML += `
+                <div class="pm-field">
+                    <label>Expiry Date</label>
+                    <input type="date" id="expiry">
+                </div>
+            `
+        }
+
+        /* ---------- OTHER VARIANTS ---------- */
+        cat.variants.forEach(v=>{
             if(v.name.toLowerCase() === "expiry") return;
 
             variant_fields.innerHTML += `
-            <label>${v.name}</label>
-            <input data-vid="${v.id}">
+                <div class="pm-field">
+                    <label>${v.name}</label>
+                    <input data-vid="${v.id}" placeholder="Enter ${v.name}">
+                </div>
             `
         })
     }
 }
+
+
 
 /* ---------- SAVE ---------- */
 function saveProduct(){
     let pid = document.getElementById("pid").value
 
     let vars = []
-    document.querySelectorAll("#variant_fields input").forEach(i=>{
+    document.querySelectorAll("#variant_fields input[data-vid]").forEach(i=>{
         if(i.value.trim()){
             vars.push({
                 variant: i.dataset.vid,
@@ -112,51 +180,71 @@ function saveProduct(){
         }
     })
 
+    let expiryInput = document.getElementById("expiry")
+
     let data = {
         name: pname.value,
         category: category.value,
-        expiry_date: expiry.value || null,
+        expiry_date: expiryInput ? expiryInput.value : null,
         variant_values: vars
     }
 
     fetch(pid ? prodApi+pid+"/" : prodApi,{
-        method: pid ? "PUT":"POST",
+        method: pid ? "PUT" : "POST",
         headers:{
             "Content-Type":"application/json",
-            "X-CSRFToken":csrftoken
+            "X-CSRFToken": csrftoken
         },
-        body:JSON.stringify(data)
+        body: JSON.stringify(data)
     })
     .then(r=>{
         if(!r.ok) return r.json().then(e=>{throw e})
         return r.json()
     })
-    .then(()=>{ clearForm(); loadProducts() })
+    .then(()=>{
+        clearForm()
+        loadProducts()
+    })
     .catch(e=>{
         console.error("SAVE ERROR:", e)
-        alert("Save failed. Check console.")
+        alert("Save failed.")
     })
 }
+
 
 /* ---------- LOAD PRODUCTS ---------- */
 function loadProducts(){
     fetch(prodApi).then(r=>r.json()).then(data=>{
-        let rows=""
+        let rows = ""
+        const noData = document.getElementById("noProductsRow")
+
+        if(data.length === 0){
+            ptable.innerHTML = ""
+            noData.style.display = ""
+            return
+        }
+
+        noData.style.display = "none"
+
         data.forEach(p=>{
             let cat = categories.find(c=>c.id==p.category)
-            rows+=`
-            <tr>
-            <td>${p.name}</td>
-            <td>${cat ? cat.name : ""}</td>
-            <td>${p.variant_values.map(v => (v.variant_name || "") + ":" + v.value).join(", ")}</td>
-
-            <td>${p.expiry_date || ""}</td>
-            <td>
-                <button onclick='editProd(${JSON.stringify(p)})'>Edit</button>
-                <button onclick='delProd(${p.id})'>Delete</button>
-            </td>
-            </tr>`
+            rows += `
+                <tr>
+                    <td>${p.name}</td>
+                    <td>${cat ? cat.name : ""}</td>
+                    <td class="variants">
+                        ${p.variant_values.map(v => `<span>${v.variant_name}:${v.value}</span>`).join("")}
+                    </td>
+                    <td>${p.expiry_date || "-"}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn normal" onclick='editProd(${JSON.stringify(p)})'>Edit</button>
+                            <button class="action-btn delete" onclick="openDeleteModal(${p.id})">Delete</button>
+                        </div>
+                    </td>
+                </tr>`
         })
+
         ptable.innerHTML = rows
     })
 }
@@ -176,26 +264,75 @@ function editProd(p){
     })
 }
 
-/* ---------- DELETE ---------- */
-function delProd(id){
-    fetch(prodApi+id+"/",{method:"DELETE",headers:{"X-CSRFToken":csrftoken}})
-    .then(()=>loadProducts())
-}
 
 function clearForm(){
-    pid.value=""
-    pname.value=""
-    category.value=""
-    variant_fields.innerHTML=""
-    expiry.value=""
-    expiry_div.style.display="none"
+    pid.value = ""
+    pname.value = ""
+    category.value = ""
+    variant_fields.innerHTML = ""
 }
+
 
 loadProducts()
 
+
+
+let deleteProductId = null
+
+document.addEventListener("DOMContentLoaded", () => {
+    const deleteModal = document.getElementById("deleteModal")
+    const confirmDelete = document.getElementById("confirmDelete")
+    const cancelDelete = document.getElementById("cancelDelete")
+
+    function openDeleteModal(id){
+        deleteProductId = id
+        deleteModal.classList.remove("fade-out")
+        deleteModal.classList.add("show")
+    }
+
+    function closeDeleteModal(){
+        deleteModal.classList.add("fade-out")
+        deleteModal.classList.remove("show")
+
+        setTimeout(() => {
+            deleteModal.classList.remove("fade-out")
+        }, 300)
+    }
+
+    cancelDelete.addEventListener("click", closeDeleteModal)
+
+    confirmDelete.addEventListener("click", () => {
+        if(!deleteProductId) return
+
+        fetch(prodApi + deleteProductId + "/", {
+            method: "DELETE",
+            headers: {
+                "X-CSRFToken": csrftoken
+            }
+        })
+        .then(() => {
+            closeDeleteModal()
+            loadProducts()
+            deleteProductId = null
+        })
+    })
+
+    // Close on outside click
+    window.addEventListener("click", (e) => {
+        if (e.target === deleteModal) {
+            closeDeleteModal()
+        }
+    })
+
+    // expose globally
+    window.openDeleteModal = openDeleteModal
+})
+
 </script>
 
-</body>
-</html>
+{% endblock %}
 
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}
 

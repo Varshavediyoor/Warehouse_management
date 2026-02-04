@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Vehicle Entry Dashboard</h2>
+
+<table id="vehicleTable" border="1" cellpadding="5" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>PO Number</th>
+            <th>Gate No</th>
+            <th>Vehicle Name</th>
+            <th>Vehicle Number</th>
+            <th>Driver Name</th>
+            <th>Checked By</th>
+            <th>Entry Time</th>
+            <th>Front</th>
+            <th>Rear</th>
+            <th>Side</th>
+            <th>Driver</th>
+            <th>Entry Pass</th>
+            <th>Barcode</th>
+        </tr>
+    </thead>
+    <tbody id="vehicleBody">
+        <!-- JS will populate this -->
+    </tbody>
+</table>
+
+<script>
+async function loadVehicleEntries() {
+    try {
+        const response = await fetch("{% url 'security:api_vehicle_entry_list' %}", {
+            headers: {
+                "Accept": "application/json",
+                "X-Requested-With": "XMLHttpRequest",
+            },
+            credentials: "same-origin"
+        });
+
+        const data = await response.json();
+        const tbody = document.getElementById("vehicleBody");
+        tbody.innerHTML = "";
+
+        if (!data.length) {
+            tbody.innerHTML = `<tr><td colspan="14" style="text-align:center;">No vehicle entries found</td></tr>`;
+            return;
+        }
+
+        data.forEach(entry => {
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${entry.id}</td>
+                <td>${entry.po_number}</td>
+                <td>${entry.gate_no}</td>
+                <td>${entry.vehicle_name}</td>
+                <td>${entry.vehicle_number || "N/A"}</td>
+                <td>${entry.driver_name || "N/A"}</td>
+                <td>${entry.checked_by || "N/A"}</td>
+                <td>${entry.entry_time ? new Date(entry.entry_time).toLocaleString() : "N/A"}</td>
+                <td>${entry.front_image_url ? `<img src="${entry.front_image_url}" width="50" onclick="window.open(this.src)">` : "N/A"}</td>
+                <td>${entry.rear_image_url ? `<img src="${entry.rear_image_url}" width="50" onclick="window.open(this.src)">` : "N/A"}</td>
+                <td>${entry.side_image_url ? `<img src="${entry.side_image_url}" width="50" onclick="window.open(this.src)">` : "N/A"}</td>
+                <td>${entry.driver_image_url ? `<img src="${entry.driver_image_url}" width="50" onclick="window.open(this.src)">` : "N/A"}</td>
+                <td>${entry.entry_pass_url ? `<a href="${entry.entry_pass_url}" target="_blank">View Pass</a>` : "N/A"}</td>
+                <td>${entry.barcode_url ? `<img src="${entry.barcode_url}" width="50" onclick="window.open(this.src)">` : "N/A"}</td>
+            `;
+
+            tbody.appendChild(row);
+        });
+
+    } catch (err) {
+        console.error("Error loading vehicle entries:", err);
+        const tbody = document.getElementById("vehicleBody");
+        tbody.innerHTML = `<tr><td colspan="14" style="text-align:center;color:red;">Error loading vehicle entries</td></tr>`;
+    }
+}
+
+window.onload = loadVehicleEntries;
+</script>
+{% endblock %}

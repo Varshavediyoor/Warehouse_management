@@ -29,75 +29,101 @@
 
 <hr>
 
-<!-- FRONT -->
+
 <div class="section">
-    <h4>Front Images</h4>
-    <video id="frontVideo" autoplay></video><br>
+    <h4>Front Image</h4>
+    <video id="frontVideo"></video><br>
+    <button type="button" onclick="startCamera('front')"> Camera</button>
     <button type="button" onclick="capture('front')">Capture Front</button>
 </div>
 
-<!-- REAR -->
+
 <div class="section">
-    <h4>Rear Images</h4>
-    <video id="rearVideo" autoplay></video><br>
+    <h4>Rear Image</h4>
+    <video id="rearVideo"></video><br>
+    <button type="button" onclick="startCamera('rear')"> Camera</button>
     <button type="button" onclick="capture('rear')">Capture Rear</button>
 </div>
 
-<!-- SIDE -->
+
 <div class="section">
-    <h4>Side Images</h4>
-    <video id="sideVideo" autoplay></video><br>
+    <h4>Side Image</h4>
+    <video id="sideVideo"></video><br>
+    <button type="button" onclick="startCamera('side')"> Camera</button>
     <button type="button" onclick="capture('side')">Capture Side</button>
 </div>
 
-<!-- DRIVER -->
+
 <div class="section">
     <h4>Driver Image (Optional)</h4>
-    <video id="driverVideo" autoplay></video><br>
+    <video id="driverVideo"></video><br>
+    <button type="button" onclick="startCamera('driver')"> Camera</button>
     <button type="button" onclick="capture('driver')">Capture Driver</button>
 </div>
 
-<!-- Hidden container -->
 <div id="hiddenFiles"></div>
 
 <button type="submit">Generate Entry Pass</button>
-
 </form>
 
 <script>
 const streams = {};
 
+
 async function startCamera(type) {
+    if (streams[type]) return; 
+
     const video = document.getElementById(type + "Video");
-    streams[type] = await navigator.mediaDevices.getUserMedia({ video: true });
-    video.srcObject = streams[type];
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+    streams[type] = stream;
+    video.srcObject = stream;
+    video.play();
 }
 
-["front", "rear", "side", "driver"].forEach(startCamera);
+
+function stopCamera(type) {
+    if (!streams[type]) return;
+
+    streams[type].getTracks().forEach(track => track.stop());
+    streams[type] = null;
+
+    const video = document.getElementById(type + "Video");
+    video.srcObject = null;
+}
+
 
 function capture(type) {
+    if (!streams[type]) {
+        alert("Open camera first");
+        return;
+    }
+
     const video = document.getElementById(type + "Video");
     const canvas = document.createElement("canvas");
+
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(video, 0, 0);
+    canvas.getContext("2d").drawImage(video, 0, 0);
 
     canvas.toBlob(blob => {
-        const fileInput = document.createElement("input");
-        fileInput.type = "file";
-        fileInput.name = type + "_images";
-        if (type === "driver") {
-            fileInput.name = "driver_image";
-        }
-        const file = new File([blob], `${type}_${Date.now()}.jpg`, { type: "image/jpeg" });
+        const input = document.createElement("input");
+        input.type = "file";
+        input.name = (type === "driver") ? "driver_image" : type + "_images";
 
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        fileInput.files = dataTransfer.files;
+        const file = new File([blob], `${type}_${Date.now()}.jpg`, {
+            type: "image/jpeg"
+        });
 
-        document.getElementById("hiddenFiles").appendChild(fileInput);
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        input.files = dt.files;
+
+        document.getElementById("hiddenFiles").appendChild(input);
+
+    
+        stopCamera(type);
+
         alert(type.toUpperCase() + " image captured");
     }, "image/jpeg");
 }

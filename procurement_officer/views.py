@@ -11,6 +11,8 @@ from django.contrib.auth.decorators import login_required
 from .models import PurchaseOrder, Vendor
 from .serializers import PurchaseOrderSerializer, VendorSerializer
 from admin_app.models import Notification
+from collections import defaultdict
+
 
 class VendorListCreateAPI(APIView):
     permission_classes = [IsAuthenticated]
@@ -115,6 +117,12 @@ def purchase_order_list_page(request):
     pos = PurchaseOrder.objects.all().order_by("-id")
     return render(request, "purchase/po_list.html", {"pos": pos})
 
+
+from collections import defaultdict
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
 @login_required
 def purchase_order_form_page(request, pk=None):
     po = None
@@ -125,9 +133,18 @@ def purchase_order_form_page(request, pk=None):
             messages.error(request, "Submitted PO cannot be edited")
             return redirect("po_list")
 
+    # 🔹 Products grouped by category
+    products_by_category = defaultdict(list)
+    for p in Product.objects.select_related("category"):
+        products_by_category[p.category_id].append(p)
+
+    # 🔹 Variants grouped by product → variant name
+    variants_by_product = defaultdict(lambda: defaultdict(list))
+    for pv in ProductVariantValue.objects.select_related("variant", "product"):
+        variants_by_product[pv.product_id][pv.variant.name].append(pv)
+
     if request.method == "POST":
 
-        # ✅ ADD ITEM FORM
         if "add_item" in request.POST:
             if not po:
                 messages.error(request, "Save Purchase Order first")
@@ -137,11 +154,11 @@ def purchase_order_form_page(request, pk=None):
             product_id = request.POST.get("product")
             quantity = request.POST.get("quantity")
 
-            # ✅ IMPORTANT: getlist for M2M
-            category_variants = request.POST.getlist("category_variant")
-            product_variants = request.POST.getlist("product_variant")
+            product_variant_values = [
+                value for key, value in request.POST.items()
+                if key.startswith("variant_") and value
+            ]
 
-            # 1️⃣ Create item first
             item = PurchaseOrderItem.objects.create(
                 purchase_order=po,
                 category_id=category_id,
@@ -149,24 +166,18 @@ def purchase_order_form_page(request, pk=None):
                 quantity=quantity,
             )
 
-            # 2️⃣ Set ManyToMany fields AFTER save
-            if category_variants:
-                item.category_variant.set(category_variants)
-
-            if product_variants:
-                item.product_variant.set(product_variants)
+            if product_variant_values:
+                item.product_variant.set(product_variant_values)
 
             messages.success(request, "Item added successfully")
             return redirect("po_update", pk=po.pk)
 
-        # ✅ SAVE / UPDATE PO FORM
+        # SAVE / UPDATE PO
         vendor_id = request.POST.get("vendor")
         order_date = request.POST.get("order_date")
         remarks = request.POST.get("remarks")
 
-        if not vendor_id or not order_date:
-            messages.error(request, "Vendor and Order Date are required")
-        else:
+        if vendor_id and order_date:
             if not po:
                 po = PurchaseOrder.objects.create(
                     vendor_id=vendor_id,
@@ -187,11 +198,11 @@ def purchase_order_form_page(request, pk=None):
         "vendors": Vendor.objects.all(),
         "items": po.items.all() if po else [],
         "categories": Category.objects.all(),
-        "products": Product.objects.all(),
-        "category_variants": CategoryVariant.objects.all(),
-        "product_variants": ProductVariantValue.objects.all(),
+        "products_by_category": dict(products_by_category),
+        "variants_by_product": {
+            k: dict(v) for k, v in variants_by_product.items()
+        },
     })
-
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect

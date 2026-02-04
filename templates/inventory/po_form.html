@@ -1,95 +1,200 @@
 {% extends 'base_user.html' %}
 {% load static i18n %}
 
-{% block title %}{% trans "Create Purchase Order" %}{% endblock %}
+{% block title %}
+{% if po %}Edit{% else %}Create{% endif %} Purchase Order
+{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/user/procurement_officer/po_form.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/purchase/po_form.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 {% endblock %}
 
 {% block content %}
-<section class="po-form-section">
-  <div class="po-form-card">
-    <div class="po-form-header">
-      <h2>Create <span>{% trans "Purchase Order" %}</span></h2>
-      <p>{% trans "Fill out the form below to generate a new purchase order for your supplier." %}</p>
+
+<div class="po-container">
+
+    <!-- ===== HEADER ===== -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% if po %}Edit{% else %}Create{% endif %}</span>
+                {% trans " Purchase Order" %}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            {% if po %}
+            <span class="po-badge {{ po.status|lower }}">
+                {{ po.status }}
+            </span>
+            {% endif %}
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
     </div>
 
-    <!-- <form method="post" class="po-form">
-      {% csrf_token %}
-      <div class="form-grid">
-        {{ form.as_p }}
-      </div>
+    <!-- ===== PO DETAILS CARD ===== -->
+    <div class="po-card">
+        <h3 class="po-card-title">Purchase Order Details</h3>
 
-      <div class="po-btn-group">
-        <a href="{% url 'procurement_officer_dashboard' %}" class="btn-cancel"><i class="bi bi-x"></i> {% trans "Cancel" %}</a>
-        <button type="submit" class="btn-submit"> {% trans "Create Order" %}</button>
-      </div>
-    </form> -->
-      <form method="post" class="po-form">
-      {% csrf_token %}
+        <form method="post" class="po-form-grid">
+            {% csrf_token %}
 
-      <div class="form-grid">
+            <div class="po-input-group">
+                <label>Vendor</label>
+                <select name="vendor" required {% if po and po.status != "DRAFT" %}disabled{% endif %}>
+                    <option value="">-- Select Vendor --</option>
+                    {% for v in vendors %}
+                    <option value="{{ v.id }}" {% if po and po.vendor_id == v.id %}selected{% endif %}>
+                        {{ v.vendor_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        <!-- PO TYPE -->
-        <div class="form-group">
-          <label for="id_po_type">{% trans "PO Type" %}</label>
-          {{ form.po_type }}
+            <div class="po-input-group">
+                <label>Order Date</label>
+                <input type="date"
+                       name="order_date"
+                       value="{{ po.order_date|date:'Y-m-d' }}"
+                       required
+                       {% if po and po.status != "DRAFT" %}disabled{% endif %}>
+            </div>
+
+            <div class="po-input-group po-span-2">
+                <label>Remarks</label>
+                <textarea name="remarks" rows="3"
+                    {% if po and po.status != "DRAFT" %}disabled{% endif %}>{{ po.remarks }}</textarea>
+            </div>
+
+            {% if not po or po.status == "DRAFT" %}
+            <div class="po-actions po-span-2">
+                <button type="submit" class="po-btn-primary">
+                    Save Purchase Order
+                </button>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+
+    {% if po %}
+    <!-- ===== ADD ITEMS CARD ===== -->
+    <div class="po-card">
+        <h3 class="po-card-title">
+            Add Items to PO {{ po.po_number }}
+        </h3>
+
+        <form method="post" class="po-item-grid">
+            {% csrf_token %}
+            <input type="hidden" name="add_item" value="1">
+
+            <select name="category" required>
+                <option value="">Category</option>
+                {% for c in categories %}
+                <option value="{{ c.id }}">{{ c.name }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="product" required>
+                <option value="">Product</option>
+                {% for p in products %}
+                <option value="{{ p.id }}">{{ p.name }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="category_variant" class="multi-select" multiple>
+                {% for cv in category_variants %}
+                <option value="{{ cv.id }}">{{ cv.name }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="product_variant" class="multi-select" multiple>
+                {% for pv in product_variants %}
+                <option value="{{ pv.id }}">{{ pv.value }}</option>
+                {% endfor %}
+            </select>
+
+            <input type="number" name="quantity" min="1" required placeholder="Qty">
+
+            {% if po.status == "DRAFT" %}
+            <button type="submit" class="po-btn-accent">
+                + Add Item
+            </button>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- ===== ITEMS TABLE ===== -->
+    <div class="po-card">
+        <h3 class="po-card-title">Purchase Order Items</h3>
+
+        <div class="po-table-wrapper">
+            <table class="po-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Product</th>
+                        <th>Variants</th>
+                        <th class="qty">Qty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in items %}
+                    <tr>
+                        <td>{{ i.category }}</td>
+                        <td>{{ i.product }}</td>
+                        <td>
+                            {% for cv in i.category_variant.all %}
+                                <span class="po-chip">
+                                    {{ cv.name }}
+                                </span>
+                            {% endfor %}
+                            {% for pv in i.product_variant.all %}
+                                <span class="po-chip accent">
+                                    {{ pv.value }}
+                                </span>
+                            {% endfor %}
+                        </td>
+                        <td class="qty">{{ i.quantity }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="po-empty">
+                            No items added
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
+    </div>
 
-        <!-- SUPPLIER (EXTERNAL PO) -->
-        <div class="form-group" id="supplier_block">
-          <label for="id_supplier">{% trans "Supplier" %}</label>
-          {{ form.supplier }}
-        </div>
-
-        <!-- VENDOR (VENDOR PO) -->
-        <div class="form-group" id="vendor_block">
-          <label for="id_vendor_name">{% trans "Vendor Name" %}</label>
-          {{ form.vendor_name }}
-        </div>
-
-        <!-- ORDER DATE -->
-        <div class="form-group">
-          <label for="id_order_date">{% trans "Order Date" %}</label>
-          {{ form.order_date }}
-        </div>
-
-      </div>
-
-      <div class="po-btn-group">
-        <a href="{% url 'procurement_officer_dashboard' %}" class="btn-cancel">
-          <i class="bi bi-x"></i> {% trans "Cancel" %}
+    {% if po.status == "DRAFT" %}
+    <!-- ===== SUBMIT BAR ===== -->
+    <div class="po-submit-bar">
+        <a href="{% url 'po_submit' po.id %}" class="po-btn-primary big">
+            Submit Purchase Order
         </a>
-        <button type="submit" class="btn-submit">
-          {% trans "Create Order" %}
-        </button>
-      </div>
-    </form>
+    </div>
+    {% endif %}
+    {% endif %}
 
+</div>
 
-  </div>
-</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
-  const poType = document.getElementById("id_po_type");
-  const supplierBlock = document.getElementById("supplier_block");
-  const vendorBlock = document.getElementById("vendor_block");
-
-  function toggleFields() {
-    if (poType.value === "external") {
-      supplierBlock.style.display = "block";
-      vendorBlock.style.display = "none";
-    } else if (poType.value === "vendor") {
-      supplierBlock.style.display = "none";
-      vendorBlock.style.display = "block";
-    } else {
-      supplierBlock.style.display = "none";
-      vendorBlock.style.display = "none";
-    }
-  }
-
-  poType.addEventListener("change", toggleFields);
-  toggleFields(); // run on page load
+$(document).ready(function () {
+    $('.multi-select').select2({
+        placeholder: "Select options",
+        allowClear: true,
+        width: '100%'
+    });
+});
 </script>
-
 {% endblock %}

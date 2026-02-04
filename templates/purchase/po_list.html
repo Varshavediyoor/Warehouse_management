@@ -1,20 +1,93 @@
-<h2>Purchase Orders</h2>
-<a href="{% url 'po_create' %}">Create PO</a>
+{% extends 'base_user.html' %}
+{% load static i18n %}
 
-<table border="1">
-<tr><th>PO</th><th>Vendor</th><th>Status</th><th>Action</th></tr>
-{% for po in pos %}
-<tr>
-<td>{{ po.po_number }}</td>
-<td>{{ po.vendor }}</td>
-<td>{{ po.status }}</td>
-<td>
-{% if po.status == "DRAFT" %}
-<a href="{% url 'po_update' po.id %}">Edit</a>
-{% endif %}
-<a href="{% url 'inventory_manager:po_decide' po.id %}">View</a>
-</td>
-</tr>
-{% endfor %}
-</table>
-</table>
+{% block title %}{% trans "Purchase Order List" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user/purchase/po_list.css' %}">
+<link rel="stylesheet" href="{% static 'css/user/user_tables.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="po-container">
+
+    <!-- Header -->
+    <div class="wh-header-section">
+        <div class="wh-header-left">
+            <h1>
+                <span>{% trans "Purchase" %}</span>
+                {% trans " Orders" %}
+            </h1>
+        </div>
+        <div class="wh-header-right">
+            <a href="javascript:history.back()" class="btn-back">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Create PO Button -->
+    <div class="po-buttons">
+        <a href="{% url 'po_create' %}" class="po-btn">
+            {% trans "Create PO" %}
+        </a>
+    </div>
+
+    <!-- Table -->
+    <div class="table-scroll-wrapper">
+        <div class="table-container">
+            <table class="table-content" id="tableContent">
+                <thead>
+                    <tr>
+                        <th>{% trans "PO Number" %}</th>
+                        <th>{% trans "Vendor" %}</th>
+                        <th>{% trans "Status" %}</th>
+                        <th>{% trans "Action" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for po in pos %}
+                    <tr>
+                        <td>{{ po.po_number }}</td>
+                        <td>{{ po.vendor }}</td>
+                        <td>
+                            <span class="status-badge {{ po.status|lower }}">
+                                {{ po.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                {% if po.status == "DRAFT" %}
+                                <a href="{% url 'po_update' po.id %}" class="action-btn edit">
+                                    {% trans "Edit" %}
+                                </a>
+                                {% endif %}
+                                <a href="{% url 'inventory_manager:po_decide' po.id %}" class="action-btn normal">
+                                    {% trans "View" %}
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="no-data">
+                            {% trans "No purchase orders found." %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container" id="tablePagination"></div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/user/user_tables.js' %}"></script>
+{% endblock %}

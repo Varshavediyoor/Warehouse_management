@@ -28,25 +28,21 @@ urlpatterns = [
     
 ]
 
-# urlpatterns += i18n_patterns(
-#     path('admin/', admin.site.urls),
-#     path('', include('admin_app.urls')),
-#     path('dashboard/maintenance/', include('maintenance.urls')),
-#     path('dashboard/inventory-manager/', include('inventory_manager.urls')),
-#     path('dashboard/procurement-officer/', include('procurement_officer.urls')),
+
     
 urlpatterns += i18n_patterns(
     path('admin/', admin.site.urls),
     path('', include('admin_app.urls')),
     path(
-        'procurement-officer/dashboard/',
+        'dashboard/procurement-officer/',
         include('procurement_officer.urls')
     ),
-    path('inventory-manager/dashbaord/', include('inventory_manager.urls')),
-    path('security/dashboard/', include('security.urls')),
+    path('dashboard/inventory-manager/', include('inventory_manager.urls')),
+    path('dashboard/security', include('security.urls')),
     
     
-    path('quality_control/dashboard/', include('quality_control.urls')),
+    path('dashboard/quality_control/', include('quality_control.urls')),
+    path('dashboard/maintenance/', include('maintenance.urls')),
 )
 
 

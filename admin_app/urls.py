@@ -33,8 +33,8 @@ urlpatterns = [
     path('dashboard/inventory-manager', views.inventory_manager_dashboard, name='inventory_manager_dashboard'),
     path('dashboard/salesofficer', views.salesofficer_dashboard, name='salesofficer_dashboard'),
     path('dashboard/delivery_boy', views.delivery_boy_dashboard, name='delivery_boy_dashboard'),
-    path('maintenance-dashboard/', views.maintenance_dashboard, name='maintenance_staff_dashboard'),
-    path("security/dashboard/", views.security_dashboard, name="security_dashboard"),
+    path('dashboard/maintenance', views.maintenance_dashboard, name='maintenance_staff_dashboard'),
+    path("dashboard/security/", views.security_dashboard, name="security_dashboard"),
     path('dashboard/quality_control',views.qc_dashboard,name='quality_control'),
 
     #-------------------- profile and notification links ---------------------------------
